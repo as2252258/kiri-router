@@ -24,15 +24,30 @@ class Validator
 
 
 	/**
+	 * @param object $formData
+	 */
+	public function setFormData(object $formData): void
+	{
+		$this->formData = $formData;
+	}
+
+
+	/**
+	 * @return object
+	 */
+	public function getFormData(): object
+	{
+		return $this->formData;
+	}
+
+	/**
 	 * @param string $name
-	 * @param object $data
 	 * @param ValidatorInterface $rule
 	 * @return void
 	 */
-	public function addRule(string $name, object $data, ValidatorInterface $rule): void
+	public function addRule(string $name, ValidatorInterface $rule): void
 	{
 		$this->rules[$name] = $rule;
-		$this->formData = $data;
 	}
 
 

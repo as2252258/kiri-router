@@ -26,12 +26,12 @@ class BindForm implements InjectParameterInterface
 	{
 		$validator = new Validator();
 		$reflect = \Kiri::getDi()->getReflectionClass($this->formValidate);
-		$model = $reflect->newInstanceWithoutConstructor();
+		$validator->setFormData($reflect->newInstanceWithoutConstructor());
 		foreach ($reflect->getProperties() as $property) {
 			foreach ($property->getAttributes() as $attribute) {
 				$rule = $attribute->newInstance();
 				if ($rule instanceof ValidatorInterface) {
-					$validator->addRule($property->getName(), $model, $rule);
+					$validator->addRule($property->getName(), $rule);
 				}
 			}
 		}
