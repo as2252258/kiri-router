@@ -20,16 +20,16 @@ abstract class Controller
 {
 
 	#[Service('request')]
-	readonly public RequestInterface $request;
+	public RequestInterface $request;
 
 	#[Service('response')]
-	readonly public ResponseInterface $response;
+	public ResponseInterface $response;
 
 
 	#[Container(LoggerInterface::class)]
-	readonly public LoggerInterface $logger;
+	public LoggerInterface $logger;
 
 
 	#[Container(ContainerInterface::class)]
-	readonly public ContainerInterface $container;
+	public ContainerInterface $container;
 }
