@@ -117,10 +117,10 @@ class Server implements OnRequestInterface
 			->withUri(Uri::parse($request))
 			->withProtocolVersion($request->server['server_protocol'])
 			->withCookieParams($request->cookie ?? [])
-			->withQueryParams($request->get)
-			->withUploadedFiles($request->files)
+			->withQueryParams($request->get ?? [])
+			->withUploadedFiles($request->files ?? [])
 			->withMethod($request->getMethod())
-			->withParsedBody($request->post);
+			->withParsedBody($request->post ?? []);
 
 		/** @var ConstrictRequest $PsrRequest */
 		return Context::set(RequestInterface::class, $serverRequest);

@@ -395,7 +395,7 @@ class Uri implements UriInterface
 	public static function parse(\Swoole\Http\Request $request): UriInterface
 	{
 		$uri = new static();
-		$uri->queryString = $request->server['query_string'];
+		$uri->queryString = $request->server['query_string'] ?? '';
 		$uri->path = $request->server['path_info'];
 		$uri->port = $request->server['server_port'];
 		if (isset($request->server['https']) && $request->server['https'] !== 'off') {
