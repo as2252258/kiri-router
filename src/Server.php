@@ -6,7 +6,7 @@ namespace Kiri\Router;
 
 use Exception;
 use Kiri;
-use Kiri\Di\ContainerInterface;
+use Psr\Container\ContainerInterface;
 use Kiri\Di\Context;
 use Kiri\Events\EventProvider;
 use Kiri\Router\Interface\ExceptionHandlerInterface;

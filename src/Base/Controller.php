@@ -5,7 +5,7 @@ namespace Kiri\Router\Base;
 
 
 use Kiri;
-use Kiri\Di\ContainerInterface;
+use Psr\Container\ContainerInterface;
 use Psr\Log\LoggerInterface;
 use Psr\Http\Message\RequestInterface;
 use Psr\Http\Message\ResponseInterface;
