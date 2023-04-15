@@ -123,8 +123,7 @@ class RouterCollector implements \ArrayAccess, \IteratorAggregate
 			if ($hashMap->has($item)) {
 				$hashMap = $hashMap->get($item);
 			} else {
-				$hashMap = new HashMap();
-				$hashMap->put($item, $hashMap);
+				$hashMap->put($item, $hashMap = new HashMap());
 			}
 		}
 		$hashMap->put('handler', $handler);
