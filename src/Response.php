@@ -46,6 +46,25 @@ class Response implements ResponseInterface
 
 
 	/**
+	 * @param array $cookies
+	 * @return ResponseInterface
+	 */
+	public function withCookieParams(array $cookies): ResponseInterface
+	{
+		return $this->__call__(__FUNCTION__, $cookies);
+	}
+
+
+	/**
+	 * @return array
+	 */
+	public function getCookieParams(): array
+	{
+		return $this->__call__(__FUNCTION__);
+	}
+
+
+	/**
 	 * Retrieves the HTTP protocol version as a string.
 	 *
 	 * The string MUST contain only the HTTP version number (e.g., "1.1", "1.0").

@@ -109,14 +109,17 @@ class Server implements OnRequestInterface
 		/** @var \Kiri\Router\Response $response */
 		$response = Kiri::service()->get('response');
 
+
+		$cookie = $request->cookie ?? [];
+
 		/** @var ConstrictResponse $PsrResponse */
 		$PsrResponse = Context::set(ResponseInterface::class, new ConstrictResponse());
-		$PsrResponse->withContentType($response->contentType);
+		$PsrResponse->withContentType($response->contentType)->withCookieParams($cookie);
 
 		$serverRequest = (new ConstrictRequest())->withDataHeaders($request->getData())
 			->withUri(Uri::parse($request))
 			->withProtocolVersion($request->server['server_protocol'])
-			->withCookieParams($request->cookie ?? [])
+			->withCookieParams($cookie)
 			->withQueryParams($request->get ?? [])
 			->withUploadedFiles($request->files ?? [])
 			->withMethod($request->getMethod())
