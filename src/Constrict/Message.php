@@ -27,6 +27,54 @@ class Message implements MessageInterface
 	 */
 	private StreamInterface $stream;
 
+	/**
+	 * @var array
+	 */
+	private array $cookieParams = [];
+
+
+
+	/**
+	 * Retrieve cookies.
+	 *
+	 * Retrieves cookies sent by the client to the server.
+	 *
+	 * The data MUST be compatible with the structure of the $_COOKIE
+	 * superglobal.
+	 *
+	 * @return array
+	 */
+	public function getCookieParams(): array
+	{
+		// TODO: Implement getCookieParams() method.
+		return $this->cookieParams;
+	}
+
+
+	/**
+	 * Return an instance with the specified cookies.
+	 *
+	 * The data IS NOT REQUIRED to come from the $_COOKIE superglobal, but MUST
+	 * be compatible with the structure of $_COOKIE. Typically, this data will
+	 * be injected at instantiation.
+	 *
+	 * This method MUST NOT update the related Cookie header of the request
+	 * instance, nor related values in the server params.
+	 *
+	 * This method MUST be implemented in such a way as to retain the
+	 * immutability of the message, and MUST return an instance that has the
+	 * updated cookie values.
+	 *
+	 * @param array $cookies Array of key/value pairs representing cookies.
+	 * @return static
+	 */
+	public function withCookieParams(array $cookies): static
+	{
+		// TODO: Implement withCookieParams() method.
+		$this->cookieParams = $cookies;
+		return $this;
+	}
+
 
 	/**
 	 * Retrieves the HTTP protocol version as a string.

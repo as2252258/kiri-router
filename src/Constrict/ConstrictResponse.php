@@ -14,7 +14,6 @@ class ConstrictResponse extends Message implements ResponseInterface
 
 
 	private string $reasonPhrase;
-	private array $cookieParams;
 
 
 	/**
@@ -86,27 +85,6 @@ class ConstrictResponse extends Message implements ResponseInterface
 	{
 		// TODO: Implement getReasonPhrase() method.
 		return $this->reasonPhrase;
-	}
-
-
-
-	/**
-	 * @param array $cookies
-	 * @return ResponseInterface
-	 */
-	public function withCookieParams(array $cookies): static
-	{
-		$this->cookieParams = $cookies;
-		return $this;
-	}
-
-
-	/**
-	 * @return array
-	 */
-	public function getCookieParams(): array
-	{
-		return $this->cookieParams;
 	}
 
 

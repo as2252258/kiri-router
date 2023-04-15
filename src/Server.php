@@ -114,7 +114,7 @@ class Server implements OnRequestInterface
 
 		/** @var ConstrictResponse $PsrResponse */
 		$PsrResponse = Context::set(ResponseInterface::class, new ConstrictResponse());
-		$PsrResponse->withContentType($response->contentType)->withCookieParams($cookie);
+		$PsrResponse->withContentType($response->contentType);
 
 		$serverRequest = (new ConstrictRequest())->withDataHeaders($request->getData())
 			->withUri(Uri::parse($request))
