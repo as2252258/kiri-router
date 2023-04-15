@@ -6,7 +6,6 @@ namespace Kiri\Router;
 
 use Exception;
 use Kiri;
-use Kiri\Abstracts\AbstractServer;
 use Kiri\Di\ContainerInterface;
 use Kiri\Di\Context;
 use Kiri\Events\EventProvider;
@@ -27,7 +26,7 @@ use Kiri\Router\Base\ExceptionHandlerDispatcher;
 /**
  *
  */
-class Server extends AbstractServer implements OnRequestInterface
+class Server implements OnRequestInterface
 {
 
 	public RouterCollector $router;
@@ -55,7 +54,6 @@ class Server extends AbstractServer implements OnRequestInterface
 		public EventProvider      $provider,
 		array                     $config = [])
 	{
-		parent::__construct($config);
 	}
 
 
