@@ -5,6 +5,7 @@ namespace Kiri\Router;
 
 use Kiri\Di\Context;
 use Kiri\Router\Base\ExceptionHandlerDispatcher;
+use Psr\Http\Message\RequestInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Message\StreamInterface;
 use Psr\Http\Message\UriInterface;
@@ -33,10 +34,10 @@ class Request implements ServerRequestInterface
 	 */
 	private function __call__(string $method, ...$params): mixed
 	{
-		if (!Context::exists(ServerRequestInterface::class)) {
-			$response = Context::set(ServerRequestInterface::class, new static());
+		if (!Context::exists(RequestInterface::class)) {
+			$response = Context::set(RequestInterface::class, new static());
 		} else {
-			$response = Context::get(ServerRequestInterface::class);
+			$response = Context::get(RequestInterface::class);
 		}
 		return $response->{$method}(...$params);
 
