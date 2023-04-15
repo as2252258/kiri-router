@@ -39,7 +39,7 @@ class HttpResponseEmitter implements ResponseEmitter
 		/** @var Response $resp */
 		$resp = \Kiri::service()->get('response');
 		foreach ($resp->getHeaders() as $name => $header) {
-			$response->header($name, implode(', ', $header));
+			$response->header($name, $header);
 		}
 		foreach ($resp->getCookieParams() as $cookie) {
 			$response->setCookie(...$cookie);
