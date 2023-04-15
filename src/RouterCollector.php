@@ -179,10 +179,11 @@ class RouterCollector implements \ArrayAccess, \IteratorAggregate
 	/**
 	 * @param string $path
 	 * @return Handler
+	 * @throws ReflectionException
 	 */
 	private function NotFundHandler(string $path): Handler
 	{
-		return new Handler([NotFoundController::class, 'fail'], []);
+		return new Handler([di(NotFoundController::class), 'fail'], []);
 	}
 
 	/**

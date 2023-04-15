@@ -72,7 +72,7 @@ class ControllerInterpreter
 		$container = \Kiri::getDi();
 		$parameters = $container->getMethodParams($reflectionMethod);
 
-		return new Handler([$reflectionClass->getName(), $reflectionMethod->getName()], $parameters);
+		return new Handler([$container->get($reflectionClass->getName()), $reflectionMethod->getName()], $parameters);
 	}
 
 }
