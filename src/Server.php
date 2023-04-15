@@ -85,7 +85,7 @@ class Server extends AbstractServer implements OnRequestInterface
 	public function onRequest(Request $request, Response $response): void
 	{
 		try {
-			/** @var Request $PsrRequest */
+			/** @var ConstrictRequest $PsrRequest */
 			$PsrRequest = $this->initRequestAndResponse($request);
 
 			$dispatcher = $this->router->query($request->server['request_uri'], $request->getMethod());
@@ -123,7 +123,7 @@ class Server extends AbstractServer implements OnRequestInterface
 			->withMethod($request->getMethod())
 			->withParsedBody($request->post);
 
-		/** @var Request $PsrRequest */
+		/** @var ConstrictRequest $PsrRequest */
 		return Context::set(RequestInterface::class, $serverRequest);
 	}
 
