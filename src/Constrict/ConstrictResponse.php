@@ -86,4 +86,14 @@ class ConstrictResponse extends Message implements ResponseInterface
 		// TODO: Implement getReasonPhrase() method.
 		return $this->reasonPhrase;
 	}
+
+
+	/**
+	 * @param object $response
+	 * @return void
+	 */
+	public function write(object $response): void
+	{
+		$response->end($this->getBody()->getContents());
+	}
 }

@@ -316,14 +316,4 @@ class Response implements ResponseInterface
 		// TODO: Implement getReasonPhrase() method.
 		return $this->__call__(__FUNCTION__);
 	}
-
-
-	/**
-	 * @param object $response
-	 * @return void
-	 */
-	public function write(object $response): void
-	{
-		$response->end($this->getBody()->getContents());
-	}
 }
