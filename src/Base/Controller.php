@@ -5,10 +5,12 @@ namespace Kiri\Router\Base;
 
 
 use Kiri;
-use Kiri\Message\Constrict\RequestInterface;
-use Kiri\Message\Constrict\ResponseInterface;
 use Kiri\Di\ContainerInterface;
 use Psr\Log\LoggerInterface;
+use Psr\Http\Message\RequestInterface;
+use Psr\Http\Message\ResponseInterface;
+use Kiri\Di\Inject\Service;
+use Kiri\Di\Inject\Container;
 
 /**
  * Class WebController
@@ -17,20 +19,17 @@ use Psr\Log\LoggerInterface;
 abstract class Controller
 {
 
+	#[Service('request')]
+	readonly public RequestInterface $request;
 
-	/**
-	 * @param RequestInterface $request
-	 * @param ResponseInterface $response
-	 * @param LoggerInterface $logger
-	 * @param ContainerInterface $container
-	 */
-	public function __construct(
-		public RequestInterface   $request,
-		public ResponseInterface  $response,
-		public LoggerInterface    $logger,
-		public ContainerInterface $container)
-	{
-	}
+	#[Service('response')]
+	readonly public ResponseInterface $response;
 
 
+	#[Container(LoggerInterface::class)]
+	readonly public LoggerInterface $logger;
+
+
+	#[Container(ContainerInterface::class)]
+	readonly public ContainerInterface $container;
 }
