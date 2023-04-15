@@ -174,7 +174,8 @@ class Router
 	 */
 	public function scan_build_route(): void
 	{
-		scan_directory(APP_PATH, 'App');
+		$scanner = Kiri::getDi()->get(Kiri\Scanner::class);
+		$scanner->parse('App');
 
 		$this->read_dir_file(APP_PATH . 'routes');
 	}
