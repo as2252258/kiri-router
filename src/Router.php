@@ -1,11 +1,12 @@
 <?php
+declare(strict_types=1);
 
 namespace Kiri\Router;
 
 use Closure;
 use Exception;
 use Kiri;
-use Kiri\Annotation\Route\RequestMethod;
+use Kiri\Router\Constrict\RequestMethod;
 use ReflectionException;
 
 const ROUTER_TYPE_HTTP = 'http';

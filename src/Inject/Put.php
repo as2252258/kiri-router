@@ -1,9 +1,10 @@
 <?php
+declare(strict_types=1);
 
 namespace Kiri\Router\Inject;
 
 use Exception;
-use Kiri\Annotation\Route\RequestMethod;
+use Kiri\Router\Constrict\RequestMethod;
 use Kiri\Router\InjectRouteInterface;
 use Kiri\Router\Router;
 use Kiri\Router\Base\Middleware as MiddlewareManager;

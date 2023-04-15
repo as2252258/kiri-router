@@ -1,8 +1,10 @@
 <?php
+declare(strict_types=1);
 
 namespace Kiri\Router\Base;
 
-use Kiri\Message\Constrict\ResponseInterface;
+
+use Psr\Http\Message\ResponseInterface;
 
 class NotFoundController extends Controller
 {
@@ -13,7 +15,7 @@ class NotFoundController extends Controller
 	 */
 	public function fail(): ResponseInterface
 	{
-		return $this->response->failure(404, "not found page.");
+		return $this->response->withStatus(404, "not found page.");
 	}
 
 }

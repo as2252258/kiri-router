@@ -1,8 +1,10 @@
 <?php
+declare(strict_types=1);
 
 namespace Kiri\Router\Base;
 
-use Kiri\Message\Constrict\ResponseInterface;
+
+use Psr\Http\Message\ResponseInterface;
 
 class MethodErrorController extends Controller
 {
@@ -13,6 +15,6 @@ class MethodErrorController extends Controller
 	 */
 	public function fail(): ResponseInterface
 	{
-		return $this->response->failure(405, "method allow.");
+		return $this->response->withStatus(405, "method allow.");
 	}
 }
