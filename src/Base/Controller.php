@@ -1,7 +1,7 @@
 <?php
 declare(strict_types=1);
 
-namespace Kiri\Message\Handler;
+namespace Kiri\Router\Base;
 
 
 use Kiri;

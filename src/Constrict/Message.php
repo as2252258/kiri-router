@@ -1,12 +1,31 @@
 <?php
 
-namespace Kiri\Router\Message;
+namespace Kiri\Router\Constrict;
 
+use InvalidArgumentException;
 use Psr\Http\Message\MessageInterface;
 use Psr\Http\Message\StreamInterface;
 
 class Message implements MessageInterface
 {
+
+	/**
+	 * @var string
+	 */
+	private string $version = '1.1';
+
+
+	/**
+	 * @var array
+	 */
+	private array $headers = [];
+
+
+	/**
+	 * @var StreamInterface
+	 */
+	private StreamInterface $stream;
+
 
 	/**
 	 * Retrieves the HTTP protocol version as a string.
@@ -15,9 +34,10 @@ class Message implements MessageInterface
 	 *
 	 * @return string HTTP protocol version.
 	 */
-	public function getProtocolVersion()
+	public function getProtocolVersion(): string
 	{
 		// TODO: Implement getProtocolVersion() method.
+		return $this->version;
 	}
 
 	/**
@@ -33,9 +53,11 @@ class Message implements MessageInterface
 	 * @param string $version HTTP protocol version
 	 * @return static
 	 */
-	public function withProtocolVersion(string $version)
+	public function withProtocolVersion(string $version): static
 	{
 		// TODO: Implement withProtocolVersion() method.
+		$this->version = $version;
+		return $this;
 	}
 
 	/**
@@ -63,9 +85,10 @@ class Message implements MessageInterface
 	 *     key MUST be a header name, and each value MUST be an array of strings
 	 *     for that header.
 	 */
-	public function getHeaders()
+	public function getHeaders(): array
 	{
 		// TODO: Implement getHeaders() method.
+		return $this->headers;
 	}
 
 	/**
@@ -76,9 +99,10 @@ class Message implements MessageInterface
 	 *     name using a case-insensitive string comparison. Returns false if
 	 *     no matching header name is found in the message.
 	 */
-	public function hasHeader(string $name)
+	public function hasHeader(string $name): bool
 	{
 		// TODO: Implement hasHeader() method.
+		return isset($this->headers[$name]) && $this->headers[$name] !== null;
 	}
 
 	/**
@@ -95,9 +119,15 @@ class Message implements MessageInterface
 	 *    header. If the header does not appear in the message, this method MUST
 	 *    return an empty array.
 	 */
-	public function getHeader(string $name)
+	public function getHeader(string $name): array
 	{
 		// TODO: Implement getHeader() method.
+		if (isset($this->headers[$name])) {
+			$header = $this->headers[$name];
+
+			return is_string($header) ? [$header] : $header;
+		}
+		return [];
 	}
 
 	/**
@@ -119,9 +149,24 @@ class Message implements MessageInterface
 	 *    concatenated together using a comma. If the header does not appear in
 	 *    the message, this method MUST return an empty string.
 	 */
-	public function getHeaderLine(string $name)
+	public function getHeaderLine(string $name): string
 	{
 		// TODO: Implement getHeaderLine() method.
+		return implode(';', $this->getHeader($name));
+	}
+
+
+	/**
+	 * @param string $name
+	 * @param string|null $default
+	 * @return string|null
+	 */
+	public function header(string $name, ?string $default = null): ?string
+	{
+		if (!$this->hasHeader($name)) {
+			return $default;
+		}
+		return $this->getHeaderLine($name);
 	}
 
 	/**
@@ -137,11 +182,13 @@ class Message implements MessageInterface
 	 * @param string $name Case-insensitive header field name.
 	 * @param string|string[] $value Header value(s).
 	 * @return static
-	 * @throws \InvalidArgumentException for invalid header names or values.
+	 * @throws InvalidArgumentException for invalid header names or values.
 	 */
-	public function withHeader(string $name, $value)
+	public function withHeader(string $name, $value): static
 	{
-		// TODO: Implement withHeader() method.
+		// TODO: Implement withAddedHeader() method.
+		$this->headers[$name] = $value;
+		return $this;
 	}
 
 	/**
@@ -158,11 +205,13 @@ class Message implements MessageInterface
 	 * @param string $name Case-insensitive header field name to add.
 	 * @param string|string[] $value Header value(s).
 	 * @return static
-	 * @throws \InvalidArgumentException for invalid header names or values.
+	 * @throws InvalidArgumentException for invalid header names or values.
 	 */
-	public function withAddedHeader(string $name, $value)
+	public function withAddedHeader(string $name, $value): static
 	{
 		// TODO: Implement withAddedHeader() method.
+		$this->headers[$name] = $value;
+		return $this;
 	}
 
 	/**
@@ -177,9 +226,11 @@ class Message implements MessageInterface
 	 * @param string $name Case-insensitive header field name to remove.
 	 * @return static
 	 */
-	public function withoutHeader(string $name)
+	public function withoutHeader(string $name): static
 	{
 		// TODO: Implement withoutHeader() method.
+		unset($this->headers[$name]);
+		return $this;
 	}
 
 	/**
@@ -187,9 +238,10 @@ class Message implements MessageInterface
 	 *
 	 * @return StreamInterface Returns the body as a stream.
 	 */
-	public function getBody()
+	public function getBody(): StreamInterface
 	{
 		// TODO: Implement getBody() method.
+		return $this->stream;
 	}
 
 	/**
@@ -203,10 +255,12 @@ class Message implements MessageInterface
 	 *
 	 * @param StreamInterface $body Body.
 	 * @return static
-	 * @throws \InvalidArgumentException When the body is not valid.
+	 * @throws InvalidArgumentException When the body is not valid.
 	 */
-	public function withBody(StreamInterface $body)
+	public function withBody(StreamInterface $body): static
 	{
 		// TODO: Implement withBody() method.
+		$this->stream = $body;
+		return $this;
 	}
 }

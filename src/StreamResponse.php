@@ -2,7 +2,7 @@
 
 namespace Kiri\Router;
 
-class ChunkResponse extends Response
+class StreamResponse extends Response
 {
 
 	public int $limit;

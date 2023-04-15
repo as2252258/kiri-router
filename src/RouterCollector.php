@@ -1,33 +1,19 @@
 <?php
 
-namespace Kiri\Message\Handler;
+namespace Kiri\Router;
 
 
 use Closure;
 use Exception;
 use Kiri;
-use Kiri\Annotation\Inject;
-use Kiri\Exception\ConfigException;
-use Kiri\Message\Handler\Abstracts\MiddlewareManager;
-use Kiri\Message\Handler\TreeHelper\HashTree;
-use Kiri\Message\Handler\TreeHelper\MethodDelete;
-use Kiri\Message\Handler\TreeHelper\MethodGet;
-use Kiri\Message\Handler\TreeHelper\MethodHead;
-use Kiri\Message\Handler\TreeHelper\MethodOptions;
-use Kiri\Message\Handler\TreeHelper\MethodPut;
-use Kiri\Message\Handler\TreeHelper\MethodPost;
-use Kiri\Message\Handler\TreeHelper\TreeLeafInterface;
-use Psr\Http\Server\MiddlewareInterface;
-use Psr\Log\LoggerInterface;
+use Kiri\Router\Base\NotFoundController;
 use ReflectionException;
 use Throwable;
 use Traversable;
+use Kiri\Router\Base\Middleware;
+use Kiri\Core\HashMap;
 use Kiri\Annotation\Route\RequestMethod;
 
-
-const REQUEST_METHODS = [
-	'PUT' => new MethodPut()
-];
 
 /**
  *
@@ -39,41 +25,18 @@ class RouterCollector implements \ArrayAccess, \IteratorAggregate
 	private array $_item = [];
 
 
-	private array $reflex = [];
-
-
-	/**
-	 * @var LoggerInterface
-	 */
-	#[Inject(LoggerInterface::class)]
-	public LoggerInterface $logger;
-
-
-	private array $globalMiddlewares = [];
-
-
 	public array $groupTack = [];
 
 
 	/**
-	 * @var array
+	 * @var HashMap
 	 */
-	private array $methods = [];
+	private HashMap $methods;
 
 
-	/**
-	 *
-	 */
 	public function __construct()
 	{
-		$this->methods = [
-			RequestMethod::REQUEST_DELETE->getString()  => di(MethodDelete::class),
-			RequestMethod::REQUEST_PUT->getString()     => di(MethodPut::class),
-			RequestMethod::REQUEST_POST->getString()    => di(MethodPost::class),
-			RequestMethod::REQUEST_OPTIONS->getString() => di(MethodOptions::class),
-			RequestMethod::REQUEST_GET->getString()     => di(MethodGet::class),
-			RequestMethod::REQUEST_HEAD->getString()    => di(MethodHead::class),
-		];
+		$this->methods = new HashMap();
 	}
 
 
@@ -87,176 +50,138 @@ class RouterCollector implements \ArrayAccess, \IteratorAggregate
 
 
 	/**
-	 * @return array<MiddlewareInterface>
-	 */
-	public function getGlobalMiddlewares(): array
-	{
-		return $this->globalMiddlewares;
-	}
-
-
-	/**
-	 * @param string $handler
-	 * @return void
-	 * @throws Exception
-	 */
-	public function addGlobalMiddlewares(string $handler): void
-	{
-		$handler = Kiri::getDi()->get($handler);
-		if (!in_array(MiddlewareInterface::class, class_implements($handler))) {
-			throw new Exception('The Middleware must instance ' . MiddlewareInterface::class);
-		}
-		$this->globalMiddlewares[] = $handler;
-	}
-
-
-	/**
 	 * @param RequestMethod[] $method
 	 * @param string $route
-	 * @param string|Closure|array $closure
+	 * @param string|Closure $closure
 	 * @throws
 	 */
-	public function addRoute(array $method, string $route, string|Closure|array $closure)
+	public function addRoute(array $method, string $route, string|Closure $closure)
 	{
 		try {
 			$route = $this->_splicing_routing($route);
-			$middlewares = Kiri\Abstracts\Config::get('request.middlewares', []);
+			$interpreter = Kiri::getDi()->get(ControllerInterpreter::class);
 			if ($closure instanceof Closure) {
-				$middlewares = $this->_getRouteMiddlewares($middlewares);
-			} else if (is_string($closure)) {
-				$this->_route_analysis($closure);
+				$handler = $interpreter->addRouteByClosure($closure);
+			} else {
+				$handler = $this->resolve($closure, $interpreter);
 			}
 			foreach ($method as $value) {
-				$this->register($route, $value->getString(), $closure, $middlewares);
+				if ($value instanceof RequestMethod) {
+					$value = $value->getString();
+				}
+				$this->register($route, $value, $handler);
 			}
 		} catch (Throwable $throwable) {
-			$this->logger->error($throwable->getMessage(), [throwable($throwable)]);
+			error($throwable->getMessage(), [throwable($throwable)]);
 		}
+	}
+
+
+	/**
+	 * @param string $closure
+	 * @param ControllerInterpreter $interpreter
+	 * @return Handler
+	 * @throws ReflectionException
+	 */
+	private function resolve(string $closure, ControllerInterpreter $interpreter): Handler
+	{
+		[$className, $method] = explode('@', $closure);
+
+		$class = Kiri::getDi()->get($this->resetName($className));
+
+		return $interpreter->addRouteByString($class, $method);
+	}
+
+
+	/**
+	 * @param string $className
+	 * @return string
+	 */
+	private function resetName(string $className): string
+	{
+		$namespace = array_filter(array_column($this->groupTack, 'namespace'));
+		if (count($namespace) < 1) {
+			return $className;
+		}
+		return implode('\\', $namespace) . '\\' . $className;
 	}
 
 
 	/**
 	 * @param string $path
 	 * @param string $method
-	 * @param $closure
-	 * @param $middlewares
+	 * @param Handler $handler
 	 * @return void
 	 * @throws ReflectionException
 	 */
-	public function register(string $path, string $method, $closure, $middlewares): void
+	public function register(string $path, string $method, Handler $handler): void
 	{
-		$end = $this->methods[$method];
-
-		$json = str_split($path, 4);
-
-		$handler = new Handler($path, $closure, $middlewares);
-		foreach ($json as $item) {
-			/** @var TreeLeafInterface $leaf */
-			$leaf = new ($end::class)($item);
-			$leaf->setPath($item);
-			if (!$end->hasLeaf()) {
-				$end = $end->addLeaf($item, $leaf);
+		$hashMap = HashMap::Tree($this->methods, $method);
+		foreach (str_split($path, 4) as $item) {
+			if ($hashMap->has($item)) {
+				$hashMap = $hashMap->get($item);
 			} else {
-				$search = $end->searchLeaf($item);
-				if ($search == null) {
-					$end = $end->addLeaf($item, $leaf);
-				} else {
-					$end = $search;
+				$hashMap = new HashMap();
+				$hashMap->put($item, $hashMap);
+			}
+		}
+		$hashMap->put('handler', $handler);
+		$this->registerMiddleware($path);
+	}
+
+
+	/**
+	 * @param string $path
+	 * @return void
+	 * @throws ReflectionException
+	 * @throws Exception
+	 */
+	public function registerMiddleware(string $path): void
+	{
+		$middlewares = array_column($this->groupTack, 'middleware');
+		if (count($middlewares) > 0) {
+			$manager = Kiri::getDi()->get(Middleware::class);
+			foreach ($middlewares as $middleware) {
+				if (is_string($middleware)) {
+					$middleware = [$middleware];
+				}
+				foreach ($middleware as $value) {
+					$manager->addPathMiddleware($path, $value);
 				}
 			}
 		}
-		$end->setHandler($handler);
 	}
 
 
 	/**
 	 * @param string $path
 	 * @param string $method
-	 * @return HashTree|null
-	 * @throws ConfigException
-	 * @throws ReflectionException
+	 * @return Handler|null
 	 */
 	public function query(string $path, string $method): ?Handler
 	{
-		$parent = $this->methods[$method];
-
-		$string = str_split($path, 4);
-		foreach ($string as $item) {
-			$parent = $parent->searchLeaf($item);
+		if (!$this->methods->has($method)) {
+			return $this->NotFundHandler($path);
+		}
+		$parent = $this->methods->get($method);
+		foreach (str_split($path, 4) as $item) {
+			$parent = $parent->get($item);
 			if ($parent === null) {
 				return $this->NotFundHandler($path);
 			}
 		}
-		return $parent->getHandler();
+		return $parent->get('handler');
 	}
 
 
 	/**
 	 * @param string $path
 	 * @return Handler
-	 * @throws ReflectionException
 	 */
 	private function NotFundHandler(string $path): Handler
 	{
-		$middlewares = Kiri\Abstracts\Config::get('request.middlewares', []);
-
-		return new Handler($path, [NotFoundController::class, 'fail'], $middlewares);
+		return new Handler([NotFoundController::class, 'fail'], []);
 	}
-
-
-	/**
-	 * @param string $closure
-	 * @throws Exception
-	 */
-	private function _route_analysis(string &$closure)
-	{
-		$closure = explode('@', $closure);
-		$closure[0] = $this->addNamespace($closure[0]);
-		if (class_exists($closure[0])) {
-			$this->_registerMiddleware($closure[0], $closure[1]);
-		}
-	}
-
-
-	/**
-	 * @param array $middlewares
-	 * @return array
-	 * @throws Exception
-	 */
-	private function _getRouteMiddlewares(array $middlewares = []): array
-	{
-		$middleware = array_column($this->groupTack, 'middleware');
-		if (count($middleware = array_filter($middleware)) > 0) {
-			foreach ($middleware as $value) {
-				if (is_string($value)) {
-					$value = [$value];
-				}
-				foreach ($value as $item) {
-					if (!in_array(MiddlewareInterface::class, class_implements($item, true))) {
-						throw new Exception("middleware handler must instance MiddlewareInterface::class");
-					}
-					$middlewares[] = $item;
-				}
-			}
-		}
-		return $middlewares;
-	}
-
-
-	/**
-	 * @param string $class
-	 * @param string $method
-	 * @return void
-	 * @throws Exception
-	 */
-	private function _registerMiddleware(string $class, string $method): void
-	{
-		$middleware = $this->_getRouteMiddlewares();
-		foreach ($middleware as $value) {
-			MiddlewareManager::add($class, $method, $value);
-		}
-	}
-
 
 	/**
 	 * @param string $route
@@ -270,115 +195,6 @@ class RouterCollector implements \ArrayAccess, \IteratorAggregate
 			return '/' . $route;
 		}
 		return '/' . implode('/', $prefix) . '/' . $route;
-	}
-
-
-	/**
-	 * @param $closure
-	 * @param $route
-	 * @return array
-	 * @throws ReflectionException
-	 * @throws Exception
-	 */
-	protected function loadMiddlewares($closure, $route): array
-	{
-		$middlewares = [];
-		$close = new \ReflectionFunction($closure);
-		if (!empty($close->getClosureThis()) && env('environmental_workerId') == 0) {
-			$this->logger->warning('[' . $route . '] Static functions are recommended as callback functions.');
-		}
-		$middleware = array_column($this->groupTack, 'middleware');
-		$middleware = array_unique($middleware);
-		if (!empty($middleware = array_filter($middleware))) {
-			foreach ($middleware as $mi) {
-				if (!is_array($mi)) {
-					$mi = [$mi];
-				}
-				foreach ($mi as $item) {
-					if (!in_array(MiddlewareInterface::class, class_implements($item))) {
-						throw new Exception('The Middleware must instance ' . MiddlewareInterface::class);
-					}
-					$middlewares[$item] = $item;
-				}
-			}
-			$middlewares = array_values($middlewares);
-		}
-		return $middlewares;
-	}
-
-
-	/**
-	 * @param $class
-	 * @return string|null
-	 */
-	protected function addNamespace($class): ?string
-	{
-		$middleware = array_column($this->groupTack, 'namespace');
-		if (empty($middleware = array_filter($middleware))) {
-			return $class;
-		}
-		$middleware[] = $class;
-		return implode('\\', array_map(function ($value) {
-			return trim($value, '\\');
-		}, $middleware));
-	}
-
-
-	/**
-	 * @param string $path
-	 * @param string $method
-	 * @return Handler|int|null
-	 * @throws ReflectionException
-	 */
-	public function find(string $path, string $method): Handler|int|null
-	{
-		$dispatcher = match ($method) {
-			'OPTIONS' => $this->options($path, $method),
-			default => $this->other($path, $method)
-		};
-		if (is_null($dispatcher)) {
-			$middlewares = Kiri\Abstracts\Config::get('request.middlewares', []);
-
-			$dispatcher = new Handler($path, [NotFoundController::class, 'fail'], $middlewares);
-		} else if (is_integer($dispatcher)) {
-			$middlewares = Kiri\Abstracts\Config::get('request.middlewares', []);
-
-			$dispatcher = new Handler($path, [MethodErrorController::class, 'fail'], $middlewares);
-		}
-		return $dispatcher;
-	}
-
-
-	/**
-	 * @param $path
-	 * @param $method
-	 * @return int|mixed
-	 */
-	public function other($path, $method): mixed
-	{
-		if (!isset($this->_item[$path])) {
-			return 404;
-		}
-		$handler = $this->_item[$path][$method] ?? null;
-		if (is_null($handler)) {
-			return 405;
-		}
-		return $handler;
-	}
-
-
-	/**
-	 * @param $path
-	 * @param $method
-	 * @return int|mixed
-	 */
-	public function options($path, $method): mixed
-	{
-		$handler = $this->_item[$path][$method] ?? null;
-		if (is_null($handler)) {
-			return $this->_item['/*'][$method] ?? 405;
-		}
-		return $handler;
 	}
 
 

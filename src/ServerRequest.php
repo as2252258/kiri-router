@@ -3,6 +3,9 @@
 namespace Kiri\Router;
 
 use Kiri\Di\Context;
+use Kiri\Message\Stream;
+use Kiri\Router\Base\ExceptionHandlerDispatcher;
+use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Message\StreamInterface;
 use Psr\Http\Message\UriInterface;
@@ -11,8 +14,17 @@ use Psr\Http\Message\UriInterface;
 /**
  * @property-read bool $isPost
  */
-class Request implements ServerRequestInterface
+class ServerRequest implements ServerRequestInterface
 {
+
+
+	public array $middlewares = [];
+
+
+	/**
+	 * @var string
+	 */
+	public string $exception = ExceptionHandlerDispatcher::class;
 
 
 	/**
@@ -174,6 +186,38 @@ class Request implements ServerRequestInterface
 		// TODO: Implement withHeader() method.
 		return $this->__call__(__FUNCTION__, $name, $value);
 	}
+
+
+	/**
+	 * @param string $data
+	 * @return ServerRequestInterface
+	 */
+	public function withHeaders(string $data): ServerRequestInterface
+	{
+		$headers = explode("\r\n\r\n", $data);
+		$headers = explode("\r\n", $headers[0]);
+		foreach ($headers as $header) {
+			$keyValue = explode(': ', $header);
+			if (!isset($keyValue[1])) {
+				$keyValue[1] = '';
+			}
+			$keyValue[1] = explode(', ', $keyValue[1]);
+			$this->withHeader(...$keyValue);
+		}
+		return $this;
+	}
+
+
+	/**
+	 * @param string $name
+	 * @param string|null $default
+	 * @return string|null
+	 */
+	public function header(string $name, ?string $default = null): ?string
+	{
+		return $this->__call__(__FUNCTION__, $name, $default);
+	}
+
 
 	/**
 	 * Return an instance with the specified header appended with the given value.

@@ -1,8 +1,10 @@
 <?php
 
-namespace Kiri\Inject\Validator;
+namespace Kiri\Router\Validator;
 
-use Kiri\Inject\Validator\Inject\ValidatorInterface;
+use Kiri\Router\Interface\ValidatorInterface;
+use Kiri\Router\ServerRequest;
+use Psr\Http\Message\ServerRequestInterface;
 
 class Validator
 {
@@ -17,14 +19,39 @@ class Validator
 	private string $message;
 
 
+	private object $formData;
+
+
 	/**
 	 * @param string $name
+	 * @param object $data
 	 * @param ValidatorInterface $rule
 	 * @return void
 	 */
-	public function addRule(string $name, ValidatorInterface $rule): void
+	public function addRule(string $name, object $data, ValidatorInterface $rule): void
 	{
 		$this->rules[$name] = $rule;
+		$this->formData = $data;
+	}
+
+
+	/**
+	 * @param ServerRequestInterface|ServerRequest $request
+	 * @return Validator
+	 */
+	public function bindData(ServerRequestInterface|ServerRequest $request): static
+	{
+		if ($request->isPost) {
+			$data = $request->getParsedBody();
+		} else {
+			$data = $request->getQueryParams();
+		}
+		foreach ($data as $key => $value) {
+			if (method_exists($this->formData, $key)) {
+				$this->formData->{$key} = $value;
+			}
+		}
+		return $this;
 	}
 
 
@@ -34,7 +61,7 @@ class Validator
 	public function run(): bool
 	{
 		foreach ($this->rules as $name => $rule) {
-			if (!$rule->dispatch($name)) {
+			if (!$rule->dispatch($this->formData, $name)) {
 				return false;
 			}
 		}

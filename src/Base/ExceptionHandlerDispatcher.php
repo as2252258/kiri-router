@@ -1,12 +1,13 @@
 <?php
 
-namespace Kiri\Message;
+namespace Kiri\Router\Base;
 
 
-use Kiri\Message\Constrict\Response;
-use Kiri\Message\Constrict\ResponseInterface;
-use Kiri\Message\Abstracts\ExceptionHandlerInterface;
+use Kiri\Router\ContentType;
+use Kiri\Router\Interface\ExceptionHandlerInterface;
+use Psr\Http\Message\ResponseInterface;
 use Throwable;
+use Kiri\Router\Constrict\Stream;
 
 
 /**
@@ -18,17 +19,17 @@ class ExceptionHandlerDispatcher implements ExceptionHandlerInterface
 
 	/**
 	 * @param Throwable $exception
-	 * @param Response $response
+	 * @param object $response
 	 * @return ResponseInterface
 	 */
-	public function emit(Throwable $exception, Response $response): ResponseInterface
+	public function emit(Throwable $exception, object $response): ResponseInterface
 	{
-		$response->withContentType(ContentType::HTML);
+		$response->withContentType(ContentType::HTML)->withBody(new Stream(jTraceEx($exception, null, true)));
 		if ($exception->getCode() == 404) {
-			return $response->withBody(new Stream($exception->getMessage()))->withStatus(404);
+			return $response->withStatus(404);
+		} else {
+			return $response->withStatus($exception->getCode() == 0 ? 500 : $exception->getCode());
 		}
-		return $response->withBody(new Stream(jTraceEx($exception, null, true)))
-			->withStatus($exception->getCode() == 0 ? 500 : $exception->getCode());
 	}
 
 }

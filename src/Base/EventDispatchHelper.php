@@ -1,9 +1,7 @@
 <?php
 
-namespace Kiri\Message\Abstracts;
+namespace Kiri\Router\Base;
 
-use Kiri\Annotation\Inject;
-use Kiri\Events\EventDispatch;
 
 trait EventDispatchHelper
 {

@@ -1,7 +1,8 @@
 <?php
 
-namespace Kiri\Inject\Validator\Inject;
+namespace Kiri\Router\Validator\Inject;
 
+use Kiri\Router\Interface\ValidatorInterface;
 
 #[\Attribute(\Attribute::TARGET_PROPERTY)]
 class Round implements ValidatorInterface
@@ -17,12 +18,13 @@ class Round implements ValidatorInterface
 
 
 	/**
+	 * @param object $class
 	 * @param string $name
 	 * @return bool
 	 */
-	public function dispatch(string $name): bool
+	public function dispatch(object $class, string $name): bool
 	{
 		// TODO: Implement dispatch() method.
-		return round($name, $this->value) == $name;
+		return round($class->$name, $this->value) === $class->$name;
 	}
 }

@@ -1,10 +1,9 @@
 <?php
 
-namespace Kiri\Message\Abstracts;
+namespace Kiri\Router\Interface;
 
-use Kiri\Message\Constrict\Response;
 use Throwable;
-use Kiri\Message\Constrict\ResponseInterface;
+use Psr\Http\Message\ResponseInterface;
 
 /**
  *
@@ -15,9 +14,9 @@ interface ExceptionHandlerInterface
 
 	/**
 	 * @param Throwable $exception
-	 * @param Response $response
+	 * @param ResponseInterface $response
 	 * @return ResponseInterface
 	 */
-	public function emit(Throwable $exception, Response $response): ResponseInterface;
+	public function emit(Throwable $exception, ResponseInterface $response): ResponseInterface;
 
 }

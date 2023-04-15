@@ -1,6 +1,6 @@
 <?php
 
-namespace Kiri\Message\Handler;
+namespace Kiri\Router\Base;
 
 use Kiri\Message\Constrict\ResponseInterface;
 

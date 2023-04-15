@@ -1,11 +1,23 @@
 <?php
 
-namespace Kiri\Router\Message;
+namespace Kiri\Router\Constrict;
 
 use Psr\Http\Message\ServerRequestInterface;
 
 class ServerRequest extends Request implements ServerRequestInterface
 {
+
+
+	private array $posts = [];
+
+	private array $query = [];
+
+
+	private array $cookies = [];
+
+	private array $server = [];
+
+	private array $files = [];
 
 	/**
 	 * Retrieve server parameters.
@@ -16,9 +28,10 @@ class ServerRequest extends Request implements ServerRequestInterface
 	 *
 	 * @return array
 	 */
-	public function getServerParams()
+	public function getServerParams(): array
 	{
 		// TODO: Implement getServerParams() method.
+		return $this->server;
 	}
 
 	/**
@@ -31,9 +44,10 @@ class ServerRequest extends Request implements ServerRequestInterface
 	 *
 	 * @return array
 	 */
-	public function getCookieParams()
+	public function getCookieParams(): array
 	{
 		// TODO: Implement getCookieParams() method.
+		return $this->cookies;
 	}
 
 	/**
@@ -53,9 +67,11 @@ class ServerRequest extends Request implements ServerRequestInterface
 	 * @param array $cookies Array of key/value pairs representing cookies.
 	 * @return static
 	 */
-	public function withCookieParams(array $cookies)
+	public function withCookieParams(array $cookies): static
 	{
 		// TODO: Implement withCookieParams() method.
+		$this->cookies = $cookies;
+		return $this;
 	}
 
 	/**
@@ -70,9 +86,10 @@ class ServerRequest extends Request implements ServerRequestInterface
 	 *
 	 * @return array
 	 */
-	public function getQueryParams()
+	public function getQueryParams(): array
 	{
 		// TODO: Implement getQueryParams() method.
+		return $this->query;
 	}
 
 	/**
@@ -97,9 +114,11 @@ class ServerRequest extends Request implements ServerRequestInterface
 	 *     $_GET.
 	 * @return static
 	 */
-	public function withQueryParams(array $query)
+	public function withQueryParams(array $query): static
 	{
 		// TODO: Implement withQueryParams() method.
+		$this->query = $query;
+		return $this;
 	}
 
 	/**
@@ -114,9 +133,10 @@ class ServerRequest extends Request implements ServerRequestInterface
 	 * @return array An array tree of UploadedFileInterface instances; an empty
 	 *     array MUST be returned if no data is present.
 	 */
-	public function getUploadedFiles()
+	public function getUploadedFiles(): array
 	{
 		// TODO: Implement getUploadedFiles() method.
+		return $this->files;
 	}
 
 	/**
@@ -130,9 +150,11 @@ class ServerRequest extends Request implements ServerRequestInterface
 	 * @return static
 	 * @throws \InvalidArgumentException if an invalid structure is provided.
 	 */
-	public function withUploadedFiles(array $uploadedFiles)
+	public function withUploadedFiles(array $uploadedFiles): static
 	{
 		// TODO: Implement withUploadedFiles() method.
+		$this->files = $uploadedFiles;
+		return $this;
 	}
 
 	/**
@@ -150,9 +172,10 @@ class ServerRequest extends Request implements ServerRequestInterface
 	 * @return null|array|object The deserialized body parameters, if any.
 	 *     These will typically be an array or object.
 	 */
-	public function getParsedBody()
+	public function getParsedBody(): object|array|null
 	{
 		// TODO: Implement getParsedBody() method.
+		return $this->posts;
 	}
 
 	/**
@@ -183,9 +206,11 @@ class ServerRequest extends Request implements ServerRequestInterface
 	 * @throws \InvalidArgumentException if an unsupported argument type is
 	 *     provided.
 	 */
-	public function withParsedBody($data)
+	public function withParsedBody($data): static
 	{
 		// TODO: Implement withParsedBody() method.
+		$this->posts = $data;
+		return $this;
 	}
 
 	/**
@@ -199,27 +224,31 @@ class ServerRequest extends Request implements ServerRequestInterface
 	 *
 	 * @return array Attributes derived from the request.
 	 */
-	public function getAttributes()
+	public function getAttributes(): array
 	{
 		// TODO: Implement getAttributes() method.
-	}/**
- * Retrieve a single derived request attribute.
- *
- * Retrieves a single derived request attribute as described in
- * getAttributes(). If the attribute has not been previously set, returns
- * the default value as provided.
- *
- * This method obviates the need for a hasAttribute() method, as it allows
- * specifying a default value to return if the attribute is not found.
- *
- * @param string $name The attribute name.
- * @param mixed $default Default value to return if the attribute does not exist.
- * @return mixed
- * @see getAttributes()
- */
-	public function getAttribute(string $name, $default = null)
+		return [];
+	}
+
+	/**
+	 * Retrieve a single derived request attribute.
+	 *
+	 * Retrieves a single derived request attribute as described in
+	 * getAttributes(). If the attribute has not been previously set, returns
+	 * the default value as provided.
+	 *
+	 * This method obviates the need for a hasAttribute() method, as it allows
+	 * specifying a default value to return if the attribute is not found.
+	 *
+	 * @param string $name The attribute name.
+	 * @param mixed $default Default value to return if the attribute does not exist.
+	 * @return mixed
+	 * @see getAttributes()
+	 */
+	public function getAttribute(string $name, $default = null): mixed
 	{
 		// TODO: Implement getAttribute() method.
+		return $default;
 	}
 
 	/**
@@ -237,9 +266,10 @@ class ServerRequest extends Request implements ServerRequestInterface
 	 * @return static
 	 * @see getAttributes()
 	 */
-	public function withAttribute(string $name, $value)
+	public function withAttribute(string $name, $value): static
 	{
 		// TODO: Implement withAttribute() method.
+		return $this;
 	}
 
 	/**
@@ -256,8 +286,9 @@ class ServerRequest extends Request implements ServerRequestInterface
 	 * @return static
 	 * @see getAttributes()
 	 */
-	public function withoutAttribute(string $name)
+	public function withoutAttribute(string $name): static
 	{
 		// TODO: Implement withoutAttribute() method.
+		return $this;
 	}
 }

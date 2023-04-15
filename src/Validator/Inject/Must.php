@@ -1,7 +1,9 @@
 <?php
 
-namespace Kiri\Inject\Validator\Inject;
+namespace Kiri\Router\Validator\Inject;
 
+
+use Kiri\Router\Interface\ValidatorInterface;
 
 #[\Attribute(\Attribute::TARGET_PROPERTY)]
 class Must implements ValidatorInterface
@@ -17,13 +19,14 @@ class Must implements ValidatorInterface
 
 
 	/**
+	 * @param object $class
 	 * @param string $name
 	 * @return bool
 	 */
-	public function dispatch(string $name): bool
+	public function dispatch(object $class, string $name): bool
 	{
 		// TODO: Implement dispatch() method.
-		return true;
+		return $class->{$name} === $this->value;
 	}
 
 }

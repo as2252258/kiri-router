@@ -1,6 +1,8 @@
 <?php
 
-namespace Kiri\Inject\Validator\Inject;
+namespace Kiri\Router\Validator\Inject;
+
+use Kiri\Router\Interface\ValidatorInterface;
 
 #[\Attribute(\Attribute::TARGET_PROPERTY)]
 class MaxLength implements ValidatorInterface
@@ -16,12 +18,13 @@ class MaxLength implements ValidatorInterface
 
 
 	/**
+	 * @param object $class
 	 * @param string $name
 	 * @return bool
 	 */
-	public function dispatch(string $name): bool
+	public function dispatch(object $class, string $name): bool
 	{
 		// TODO: Implement dispatch() method.
-		return true;
+		return mb_strlen($class->{$name}) <= $this->value;
 	}
 }

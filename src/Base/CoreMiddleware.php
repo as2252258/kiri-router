@@ -1,19 +1,19 @@
 <?php
 
-namespace Kiri\Message\Handler;
+namespace Kiri\Router\Base;
 
 use Exception;
-use Kiri\Message\Handler\Abstracts\Middleware;
-use Kiri\Message\ServerRequest;
+use Kiri\Router\ServerRequest;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
+use Psr\Http\Server\MiddlewareInterface;
 use Psr\Http\Server\RequestHandlerInterface;
 
 
 /**
  *
  */
-class CoreMiddleware extends Middleware
+class CoreMiddleware implements MiddlewareInterface
 {
 
 
@@ -25,12 +25,11 @@ class CoreMiddleware extends Middleware
 	 */
 	public function process(ServerRequestInterface $request, RequestHandlerInterface $handler): ResponseInterface
 	{
-		$requestMethod = $request->getAccessControlRequestMethod();
-		$allowHeaders = $request->getAccessControlAllowHeaders();
-
-		$this->response->withAccessControlAllowOrigin('*')->withAccessControlRequestMethod($requestMethod)
-			->withAccessControlAllowHeaders($allowHeaders);
-
+		/** @var ResponseInterface $response */
+		$response = \Kiri::service()->get('response');
+		$response->withHeader('Access-Control-Allow-Headers', $request->header('Access-Control-Allow-Headers'))
+			->withHeader('Access-Control-Request-Method', $request->header('Access-Control-Allow-Origin'))
+			->withHeader('Access-Control-Allow-Origin', $request->header('Access-Control-Allow-Headers'));
 		return $handler->handle($request);
 	}
 

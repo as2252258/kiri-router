@@ -1,9 +1,8 @@
 <?php
 
-namespace Kiri\Inject\Route;
+namespace Kiri\Router\Inject;
 
-use Kiri\Inject\InjectPropertyInterface;
-use Kiri\Message\Handler\Abstracts\MiddlewareManager;
+use Kiri\Di\Interface\InjectPropertyInterface;
 
 #[\Attribute(\Attribute::TARGET_METHOD | \Attribute::IS_REPEATABLE)]
 class Middleware implements InjectPropertyInterface
@@ -24,8 +23,6 @@ class Middleware implements InjectPropertyInterface
 	 */
 	public function dispatch(object $class, string $property): void
 	{
-		// TODO: Implement dispatch() method.
-		MiddlewareManager::add($class::class, $property, $this->middleware);
 	}
 
 

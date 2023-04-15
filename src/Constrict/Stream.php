@@ -1,11 +1,26 @@
 <?php
 
-namespace Kiri\Router\Message;
+namespace Kiri\Router\Constrict;
 
 use Psr\Http\Message\StreamInterface;
 
 class Stream implements StreamInterface
 {
+
+	public string $content = '';
+
+
+	public int $size = 0;
+
+
+	/**
+	 * @param string $content
+	 */
+	public function __construct(string $content = '')
+	{
+		$this->content = $content;
+	}
+
 
 	/**
 	 * Reads all data from the stream into a string, from the beginning to end.
@@ -24,6 +39,7 @@ class Stream implements StreamInterface
 	public function __toString()
 	{
 		// TODO: Implement __toString() method.
+		return $this->content;
 	}
 
 	/**
@@ -31,9 +47,14 @@ class Stream implements StreamInterface
 	 *
 	 * @return void
 	 */
-	public function close()
+	public function close(): void
 	{
 		// TODO: Implement close() method.
+		if (is_resource($this->content)) {
+			fclose($this->content);
+		} else {
+			$this->content = '';
+		}
 	}
 
 	/**
@@ -43,9 +64,10 @@ class Stream implements StreamInterface
 	 *
 	 * @return resource|null Underlying PHP stream, if any
 	 */
-	public function detach()
+	public function detach(): mixed
 	{
 		// TODO: Implement detach() method.
+		return null;
 	}
 
 	/**
@@ -53,9 +75,10 @@ class Stream implements StreamInterface
 	 *
 	 * @return int|null Returns the size in bytes if known, or null if unknown.
 	 */
-	public function getSize()
+	public function getSize(): ?int
 	{
 		// TODO: Implement getSize() method.
+		return $this->size;
 	}
 
 	/**
@@ -64,9 +87,10 @@ class Stream implements StreamInterface
 	 * @return int Position of the file pointer
 	 * @throws \RuntimeException on error.
 	 */
-	public function tell()
+	public function tell(): int
 	{
 		// TODO: Implement tell() method.
+		return 0;
 	}
 
 	/**
@@ -74,9 +98,10 @@ class Stream implements StreamInterface
 	 *
 	 * @return bool
 	 */
-	public function eof()
+	public function eof(): bool
 	{
 		// TODO: Implement eof() method.
+		return false;
 	}
 
 	/**
@@ -84,9 +109,10 @@ class Stream implements StreamInterface
 	 *
 	 * @return bool
 	 */
-	public function isSeekable()
+	public function isSeekable(): bool
 	{
 		// TODO: Implement isSeekable() method.
+		return true;
 	}
 
 	/**
@@ -101,22 +127,28 @@ class Stream implements StreamInterface
 	 *     SEEK_END: Set position to end-of-stream plus offset.
 	 * @throws \RuntimeException on failure.
 	 */
-	public function seek(int $offset, int $whence = SEEK_SET)
+	public function seek(int $offset, int $whence = SEEK_SET): void
 	{
 		// TODO: Implement seek() method.
-	}/**
- * Seek to the beginning of the stream.
- *
- * If the stream is not seekable, this method will raise an exception;
- * otherwise, it will perform a seek(0).
- *
- * @throws \RuntimeException on failure.
- * @link http://www.php.net/manual/en/function.fseek.php
- * @see seek()
- */
-	public function rewind()
+		if (is_resource($this->content)) {
+			fseek($this->content, $offset, $whence);
+		}
+	}
+
+	/**
+	 * Seek to the beginning of the stream.
+	 *
+	 * If the stream is not seekable, this method will raise an exception;
+	 * otherwise, it will perform a seek(0).
+	 *
+	 * @throws \RuntimeException on failure.
+	 * @link http://www.php.net/manual/en/function.fseek.php
+	 * @see seek()
+	 */
+	public function rewind(): void
 	{
 		// TODO: Implement rewind() method.
+		$this->seek(0);
 	}
 
 	/**
@@ -124,9 +156,13 @@ class Stream implements StreamInterface
 	 *
 	 * @return bool
 	 */
-	public function isWritable()
+	public function isWritable(): bool
 	{
 		// TODO: Implement isWritable() method.
+		if (is_resource($this->content)) {
+			return is_writable($this->content);
+		}
+		return true;
 	}
 
 	/**
@@ -136,9 +172,17 @@ class Stream implements StreamInterface
 	 * @return int Returns the number of bytes written to the stream.
 	 * @throws \RuntimeException on failure.
 	 */
-	public function write(string $string)
+	public function write(string $string): int
 	{
 		// TODO: Implement write() method.
+		if (is_resource($this->content)) {
+			$this->content = fopen($string, 'wr');
+			$this->size = filesize($string);
+		} else {
+			$this->content = $string;
+			$this->size = mb_strlen($string);
+		}
+		return $this->size;
 	}
 
 	/**
@@ -146,9 +190,13 @@ class Stream implements StreamInterface
 	 *
 	 * @return bool
 	 */
-	public function isReadable()
+	public function isReadable(): bool
 	{
 		// TODO: Implement isReadable() method.
+		if (is_resource($this->content)) {
+			return is_readable($this->content);
+		}
+		return true;
 	}
 
 	/**
@@ -161,9 +209,14 @@ class Stream implements StreamInterface
 	 *     if no bytes are available.
 	 * @throws \RuntimeException if an error occurs.
 	 */
-	public function read(int $length)
+	public function read(int $length): string
 	{
 		// TODO: Implement read() method.
+		if (!is_resource($this->content)) {
+			return mb_substr($this->content, 0, $length);
+		} else {
+			return fread($this->content, $length);
+		}
 	}
 
 	/**
@@ -173,9 +226,13 @@ class Stream implements StreamInterface
 	 * @throws \RuntimeException if unable to read or an error occurs while
 	 *     reading.
 	 */
-	public function getContents()
+	public function getContents(): string
 	{
 		// TODO: Implement getContents() method.
+		if (is_resource($this->content)) {
+			return fread($this->content, $this->getSize());
+		}
+		return $this->content;
 	}
 
 	/**
@@ -190,8 +247,12 @@ class Stream implements StreamInterface
 	 *     provided. Returns a specific key value if a key is provided and the
 	 *     value is found, or null if the key is not found.
 	 */
-	public function getMetadata(?string $key = null)
+	public function getMetadata(?string $key = null): mixed
 	{
 		// TODO: Implement getMetadata() method.
+		if (is_resource($this->content)) {
+			return stream_get_meta_data($this->content);
+		}
+		return null;
 	}
 }

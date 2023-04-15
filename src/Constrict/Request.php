@@ -1,12 +1,25 @@
 <?php
 
-namespace Kiri\Router\Message;
+namespace Kiri\Router\Constrict;
 
 use Psr\Http\Message\RequestInterface;
 use Psr\Http\Message\UriInterface;
 
 class Request extends Message implements RequestInterface
 {
+
+
+	/**
+	 * @var string
+	 */
+	private string $method;
+
+
+	/**
+	 * @var UriInterface
+	 */
+	private UriInterface $uri;
+
 
 	/**
 	 * Retrieves the message's request target.
@@ -24,9 +37,23 @@ class Request extends Message implements RequestInterface
 	 *
 	 * @return string
 	 */
-	public function getRequestTarget()
+	public function getRequestTarget(): string
 	{
 		// TODO: Implement getRequestTarget() method.
+		return (string)$this->getUri();
+	}
+
+
+	/**
+	 * @param array $headers
+	 * @return $this
+	 */
+	public function withHeaders(array $headers): static
+	{
+		foreach ($headers as $key => $header) {
+			$this->withHeader($key, [$header]);
+		}
+		return $this;
 	}
 
 	/**
@@ -46,9 +73,10 @@ class Request extends Message implements RequestInterface
 	 * @param string $requestTarget
 	 * @return static
 	 */
-	public function withRequestTarget(string $requestTarget)
+	public function withRequestTarget(string $requestTarget): static
 	{
 		// TODO: Implement withRequestTarget() method.
+		return $this;
 	}
 
 	/**
@@ -56,9 +84,10 @@ class Request extends Message implements RequestInterface
 	 *
 	 * @return string Returns the request method.
 	 */
-	public function getMethod()
+	public function getMethod(): string
 	{
 		// TODO: Implement getMethod() method.
+		return $this->method;
 	}
 
 	/**
@@ -76,9 +105,11 @@ class Request extends Message implements RequestInterface
 	 * @return static
 	 * @throws \InvalidArgumentException for invalid HTTP methods.
 	 */
-	public function withMethod(string $method)
+	public function withMethod(string $method): static
 	{
 		// TODO: Implement withMethod() method.
+		$this->method = $method;
+		return $this;
 	}
 
 	/**
@@ -90,9 +121,10 @@ class Request extends Message implements RequestInterface
 	 * @return UriInterface Returns a UriInterface instance
 	 *     representing the URI of the request.
 	 */
-	public function getUri()
+	public function getUri(): UriInterface
 	{
 		// TODO: Implement getUri() method.
+		return $this->uri;
 	}
 
 	/**
@@ -125,8 +157,10 @@ class Request extends Message implements RequestInterface
 	 * @param bool $preserveHost Preserve the original state of the Host header.
 	 * @return static
 	 */
-	public function withUri(UriInterface $uri, bool $preserveHost = false)
+	public function withUri(UriInterface $uri, bool $preserveHost = false): static
 	{
 		// TODO: Implement withUri() method.
+		$this->uri = $uri;
+		return $this;
 	}
 }

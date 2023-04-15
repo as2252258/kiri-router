@@ -1,11 +1,29 @@
 <?php
 
-namespace Kiri\Router\Message;
+namespace Kiri\Router\Constrict;
 
+use Kiri\Router\ContentType;
 use Psr\Http\Message\ResponseInterface;
 
 class Response extends Message implements ResponseInterface
 {
+
+
+	private int $code = 200;
+
+
+	private string $reasonPhrase;
+
+
+	/**
+	 * @param ContentType $type
+	 * @return $this
+	 */
+	public function withContentType(ContentType $type): static
+	{
+		$this->withHeader('Content-Type', $type->name);
+		return $this;
+	}
 
 	/**
 	 * Gets the response status code.
@@ -15,9 +33,10 @@ class Response extends Message implements ResponseInterface
 	 *
 	 * @return int Status code.
 	 */
-	public function getStatusCode()
+	public function getStatusCode(): int
 	{
 		// TODO: Implement getStatusCode() method.
+		return $this->code;
 	}
 
 	/**
@@ -40,9 +59,12 @@ class Response extends Message implements ResponseInterface
 	 * @return static
 	 * @throws \InvalidArgumentException For invalid status code arguments.
 	 */
-	public function withStatus(int $code, string $reasonPhrase = '')
+	public function withStatus(int $code, string $reasonPhrase = ''): static
 	{
 		// TODO: Implement withStatus() method.
+		$this->code = $code;
+		$this->reasonPhrase = $reasonPhrase;
+		return $this;
 	}
 
 	/**
@@ -58,8 +80,9 @@ class Response extends Message implements ResponseInterface
 	 * @link http://www.iana.org/assignments/http-status-codes/http-status-codes.xhtml
 	 * @return string Reason phrase; must return an empty string if none present.
 	 */
-	public function getReasonPhrase()
+	public function getReasonPhrase(): string
 	{
 		// TODO: Implement getReasonPhrase() method.
+		return $this->reasonPhrase;
 	}
 }

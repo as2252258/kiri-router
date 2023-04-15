@@ -1,8 +1,9 @@
 <?php
 
-namespace Kiri\Message\Handler;
+namespace Kiri\Router;
 
 use Kiri;
+use ReflectionException;
 
 class DataGrip
 {
@@ -13,11 +14,12 @@ class DataGrip
 	/**
 	 * @param $type
 	 * @return RouterCollector
+	 * @throws ReflectionException
 	 */
 	public function get($type): RouterCollector
 	{
 		if (!isset($this->servers[$type])) {
-			$this->servers[$type] = Kiri::getDi()->create(RouterCollector::class);
+			$this->servers[$type] = Kiri::getDi()->make(RouterCollector::class);
 		}
 		return $this->servers[$type];
 	}

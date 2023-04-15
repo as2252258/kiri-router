@@ -1,6 +1,6 @@
 <?php
 
-namespace Kiri\Inject\Route;
+namespace Kiri\Router\Inject;
 
 
 #[\Attribute(\Attribute::TARGET_METHOD)]

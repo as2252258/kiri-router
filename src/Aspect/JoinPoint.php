@@ -1,6 +1,6 @@
 <?php
 
-namespace Kiri\Message\Aspect;
+namespace Kiri\Router\Aspect;
 
 
 /**

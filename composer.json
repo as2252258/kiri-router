@@ -1,0 +1,24 @@
+{
+  "name": "game-worker/kiri-router",
+  "description": "kiri router",
+  "authors": [
+    {
+      "name": "XiangLin",
+      "email": "as2252258@163.com"
+    }
+  ],
+  "license": "MIT",
+  "require": {
+    "php": ">=8.0",
+    "composer-runtime-api": "^2.0",
+    "psr/http-server-middleware": "^1.0",
+    "psr/http-message": "^1.0"
+  },
+  "autoload": {
+    "psr-4": {
+      "Kiri\\Router": "./src"
+     }
+  },
+  "require-dev": {
+  }
+}

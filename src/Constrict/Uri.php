@@ -1,11 +1,20 @@
 <?php
 
-namespace Kiri\Router\Message;
+namespace Kiri\Router\Constrict;
 
 use Psr\Http\Message\UriInterface;
 
 class Uri implements UriInterface
 {
+
+	private string $scheme = '';
+	private string $host = '';
+	private int $port = 80;
+	private string $path = '';
+	private string $user = '';
+	private string $password = '';
+	private string $queryString;
+	private string $fragment;
 
 	/**
 	 * Retrieve the scheme component of the URI.
@@ -21,9 +30,10 @@ class Uri implements UriInterface
 	 * @see https://tools.ietf.org/html/rfc3986#section-3.1
 	 * @return string The URI scheme.
 	 */
-	public function getScheme()
+	public function getScheme(): string
 	{
 		// TODO: Implement getScheme() method.
+		return $this->scheme;
 	}
 
 	/**
@@ -44,9 +54,10 @@ class Uri implements UriInterface
 	 * @see https://tools.ietf.org/html/rfc3986#section-3.2
 	 * @return string The URI authority, in "[user-info@]host[:port]" format.
 	 */
-	public function getAuthority()
+	public function getAuthority(): string
 	{
 		// TODO: Implement getAuthority() method.
+		return '';
 	}
 
 	/**
@@ -64,9 +75,10 @@ class Uri implements UriInterface
 	 *
 	 * @return string The URI user information, in "username[:password]" format.
 	 */
-	public function getUserInfo()
+	public function getUserInfo(): string
 	{
 		// TODO: Implement getUserInfo() method.
+		return $this->user . '[' . $this->password . ']';
 	}
 
 	/**
@@ -80,9 +92,10 @@ class Uri implements UriInterface
 	 * @see http://tools.ietf.org/html/rfc3986#section-3.2.2
 	 * @return string The URI host.
 	 */
-	public function getHost()
+	public function getHost(): string
 	{
 		// TODO: Implement getHost() method.
+		return $this->host;
 	}
 
 	/**
@@ -100,9 +113,10 @@ class Uri implements UriInterface
 	 *
 	 * @return null|int The URI port.
 	 */
-	public function getPort()
+	public function getPort(): ?int
 	{
 		// TODO: Implement getPort() method.
+		return $this->port;
 	}
 
 	/**
@@ -130,9 +144,10 @@ class Uri implements UriInterface
 	 * @see https://tools.ietf.org/html/rfc3986#section-3.3
 	 * @return string The URI path.
 	 */
-	public function getPath()
+	public function getPath(): string
 	{
 		// TODO: Implement getPath() method.
+		return $this->path;
 	}
 
 	/**
@@ -155,9 +170,10 @@ class Uri implements UriInterface
 	 * @see https://tools.ietf.org/html/rfc3986#section-3.4
 	 * @return string The URI query string.
 	 */
-	public function getQuery()
+	public function getQuery(): string
 	{
 		// TODO: Implement getQuery() method.
+		return $this->queryString;
 	}
 
 	/**
@@ -176,9 +192,10 @@ class Uri implements UriInterface
 	 * @see https://tools.ietf.org/html/rfc3986#section-3.5
 	 * @return string The URI fragment.
 	 */
-	public function getFragment()
+	public function getFragment(): string
 	{
 		// TODO: Implement getFragment() method.
+		return $this->fragment;
 	}
 
 	/**
@@ -196,9 +213,11 @@ class Uri implements UriInterface
 	 * @return static A new instance with the specified scheme.
 	 * @throws \InvalidArgumentException for invalid or unsupported schemes.
 	 */
-	public function withScheme(string $scheme)
+	public function withScheme(string $scheme): static
 	{
 		// TODO: Implement withScheme() method.
+		$this->scheme = $scheme;
+		return $this;
 	}
 
 	/**
@@ -215,9 +234,12 @@ class Uri implements UriInterface
 	 * @param null|string $password The password associated with $user.
 	 * @return static A new instance with the specified user information.
 	 */
-	public function withUserInfo(string $user, ?string $password = null)
+	public function withUserInfo(string $user, ?string $password = null): static
 	{
 		// TODO: Implement withUserInfo() method.
+		$this->user = $user;
+		$this->password = $password;
+		return $this;
 	}
 
 	/**
@@ -232,9 +254,11 @@ class Uri implements UriInterface
 	 * @return static A new instance with the specified host.
 	 * @throws \InvalidArgumentException for invalid hostnames.
 	 */
-	public function withHost(string $host)
+	public function withHost(string $host): static
 	{
 		// TODO: Implement withHost() method.
+		$this->host = $host;
+		return $this;
 	}
 
 	/**
@@ -254,9 +278,11 @@ class Uri implements UriInterface
 	 * @return static A new instance with the specified port.
 	 * @throws \InvalidArgumentException for invalid ports.
 	 */
-	public function withPort(?int $port)
+	public function withPort(?int $port): static
 	{
 		// TODO: Implement withPort() method.
+		$this->port = $port;
+		return $this;
 	}
 
 	/**
@@ -281,9 +307,11 @@ class Uri implements UriInterface
 	 * @return static A new instance with the specified path.
 	 * @throws \InvalidArgumentException for invalid paths.
 	 */
-	public function withPath(string $path)
+	public function withPath(string $path): static
 	{
 		// TODO: Implement withPath() method.
+		$this->path = $path;
+		return $this;
 	}
 
 	/**
@@ -301,9 +329,11 @@ class Uri implements UriInterface
 	 * @return static A new instance with the specified query string.
 	 * @throws \InvalidArgumentException for invalid query strings.
 	 */
-	public function withQuery(string $query)
+	public function withQuery(string $query): static
 	{
 		// TODO: Implement withQuery() method.
+		$this->queryString = $query;
+		return $this;
 	}
 
 	/**
@@ -320,9 +350,11 @@ class Uri implements UriInterface
 	 * @param string $fragment The fragment to use with the new instance.
 	 * @return static A new instance with the specified fragment.
 	 */
-	public function withFragment(string $fragment)
+	public function withFragment(string $fragment): static
 	{
 		// TODO: Implement withFragment() method.
+		$this->fragment = $fragment;
+		return $this;
 	}
 
 	/**
@@ -351,5 +383,26 @@ class Uri implements UriInterface
 	public function __toString()
 	{
 		// TODO: Implement __toString() method.
+		return $this->scheme . '://x.x.x.x:' . $this->port . '/' . $this->path . '?' . $this->queryString;
 	}
+
+
+	/**
+	 * @param \Swoole\Http\Request $request
+	 * @return UriInterface
+	 */
+	public static function parse(\Swoole\Http\Request $request): UriInterface
+	{
+		$uri = new static();
+		$uri->queryString = $request->server['query_string'];
+		$uri->path = $request->server['path_info'];
+		$uri->port = $request->server['server_port'];
+		if (isset($request->server['https']) && $request->server['https'] !== 'off') {
+			$uri->scheme = 'https';
+		} else {
+			$uri->scheme = 'http';
+		}
+		return $uri;
+	}
+
 }

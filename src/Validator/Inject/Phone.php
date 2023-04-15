@@ -1,11 +1,8 @@
 <?php
 
-namespace Kiri\Inject\Validator\Inject;
+namespace Kiri\Router\Validator\Inject;
 
-use Exception;
-use Kiri\Inject\Route\LocalService;
-use ReflectionException;
-use Kiri\Inject\Route\Container;
+use Kiri\Router\Interface\ValidatorInterface;
 
 #[\Attribute(\Attribute::TARGET_PROPERTY)]
 class Phone implements ValidatorInterface
@@ -13,20 +10,12 @@ class Phone implements ValidatorInterface
 	const REG = '/^1[356789]\d{9}$/';
 
 	/**
+	 * @param object $class
 	 * @param string $name
 	 * @return bool
-	 * @throws ReflectionException
-	 * @throws Exception
 	 */
-	public function dispatch(string $name): bool
+	public function dispatch(object $class, string $name): bool
 	{
-		// TODO: Implement dispatch() method.
-		$service = Container::getContext()->get(LocalService::class)->get('request');
-		if ($service->isPost) {
-			$data = $service->post($name, null);
-		} else {
-			$data = $service->query($name, null);
-		}
-		return preg_match(self::REG, $data);
+		return preg_match(self::REG, $class->{$name});
 	}
 }

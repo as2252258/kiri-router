@@ -1,7 +1,8 @@
 <?php
 
-namespace Kiri\Router\Inject;
+namespace Kiri\Router;
 
+use Closure;
 use ReflectionClass;
 use ReflectionException;
 use ReflectionMethod;
@@ -11,19 +12,31 @@ class ControllerInterpreter
 
 
 	/**
-	 * @param string $className
+	 * @param object $class
 	 * @param string|ReflectionMethod $method
 	 * @param ReflectionClass|null $reflection
-	 * @return void
+	 * @return Handler
 	 * @throws ReflectionException
 	 */
-	public function addRouteByString(string $className, string|ReflectionMethod $method, ?ReflectionClass $reflection = null): void
+	public function addRouteByString(object $class, string|ReflectionMethod $method, ?ReflectionClass $reflection = null): Handler
 	{
-		$class = \Kiri::getDi()->get($className);
 		if (is_null($reflection)) {
-			$reflection = \Kiri::getDi()->getReflect($className);
+			$reflection = \Kiri::getDi()->getReflectionClass($class::class);
 		}
-		$this->resolveMethod($class, $method, $reflection);
+		return $this->resolveMethod($method, $reflection);
+	}
+
+
+	/**
+	 * @param Closure $method
+	 * @return Handler
+	 * @throws ReflectionException
+	 */
+	public function addRouteByClosure(Closure $method): Handler
+	{
+		$reflection = \Kiri::getDi()->getFunctionParams($method);
+
+		return new Handler($method, $reflection);
 	}
 
 
@@ -31,96 +44,34 @@ class ControllerInterpreter
 	 * @param object $class
 	 * @param string|ReflectionMethod $method
 	 * @param ReflectionClass|null $reflection
-	 * @return void
+	 * @return Handler
 	 * @throws ReflectionException
 	 */
-	public function addRouteByObject(object $class, string|ReflectionMethod $method, ?ReflectionClass $reflection = null): void
+	public function addRouteByObject(object $class, string|ReflectionMethod $method, ?ReflectionClass $reflection = null): Handler
 	{
 		if (is_null($reflection)) {
-			$reflection = \Kiri::getDi()->getReflect($class::class);
+			$reflection = \Kiri::getDi()->getReflectionClass($class::class);
 		}
-		$this->resolveMethod($class, $method, $reflection);
+		return $this->resolveMethod($method, $reflection);
 	}
 
 
 	/**
-	 * @param object $class
 	 * @param string|ReflectionMethod $reflectionMethod
 	 * @param ReflectionClass $reflectionClass
-	 * @return void
+	 * @return Handler
 	 * @throws ReflectionException
 	 */
-	public function resolveMethod(object $class, string|\ReflectionMethod $reflectionMethod, ReflectionClass $reflectionClass): void
+	public function resolveMethod(string|\ReflectionMethod $reflectionMethod, ReflectionClass $reflectionClass): Handler
 	{
 		if (is_string($reflectionMethod)) {
 			$reflectionMethod = $reflectionClass->getMethod($reflectionMethod);
 		}
 
-		$this->resolveProperties($reflectionClass, $class);
+		$container = \Kiri::getDi();
+		$parameters = $container->getMethodParams($reflectionMethod);
 
-		$parameters = $this->resolveMethodParams($reflectionMethod->getParameters());
-
-		$handler = new Handler([$reflectionClass->getName(), $reflectionMethod->getName()], $parameters);
-
-		ActionManager::add($reflectionClass->getName(), $reflectionMethod->getName(), $handler);
+		return new Handler([$reflectionClass->getName(), $reflectionMethod->getName()], $parameters);
 	}
-
-
-	/**
-	 * @param ReflectionClass $reflectionClass
-	 * @param object $class
-	 * @return void
-	 */
-	public function resolveProperties(ReflectionClass $reflectionClass, object $class): void
-	{
-		$properties = $reflectionClass->getProperties();
-		foreach ($properties as $property) {
-			$propertyAttributes = $property->getAttributes();
-
-			foreach ($propertyAttributes as $attribute) {
-				$attribute->newInstance()->dispatch($class, $property->getName());
-			}
-		}
-	}
-
-
-	/**
-	 * @param array $parameters
-	 * @return array
-	 */
-	public function resolveMethodParams(array $parameters): array
-	{
-		$params = [];
-		foreach ($parameters as $parameter) {
-			$parameterAttributes = $parameter->getAttributes();
-			if (count($parameterAttributes) < 1) {
-				if ($parameter->isDefaultValueAvailable()) {
-					$value = $parameter->getDefaultValue();
-				} else if ($parameter->getType() === null) {
-					$value = $parameter->getType();
-				} else {
-					$value = $parameter->getType()->getName();
-					if (class_exists($value) || interface_exists($value)) {
-						$value = \Kiri::getDi()->get($value);
-					} else {
-						$value = match ($parameter->getType()) {
-							'string' => '',
-							'int', 'float' => 0,
-							'', null, 'object', 'mixed' => NULL,
-							'bool' => false,
-							'default' => null
-						};
-					}
-				}
-				$params[$parameter->getName()] = $value;
-			} else {
-				$attribute = $parameterAttributes[0]->newInstance();
-
-				$params[$parameter->getName()] = $attribute->dispatch();
-			}
-		}
-		return $params;
-	}
-
 
 }

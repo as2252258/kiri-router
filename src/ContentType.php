@@ -1,6 +1,6 @@
 <?php
 
-namespace Kiri\Message;
+namespace Kiri\Router;
 
 
 enum ContentType

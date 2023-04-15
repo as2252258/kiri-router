@@ -1,6 +1,6 @@
 <?php
 
-namespace Kiri\Router\Validator\Inject;
+namespace Kiri\Router\Interface;
 
 interface ValidatorInterface
 {
