@@ -37,12 +37,10 @@ class HttpResponseEmitter implements ResponseEmitter
 	{
 		$response->setStatusCode($proxy->getStatusCode());
 		/** @var Request $request */
-		$request = \Kiri::service()->get('request');
+		$request = \Kiri::service()->get('response');
 		foreach ($request->getHeaders() as $name => $header) {
 			$response->header($name, implode(', ', $header));
 		}
-
-		$response->setStatusCode($proxy->getStatusCode());
 		foreach ($request->getCookieParams() as $cookie) {
 			$response->setCookie(...$cookie);
 		}
