@@ -35,7 +35,7 @@ class HttpResponseEmitter implements ResponseEmitter
 	private function writeParams(ResponseInterface $proxy, object $response): void
 	{
 		$response->setStatusCode($proxy->getStatusCode());
-		/** @var ServerRequest $request */
+		/** @var Request $request */
 		$request = \Kiri::service()->get('request');
 		foreach ($request->getHeaders() as $name => $header) {
 			$response->header($name, implode(', ', $header));

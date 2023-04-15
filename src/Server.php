@@ -16,7 +16,8 @@ use Psr\Http\Message\RequestInterface;
 use Psr\Http\Message\ResponseInterface;
 use Swoole\Http\Request;
 use Swoole\Http\Response;
-use Kiri\Router\Constrict\Response as KrcResponse;
+use Kiri\Router\Constrict\ConstrictRequest;
+use Kiri\Router\Constrict\ConstrictResponse;
 use Kiri\Router\Constrict\Uri;
 use Kiri\Router\Interface\OnRequestInterface;
 use Kiri\Router\Base\ExceptionHandlerDispatcher;
@@ -84,7 +85,7 @@ class Server extends AbstractServer implements OnRequestInterface
 	public function onRequest(Request $request, Response $response): void
 	{
 		try {
-			/** @var ServerRequest $PsrRequest */
+			/** @var Request $PsrRequest */
 			$PsrRequest = $this->initRequestAndResponse($request);
 
 			$dispatcher = $this->router->query($request->server['request_uri'], $request->getMethod());
@@ -92,7 +93,7 @@ class Server extends AbstractServer implements OnRequestInterface
 			$PsrResponse = (new HttpRequestHandler([], $dispatcher))->handle($PsrRequest);
 		} catch (\Throwable $throwable) {
 			$this->logger->error($throwable->getMessage(), [$throwable]);
-			$PsrResponse = $this->exception->emit($throwable, di(Constrict\Response::class));
+			$PsrResponse = $this->exception->emit($throwable, di(ConstrictResponse::class));
 		} finally {
 			$this->emitter->sender($PsrResponse, $response);
 		}
@@ -109,11 +110,11 @@ class Server extends AbstractServer implements OnRequestInterface
 		/** @var \Kiri\Router\Response $response */
 		$response = Kiri::service()->get('response');
 
-		/** @var KrcResponse $PsrResponse */
-		$PsrResponse = Context::set(ResponseInterface::class, new KrcResponse());
+		/** @var ConstrictResponse $PsrResponse */
+		$PsrResponse = Context::set(ResponseInterface::class, new ConstrictResponse());
 		$PsrResponse->withContentType($response->contentType);
 
-		$serverRequest = (new ServerRequest())->withHeaders($request->getData())
+		$serverRequest = (new ConstrictRequest())->withDataHeaders($request->getData())
 			->withUri(Uri::parse($request))
 			->withProtocolVersion($request->server['server_protocol'])
 			->withCookieParams($request->cookie ?? [])
@@ -122,7 +123,7 @@ class Server extends AbstractServer implements OnRequestInterface
 			->withMethod($request->getMethod())
 			->withParsedBody($request->post);
 
-		/** @var ServerRequest $PsrRequest */
+		/** @var Request $PsrRequest */
 		return Context::set(RequestInterface::class, $serverRequest);
 	}
 

@@ -3,7 +3,7 @@
 namespace Kiri\Router\Validator;
 
 use Kiri\Router\Interface\ValidatorInterface;
-use Kiri\Router\ServerRequest;
+use Kiri\Router\Request;
 use Psr\Http\Message\ServerRequestInterface;
 
 class Validator
@@ -36,10 +36,10 @@ class Validator
 
 
 	/**
-	 * @param ServerRequestInterface|ServerRequest $request
+	 * @param ServerRequestInterface|Request $request
 	 * @return Validator
 	 */
-	public function bindData(ServerRequestInterface|ServerRequest $request): static
+	public function bindData(ServerRequestInterface|Request $request): static
 	{
 		if ($request->isPost) {
 			$data = $request->getParsedBody();

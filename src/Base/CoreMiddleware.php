@@ -3,7 +3,7 @@
 namespace Kiri\Router\Base;
 
 use Exception;
-use Kiri\Router\ServerRequest;
+use Kiri\Router\Request;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Server\MiddlewareInterface;
@@ -18,7 +18,7 @@ class CoreMiddleware implements MiddlewareInterface
 
 
 	/**
-	 * @param ServerRequest $request
+	 * @param Request $request
 	 * @param RequestHandlerInterface $handler
 	 * @return ResponseInterface
 	 * @throws Exception

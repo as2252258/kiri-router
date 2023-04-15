@@ -2,22 +2,198 @@
 
 namespace Kiri\Router\Constrict;
 
+use Psr\Http\Message\RequestInterface;
 use Psr\Http\Message\ServerRequestInterface;
+use Psr\Http\Message\UriInterface;
 
-class ServerRequest extends Request implements ServerRequestInterface
+class ConstrictRequest extends Message implements RequestInterface, ServerRequestInterface
 {
 
 
-	private array $posts = [];
+	/**
+	 * @var string
+	 */
+	private string $method;
 
-	private array $query = [];
 
+	/**
+	 * @var UriInterface
+	 */
+	private UriInterface $uri;
 
-	private array $cookies = [];
-
-	private array $server = [];
+	/**
+	 * @var array|object|null
+	 */
+	private array|null|object $parsedBody = null;
 
 	private array $files = [];
+	private array $queryParams = [];
+	private array $cookieParams = [];
+	private array $serverParams = [];
+
+
+	/**
+	 * Retrieves the message's request target.
+	 *
+	 * Retrieves the message's request-target either as it will appear (for
+	 * clients), as it appeared at request (for servers), or as it was
+	 * specified for the instance (see withRequestTarget()).
+	 *
+	 * In most cases, this will be the origin-form of the composed URI,
+	 * unless a value was provided to the concrete implementation (see
+	 * withRequestTarget() below).
+	 *
+	 * If no URI is available, and no request-target has been specifically
+	 * provided, this method MUST return the string "/".
+	 *
+	 * @return string
+	 */
+	public function getRequestTarget(): string
+	{
+		// TODO: Implement getRequestTarget() method.
+		return (string)$this->getUri();
+	}
+
+
+	/**
+	 * @param array $headers
+	 * @return $this
+	 */
+	public function withHeaders(array $headers): static
+	{
+		foreach ($headers as $key => $header) {
+			$this->withHeader($key, [$header]);
+		}
+		return $this;
+	}
+
+
+	/**
+	 * @param string $data
+	 * @return ConstrictRequest
+	 */
+	public function withDataHeaders(string $data): static
+	{
+		$headers = explode("\r\n\r\n", $data);
+		$headers = explode("\r\n", $headers[0]);
+		foreach ($headers as $header) {
+			$keyValue = explode(': ', $header);
+			if (!isset($keyValue[1])) {
+				$keyValue[1] = '';
+			}
+			$keyValue[1] = explode(', ', $keyValue[1]);
+			$this->withHeader(...$keyValue);
+		}
+		return $this;
+	}
+
+	/**
+	 * Return an instance with the specific request-target.
+	 *
+	 * If the request needs a non-origin-form request-target — e.g., for
+	 * specifying an absolute-form, authority-form, or asterisk-form —
+	 * this method may be used to create an instance with the specified
+	 * request-target, verbatim.
+	 *
+	 * This method MUST be implemented in such a way as to retain the
+	 * immutability of the message, and MUST return an instance that has the
+	 * changed request target.
+	 *
+	 * @link http://tools.ietf.org/html/rfc7230#section-5.3 (for the various
+	 *     request-target forms allowed in request messages)
+	 * @param string $requestTarget
+	 * @return static
+	 */
+	public function withRequestTarget(string $requestTarget): static
+	{
+		// TODO: Implement withRequestTarget() method.
+		return $this;
+	}
+
+	/**
+	 * Retrieves the HTTP method of the request.
+	 *
+	 * @return string Returns the request method.
+	 */
+	public function getMethod(): string
+	{
+		// TODO: Implement getMethod() method.
+		return $this->method;
+	}
+
+	/**
+	 * Return an instance with the provided HTTP method.
+	 *
+	 * While HTTP method names are typically all uppercase characters, HTTP
+	 * method names are case-sensitive and thus implementations SHOULD NOT
+	 * modify the given string.
+	 *
+	 * This method MUST be implemented in such a way as to retain the
+	 * immutability of the message, and MUST return an instance that has the
+	 * changed request method.
+	 *
+	 * @param string $method Case-sensitive method.
+	 * @return static
+	 * @throws \InvalidArgumentException for invalid HTTP methods.
+	 */
+	public function withMethod(string $method): static
+	{
+		// TODO: Implement withMethod() method.
+		$this->method = $method;
+		return $this;
+	}
+
+	/**
+	 * Retrieves the URI instance.
+	 *
+	 * This method MUST return a UriInterface instance.
+	 *
+	 * @link http://tools.ietf.org/html/rfc3986#section-4.3
+	 * @return UriInterface Returns a UriInterface instance
+	 *     representing the URI of the request.
+	 */
+	public function getUri(): UriInterface
+	{
+		// TODO: Implement getUri() method.
+		return $this->uri;
+	}
+
+	/**
+	 * Returns an instance with the provided URI.
+	 *
+	 * This method MUST update the Host header of the returned request by
+	 * default if the URI contains a host component. If the URI does not
+	 * contain a host component, any pre-existing Host header MUST be carried
+	 * over to the returned request.
+	 *
+	 * You can opt-in to preserving the original state of the Host header by
+	 * setting `$preserveHost` to `true`. When `$preserveHost` is set to
+	 * `true`, this method interacts with the Host header in the following ways:
+	 *
+	 * - If the Host header is missing or empty, and the new URI contains
+	 *   a host component, this method MUST update the Host header in the returned
+	 *   request.
+	 * - If the Host header is missing or empty, and the new URI does not contain a
+	 *   host component, this method MUST NOT update the Host header in the returned
+	 *   request.
+	 * - If a Host header is present and non-empty, this method MUST NOT update
+	 *   the Host header in the returned request.
+	 *
+	 * This method MUST be implemented in such a way as to retain the
+	 * immutability of the message, and MUST return an instance that has the
+	 * new UriInterface instance.
+	 *
+	 * @link http://tools.ietf.org/html/rfc3986#section-4.3
+	 * @param UriInterface $uri New request URI to use.
+	 * @param bool $preserveHost Preserve the original state of the Host header.
+	 * @return static
+	 */
+	public function withUri(UriInterface $uri, bool $preserveHost = false): static
+	{
+		// TODO: Implement withUri() method.
+		$this->uri = $uri;
+		return $this;
+	}
 
 	/**
 	 * Retrieve server parameters.
@@ -31,7 +207,7 @@ class ServerRequest extends Request implements ServerRequestInterface
 	public function getServerParams(): array
 	{
 		// TODO: Implement getServerParams() method.
-		return $this->server;
+		return $this->serverParams = [];
 	}
 
 	/**
@@ -47,7 +223,7 @@ class ServerRequest extends Request implements ServerRequestInterface
 	public function getCookieParams(): array
 	{
 		// TODO: Implement getCookieParams() method.
-		return $this->cookies;
+		return $this->cookieParams;
 	}
 
 	/**
@@ -70,7 +246,31 @@ class ServerRequest extends Request implements ServerRequestInterface
 	public function withCookieParams(array $cookies): static
 	{
 		// TODO: Implement withCookieParams() method.
-		$this->cookies = $cookies;
+		$this->cookieParams = $cookies;
+		return $this;
+	}
+
+	/**
+	 * Return an instance with the specified cookies.
+	 *
+	 * The data IS NOT REQUIRED to come from the $_COOKIE superglobal, but MUST
+	 * be compatible with the structure of $_COOKIE. Typically, this data will
+	 * be injected at instantiation.
+	 *
+	 * This method MUST NOT update the related Cookie header of the request
+	 * instance, nor related values in the server params.
+	 *
+	 * This method MUST be implemented in such a way as to retain the
+	 * immutability of the message, and MUST return an instance that has the
+	 * updated cookie values.
+	 *
+	 * @param array $cookies Array of key/value pairs representing cookies.
+	 * @return static
+	 */
+	public function withServerParams(array $cookies): static
+	{
+		// TODO: Implement withCookieParams() method.
+		$this->serverParams = $cookies;
 		return $this;
 	}
 
@@ -89,7 +289,7 @@ class ServerRequest extends Request implements ServerRequestInterface
 	public function getQueryParams(): array
 	{
 		// TODO: Implement getQueryParams() method.
-		return $this->query;
+		return $this->queryParams;
 	}
 
 	/**
@@ -117,7 +317,7 @@ class ServerRequest extends Request implements ServerRequestInterface
 	public function withQueryParams(array $query): static
 	{
 		// TODO: Implement withQueryParams() method.
-		$this->query = $query;
+		$this->queryParams = $query;
 		return $this;
 	}
 
@@ -175,7 +375,7 @@ class ServerRequest extends Request implements ServerRequestInterface
 	public function getParsedBody(): object|array|null
 	{
 		// TODO: Implement getParsedBody() method.
-		return $this->posts;
+		return $this->parsedBody;
 	}
 
 	/**
@@ -209,7 +409,7 @@ class ServerRequest extends Request implements ServerRequestInterface
 	public function withParsedBody($data): static
 	{
 		// TODO: Implement withParsedBody() method.
-		$this->posts = $data;
+		$this->parsedBody = $data;
 		return $this;
 	}
 
@@ -248,7 +448,7 @@ class ServerRequest extends Request implements ServerRequestInterface
 	public function getAttribute(string $name, $default = null): mixed
 	{
 		// TODO: Implement getAttribute() method.
-		return $default;
+		return null;
 	}
 
 	/**

@@ -5,7 +5,7 @@ namespace Kiri\Router\Constrict;
 use Kiri\Router\ContentType;
 use Psr\Http\Message\ResponseInterface;
 
-class Response extends Message implements ResponseInterface
+class ConstrictResponse extends Message implements ResponseInterface
 {
 
 

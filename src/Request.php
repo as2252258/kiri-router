@@ -3,9 +3,7 @@
 namespace Kiri\Router;
 
 use Kiri\Di\Context;
-use Kiri\Message\Stream;
 use Kiri\Router\Base\ExceptionHandlerDispatcher;
-use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Message\StreamInterface;
 use Psr\Http\Message\UriInterface;
@@ -14,7 +12,7 @@ use Psr\Http\Message\UriInterface;
 /**
  * @property-read bool $isPost
  */
-class ServerRequest implements ServerRequestInterface
+class Request implements ServerRequestInterface
 {
 
 
@@ -192,19 +190,19 @@ class ServerRequest implements ServerRequestInterface
 	 * @param string $data
 	 * @return ServerRequestInterface
 	 */
-	public function withHeaders(string $data): ServerRequestInterface
+	public function withDataHeaders(string $data): ServerRequestInterface
 	{
-		$headers = explode("\r\n\r\n", $data);
-		$headers = explode("\r\n", $headers[0]);
-		foreach ($headers as $header) {
-			$keyValue = explode(': ', $header);
-			if (!isset($keyValue[1])) {
-				$keyValue[1] = '';
-			}
-			$keyValue[1] = explode(', ', $keyValue[1]);
-			$this->withHeader(...$keyValue);
-		}
-		return $this;
+		return $this->__call__(__FUNCTION__, $data);
+	}
+
+
+	/**
+	 * @param array $headers
+	 * @return ServerRequestInterface
+	 */
+	public function withHeaders(array $headers): ServerRequestInterface
+	{
+		return $this->__call__(__FUNCTION__, $headers);
 	}
 
 
