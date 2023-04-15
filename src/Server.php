@@ -91,7 +91,7 @@ class Server implements OnRequestInterface
 
 			$PsrResponse = (new HttpRequestHandler([], $dispatcher))->handle($PsrRequest);
 		} catch (\Throwable $throwable) {
-			$this->logger->error($throwable->getMessage(), [$throwable]);
+			\Kiri::getLogger()->error($throwable->getMessage(), [$throwable]);
 			$PsrResponse = $this->exception->emit($throwable, di(ConstrictResponse::class));
 		} finally {
 			$this->emitter->sender($PsrResponse, $response);
