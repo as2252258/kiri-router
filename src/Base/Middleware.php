@@ -13,8 +13,6 @@ class Middleware
 
 	public HashMap $map;
 
-	public HashMap $routeMap;
-
 
 	/**
 	 *
