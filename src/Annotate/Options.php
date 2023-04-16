@@ -5,7 +5,7 @@ namespace Kiri\Router\Annotate;
 
 use Exception;
 use Kiri\Router\Constrict\RequestMethod;
-use Kiri\Router\InjectRouteInterface;
+use Kiri\Router\Interface\InjectRouteInterface;
 use Kiri\Router\Router;
 use ReflectionException;
 

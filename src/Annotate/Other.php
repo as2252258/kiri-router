@@ -4,7 +4,7 @@ declare(strict_types=1);
 namespace Kiri\Router\Annotate;
 
 use Exception;
-use Kiri\Router\InjectRouteInterface;
+use Kiri\Router\Interface\InjectRouteInterface;
 use Kiri\Router\Router;
 use ReflectionException;
 

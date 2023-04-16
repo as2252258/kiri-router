@@ -1,7 +1,7 @@
 <?php
 declare(strict_types=1);
 
-namespace Kiri\Router;
+namespace Kiri\Router\Interface;
 
 interface InjectRouteInterface
 {

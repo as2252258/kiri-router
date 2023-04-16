@@ -3,7 +3,7 @@
 namespace Kiri\Router\Annotate;
 
 use Kiri\Router\Constrict\RequestMethod;
-use Kiri\Router\InjectRouteInterface;
+use Kiri\Router\Interface\InjectRouteInterface;
 use Kiri\Router\Router;
 
 #[\Attribute(\Attribute::TARGET_METHOD)]
