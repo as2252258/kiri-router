@@ -4,6 +4,7 @@ declare(strict_types=1);
 namespace Kiri\Router;
 
 use Kiri\Di\Context;
+use Kiri\Router\Base\AuthorizationInterface;
 use Kiri\Router\Base\ExceptionHandlerDispatcher;
 use Psr\Http\Message\RequestInterface;
 use Psr\Http\Message\ServerRequestInterface;
@@ -13,6 +14,7 @@ use Psr\Http\Message\UriInterface;
 
 /**
  * @property-read bool $isPost
+ * @property-read AuthorizationInterface $authority
  */
 class Request implements ServerRequestInterface
 {
@@ -25,6 +27,25 @@ class Request implements ServerRequestInterface
 	 * @var string
 	 */
 	public string $exception = ExceptionHandlerDispatcher::class;
+
+
+	/**
+	 * @return AuthorizationInterface|null
+	 */
+	public function getAuthority(): ?AuthorizationInterface
+	{
+		return $this->__call__(__FUNCTION__);
+	}
+
+
+	/**
+	 * @param AuthorizationInterface $authorization
+	 * @return RequestInterface
+	 */
+	public function withAuthority(AuthorizationInterface $authorization): RequestInterface
+	{
+		return $this->__call__(__FUNCTION__, $authorization);
+	}
 
 
 	/**

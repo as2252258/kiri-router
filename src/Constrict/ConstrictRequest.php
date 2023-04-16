@@ -3,6 +3,7 @@ declare(strict_types=1);
 
 namespace Kiri\Router\Constrict;
 
+use Kiri\Router\Base\AuthorizationInterface;
 use Psr\Http\Message\RequestInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Message\UriInterface;
@@ -31,6 +32,31 @@ class ConstrictRequest extends Message implements RequestInterface, ServerReques
 	private array $queryParams = [];
 
 	private array $serverParams = [];
+
+
+	/**
+	 * @var AuthorizationInterface|null
+	 */
+	private ?AuthorizationInterface $authorization = null;
+
+	/**
+	 * @return AuthorizationInterface|null
+	 */
+	public function getAuthority(): ?AuthorizationInterface
+	{
+		return $this->authorization;
+	}
+
+
+	/**
+	 * @param AuthorizationInterface $authorization
+	 * @return RequestInterface
+	 */
+	public function withAuthority(AuthorizationInterface $authorization): RequestInterface
+	{
+		$this->authorization = $authorization;
+		return $this;
+	}
 
 
 	/**
