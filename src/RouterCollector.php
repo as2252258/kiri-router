@@ -52,12 +52,11 @@ class RouterCollector implements \ArrayAccess, \IteratorAggregate
 
 
 	/**
-	 * @param RequestMethod[] $method
+	 * @param array $method
 	 * @param string $route
-	 * @param string|Closure $closure
-	 * @throws
+	 * @param string|array|Closure $closure
 	 */
-	public function addRoute(array $method, string $route, string|Closure $closure)
+	public function addRoute(array $method, string $route, string|array|Closure $closure)
 	{
 		try {
 			$route = $this->_splicing_routing($route);
@@ -80,17 +79,20 @@ class RouterCollector implements \ArrayAccess, \IteratorAggregate
 
 
 	/**
-	 * @param string $closure
+	 * @param string|array $closure
 	 * @param ControllerInterpreter $interpreter
 	 * @return Handler
 	 * @throws ReflectionException
 	 */
-	private function resolve(string $closure, ControllerInterpreter $interpreter): Handler
+	private function resolve(string|array $closure, ControllerInterpreter $interpreter): Handler
 	{
-		[$className, $method] = explode('@', $closure);
+		if (is_array($closure)) {
+			[$class, $method] = $closure;
+		} else {
+			[$className, $method] = explode('@', $closure);
 
-		$class = Kiri::getDi()->get($this->resetName($className));
-
+			$class = Kiri::getDi()->get($this->resetName($className));
+		}
 		return $interpreter->addRouteByString($class, $method);
 	}
 
