@@ -34,6 +34,15 @@ class ConstrictRequest extends Message implements RequestInterface, ServerReques
 
 
 	/**
+	 * @return bool
+	 */
+	public function getIsPost(): bool
+	{
+		return $this->method === 'POST';
+	}
+
+
+	/**
 	 * Retrieves the message's request target.
 	 *
 	 * Retrieves the message's request-target either as it will appear (for
