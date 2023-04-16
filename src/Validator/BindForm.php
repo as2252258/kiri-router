@@ -21,13 +21,12 @@ class BindForm implements InjectParameterInterface
 
 
 	/**
-	 * @param object $class
+	 * @param string $class
 	 * @param string $method
 	 * @return mixed
 	 * @throws ReflectionException
-	 * @throws \Exception
 	 */
-	public function dispatch(object $class, string $method): mixed
+	public function dispatch(string $class, string $method): mixed
 	{
 		$validator = new Validator();
 		$reflect = \Kiri::getDi()->getReflectionClass($this->formValidate);
@@ -42,7 +41,7 @@ class BindForm implements InjectParameterInterface
 		}
 
 		$manager = \Kiri::getDi()->get(Middleware::class);
-		$manager->set($class::class, $method, ValidatorMiddleware::class, [$validator]);
+		$manager->set($class, $method, ValidatorMiddleware::class, [$validator]);
 
 		return $validator;
 	}
