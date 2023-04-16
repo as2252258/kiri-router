@@ -15,9 +15,9 @@ class Stream implements StreamInterface
 
 
 	/**
-	 * @param string $content
+	 * @param mixed $content
 	 */
-	public function __construct(string $content = '')
+	public function __construct(mixed $content = '')
 	{
 		$this->content = $content;
 	}

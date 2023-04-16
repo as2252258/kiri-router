@@ -29,6 +29,62 @@ class Response implements ResponseInterface
 
 
 	/**
+	 * @param array $content
+	 * @param int $statusCode
+	 * @return ResponseInterface
+	 */
+	public function json(array $content, int $statusCode = 200): ResponseInterface
+	{
+		return $this->__call__(__FUNCTION__, $content, $statusCode);
+	}
+
+
+	/**
+	 * @param array $content
+	 * @param int $statusCode
+	 * @return ResponseInterface
+	 */
+	public function xml(array $content, int $statusCode = 200): ResponseInterface
+	{
+		return $this->__call__(__FUNCTION__, $content, $statusCode);
+	}
+
+
+	/**
+	 * @param string $content
+	 * @param int $statusCode
+	 * @return ResponseInterface
+	 */
+	public function html(string $content, int $statusCode = 200): ResponseInterface
+	{
+		return $this->__call__(__FUNCTION__, $content, $statusCode);
+	}
+
+
+	/**
+	 * @param string $content
+	 * @param int $statusCode
+	 * @return ResponseInterface
+	 */
+	public function sendfile(string $content, int $statusCode = 200): ResponseInterface
+	{
+		return $this->__call__(__FUNCTION__, $content, $statusCode);
+	}
+
+
+	/**
+	 * @param mixed $data
+	 * @param int $statusCode
+	 * @param ContentType $type
+	 * @return Response
+	 */
+	public function write(mixed $data, int $statusCode = 200, ContentType $type = ContentType::JSON): static
+	{
+		return $this->__call__(__FUNCTION__, $data, $statusCode, $type);
+	}
+
+
+	/**
 	 * @param string $method
 	 * @param mixed ...$params
 	 * @return mixed

@@ -3,7 +3,10 @@ declare(strict_types=1);
 
 namespace Kiri\Router\Constrict;
 
+use Kiri\Core\Help;
+use Kiri\Core\Xml;
 use Kiri\Router\ContentType;
+use Kiri\Router\StreamResponse;
 use Psr\Http\Message\ResponseInterface;
 
 class ConstrictResponse extends Message implements ResponseInterface
@@ -24,6 +27,72 @@ class ConstrictResponse extends Message implements ResponseInterface
 	{
 		$this->withHeader('Content-Type', $type->toString());
 		return $this;
+	}
+
+
+	/**
+	 * @param mixed $data
+	 * @param int $statusCode
+	 * @param ContentType $type
+	 * @return $this
+	 */
+	public function write(mixed $data, int $statusCode = 200, ContentType $type = ContentType::JSON): static
+	{
+		if ($data instanceof \Stringable) {
+			$this->getBody()->write($data->__toString());
+		} else {
+			$this->getBody()->write((string)$data);
+		}
+		return $this->withContentType($type)->withStatus($statusCode);
+	}
+
+
+	/**
+	 * @param mixed $data
+	 * @param int $statusCode
+	 * @return $this
+	 */
+	public function xml(array $data, int $statusCode = 200): static
+	{
+		$this->getBody()->write(Help::toXml($data));
+		return $this->withContentType(ContentType::XML)->withStatus($statusCode);
+	}
+
+
+	/**
+	 * @param array $content
+	 * @param int $statusCode
+	 * @return $this
+	 */
+	public function json(array $content, int $statusCode = 200): static
+	{
+		$this->getBody()->write(json_encode($content));
+		return $this->withContentType(ContentType::JSON)->withStatus($statusCode);
+	}
+
+
+	/**
+	 * @param string $content
+	 * @param int $statusCode
+	 * @return $this
+	 */
+	public function html(string $content, int $statusCode = 200): static
+	{
+		$this->getBody()->write($content);
+		return $this->withContentType(ContentType::HTML)->withStatus($statusCode);
+	}
+
+
+	/**
+	 * @param string $content
+	 * @param int $statusCode
+	 * @return $this
+	 */
+	public function sendfile(string $content, int $statusCode = 200): ResponseInterface
+	{
+		$stream = new StreamResponse();
+		$stream->withBody(new Stream(fopen($content, 'r+')));
+		return $stream->withStatus($statusCode);
 	}
 
 	/**
@@ -88,12 +157,11 @@ class ConstrictResponse extends Message implements ResponseInterface
 	}
 
 
-
 	/**
 	 * @param object $response
 	 * @return void
 	 */
-	public function write(object $response): void
+	public function end(object $response): void
 	{
 		$response->end($this->getBody()->getContents());
 	}

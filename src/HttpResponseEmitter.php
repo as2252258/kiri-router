@@ -23,7 +23,7 @@ class HttpResponseEmitter implements ResponseEmitter
 		// TODO: Implement sender() method.
 		$this->writeParams($proxy, $response);
 
-		$proxy->write($response);
+		$proxy->end($response);
 	}
 
 
