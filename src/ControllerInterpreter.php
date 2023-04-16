@@ -24,7 +24,7 @@ class ControllerInterpreter
 		if (is_null($reflection)) {
 			$reflection = \Kiri::getDi()->getReflectionClass($class::class);
 		}
-		return $this->resolveMethod($method, $reflection);
+		return $this->resolveMethod($class, $method, $reflection);
 	}
 
 
@@ -53,17 +53,18 @@ class ControllerInterpreter
 		if (is_null($reflection)) {
 			$reflection = \Kiri::getDi()->getReflectionClass($class::class);
 		}
-		return $this->resolveMethod($method, $reflection);
+		return $this->resolveMethod($class, $method, $reflection);
 	}
 
 
 	/**
+	 * @param object $class
 	 * @param string|ReflectionMethod $reflectionMethod
 	 * @param ReflectionClass $reflectionClass
 	 * @return Handler
 	 * @throws ReflectionException
 	 */
-	public function resolveMethod(string|\ReflectionMethod $reflectionMethod, ReflectionClass $reflectionClass): Handler
+	public function resolveMethod(object $class, string|\ReflectionMethod $reflectionMethod, ReflectionClass $reflectionClass): Handler
 	{
 		if (is_string($reflectionMethod)) {
 			$reflectionMethod = $reflectionClass->getMethod($reflectionMethod);
@@ -72,7 +73,7 @@ class ControllerInterpreter
 		$container = \Kiri::getDi();
 		$parameters = $container->getMethodParams($reflectionMethod);
 
-		return new Handler([$container->get($reflectionClass->getName()), $reflectionMethod->getName()], $parameters);
+		return new Handler([$class, $reflectionMethod->getName()], $parameters);
 	}
 
 }
