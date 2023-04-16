@@ -24,8 +24,7 @@ class Response implements ResponseInterface
 	 */
 	public function withContentType(ContentType $contentType): static
 	{
-		$this->contentType = $contentType;
-		return $this;
+		return $this->__call__(__FUNCTION__, $contentType);
 	}
 
 
