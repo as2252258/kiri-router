@@ -34,6 +34,16 @@ class Message extends Component implements MessageInterface
 	private array $cookieParams = [];
 
 
+	/**
+	 *
+	 */
+	public function __construct()
+	{
+		parent::__construct();
+
+		$this->stream = new Stream();
+	}
+
 
 	/**
 	 * Retrieve cookies.
