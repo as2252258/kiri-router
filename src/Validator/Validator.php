@@ -63,7 +63,7 @@ class Validator
 			$data = $request->getQueryParams();
 		}
 		foreach ($data as $key => $value) {
-			if (method_exists($this->formData, $key)) {
+			if (property_exists($this->formData, $key)) {
 				$this->formData->{$key} = $value;
 			}
 		}
