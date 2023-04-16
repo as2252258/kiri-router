@@ -29,12 +29,11 @@ class Middleware
 	/**
 	 * @param string $className
 	 * @param string $method
-	 * @param string $middleware
-	 * @param array $construct
+	 * @param string|object $middleware
 	 * @return void
 	 * @throws Exception
 	 */
-	public function set(string $className, string $method, string $middleware, array $construct = []): void
+	public function set(string $className, string $method, string|object $middleware): void
 	{
 		$path = $className . '::' . $method;
 		if ($this->map->has($path)) {
@@ -46,7 +45,7 @@ class Middleware
 				return;
 			}
 		}
-		$this->map->append($path, [$middleware, $construct]);
+		$this->map->append($path, $middleware);
 	}
 
 
@@ -57,28 +56,8 @@ class Middleware
 	 */
 	public function get(string $className, string $method): array
 	{
-		return $this->routeMap->get($className . '::' . $method) ?? [];
+		return $this->map->get($className . '::' . $method) ?? [];
 	}
 
-
-	/**
-	 * @param string $path
-	 * @param mixed $middleware
-	 * @return void
-	 * @throws Exception
-	 */
-	public function addPathMiddleware(string $path, string $middleware): void
-	{
-		if ($this->routeMap->has($path)) {
-			$values = $this->routeMap->get($path);
-			if (in_array($middleware, $values)) {
-				return;
-			}
-			if (!in_array(MiddlewareInterface::class, class_implements($middleware))) {
-				return;
-			}
-		}
-		$this->routeMap->append($path, $middleware);
-	}
 
 }
