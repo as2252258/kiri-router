@@ -36,12 +36,10 @@ class HttpResponseEmitter implements ResponseEmitter
 	private function writeParams(ResponseInterface $proxy, object $response): void
 	{
 		$response->setStatusCode($proxy->getStatusCode());
-		/** @var Response $resp */
-		$resp = \Kiri::service()->get('response');
-		foreach ($resp->getHeaders() as $name => $header) {
+		foreach ($proxy->getHeaders() as $name => $header) {
 			$response->header($name, $header);
 		}
-		foreach ($resp->getCookieParams() as $cookie) {
+		foreach ($proxy->getCookieParams() as $cookie) {
 			$response->setCookie(...$cookie);
 		}
 		$response->header('Server', 'swoole');

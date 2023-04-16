@@ -22,7 +22,7 @@ class ConstrictResponse extends Message implements ResponseInterface
 	 */
 	public function withContentType(ContentType $type): static
 	{
-		$this->withHeader('Content-Type', $type->name);
+		$this->withHeader('Content-Type', $type->toString());
 		return $this;
 	}
 
