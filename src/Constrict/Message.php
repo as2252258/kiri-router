@@ -4,10 +4,11 @@ declare(strict_types=1);
 namespace Kiri\Router\Constrict;
 
 use InvalidArgumentException;
+use Kiri\Abstracts\Component;
 use Psr\Http\Message\MessageInterface;
 use Psr\Http\Message\StreamInterface;
 
-class Message implements MessageInterface
+class Message extends Component implements MessageInterface
 {
 
 	/**
