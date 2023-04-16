@@ -16,7 +16,7 @@ class ValidatorMiddleware implements MiddlewareInterface
 {
 
 
-	readonly public Validator $validator;
+	public Validator $validator;
 
 
 

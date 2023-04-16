@@ -21,7 +21,6 @@ class Middleware
 	 */
 	public function __construct()
 	{
-		$this->routeMap = new HashMap();
 		$this->map = new HashMap();
 	}
 
