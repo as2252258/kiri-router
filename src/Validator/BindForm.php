@@ -4,6 +4,7 @@ namespace Kiri\Router\Validator;
 
 use Kiri\Di\Interface\InjectParameterInterface;
 use Kiri\Router\Interface\ValidatorInterface;
+use ReflectionException;
 
 #[\Attribute(\Attribute::TARGET_PARAMETER)]
 class BindForm implements InjectParameterInterface
@@ -19,10 +20,12 @@ class BindForm implements InjectParameterInterface
 
 
 	/**
+	 * @param object $class
+	 * @param string $method
 	 * @return mixed
-	 * @throws \ReflectionException
+	 * @throws ReflectionException
 	 */
-	public function dispatch(): mixed
+	public function dispatch(object $class, string $method): mixed
 	{
 		$validator = new Validator();
 		$reflect = \Kiri::getDi()->getReflectionClass($this->formValidate);
