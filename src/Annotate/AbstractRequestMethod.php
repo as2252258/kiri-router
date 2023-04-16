@@ -27,6 +27,9 @@ abstract class AbstractRequestMethod
 
 		$middlewareManager = \Kiri::getDi()->get(MiddlewareManager::class);
 		foreach ($middleware as $value) {
+			if (!class_exists($value->getName())) {
+				continue;
+			}
 			/** @var Middleware $instance */
 			$instance = $value->newInstance();
 

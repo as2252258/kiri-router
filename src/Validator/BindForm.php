@@ -35,6 +35,9 @@ class BindForm implements InjectParameterInterface
 		$validator->setFormData($reflect->newInstanceWithoutConstructor());
 		foreach ($reflect->getProperties() as $property) {
 			foreach ($property->getAttributes() as $attribute) {
+				if (!class_exists($attribute->getName())) {
+					continue;
+				}
 				$rule = $attribute->newInstance();
 				if ($rule instanceof ValidatorInterface) {
 					$validator->addRule($property->getName(), $rule);

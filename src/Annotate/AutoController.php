@@ -17,6 +17,9 @@ class AutoController
 		foreach ($reflection->getMethods() as $method) {
 			$attributes = $method->getAttributes();
 			foreach ($attributes as $attribute) {
+				if (!class_exists($attribute->getName())) {
+					continue;
+				}
 				$attribute->newInstance()->dispatch($object, $method->getName());
 			}
 		}
