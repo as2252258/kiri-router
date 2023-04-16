@@ -11,10 +11,13 @@ use Psr\Http\Message\RequestInterface;
 use Psr\Http\Message\ResponseInterface;
 use Kiri\Di\Inject\Service;
 use Kiri\Di\Inject\Container;
+use ReflectionException;
 
 /**
  * Class WebController
  * @package Kiri\Web
+ * @property-read ContainerInterface $container
+ * @property-read LoggerInterface $logger
  */
 abstract class Controller
 {
@@ -35,15 +38,33 @@ abstract class Controller
 
 
 	/**
-	 * @var LoggerInterface
+	 * @return ContainerInterface
 	 */
-	#[Container(LoggerInterface::class)]
-	public LoggerInterface $logger;
+	private function getContainer(): ContainerInterface
+	{
+		return Kiri::getDi();
+	}
 
 
 	/**
-	 * @var ContainerInterface
+	 * @return LoggerInterface
+	 * @throws ReflectionException
 	 */
-	#[Container(ContainerInterface::class)]
-	public ContainerInterface $container;
+	private function getLogger(): LoggerInterface
+	{
+		return Kiri::getDi()->get(LoggerInterface::class);
+	}
+
+
+	/**
+	 * @param string $name
+	 * @return mixed
+	 */
+	public function __get(string $name)
+	{
+		// TODO: Implement __get() method.
+		return $this->{'get' . ucfirst($name)}();
+	}
+
+
 }
