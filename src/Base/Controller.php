@@ -19,17 +19,31 @@ use Kiri\Di\Inject\Container;
 abstract class Controller
 {
 
+
+	/**
+	 * @var Kiri\Router\Request
+	 */
 	#[Service('request')]
 	public RequestInterface $request;
 
+
+	/**
+	 * @var Kiri\Router\Response
+	 */
 	#[Service('response')]
 	public ResponseInterface $response;
 
 
+	/**
+	 * @var LoggerInterface
+	 */
 	#[Container(LoggerInterface::class)]
 	public LoggerInterface $logger;
 
 
+	/**
+	 * @var ContainerInterface
+	 */
 	#[Container(ContainerInterface::class)]
 	public ContainerInterface $container;
 }
