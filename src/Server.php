@@ -64,7 +64,7 @@ class Server implements OnRequestInterface
 	 * @throws NotFoundExceptionInterface
 	 * @throws Exception
 	 */
-	public function init()
+	public function init(): void
 	{
 		$this->emitter = $this->container->get(HttpResponseEmitter::class);
 
