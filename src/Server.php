@@ -17,6 +17,7 @@ use Psr\Http\Message\RequestInterface;
 use Psr\Http\Message\ResponseInterface;
 use Swoole\Http\Request;
 use Swoole\Http\Response;
+use Kiri\Di\Inject\Container;
 use Kiri\Router\Constrict\ConstrictRequest;
 use Kiri\Router\Constrict\ConstrictResponse;
 use Kiri\Router\Constrict\Uri;
@@ -45,17 +46,17 @@ class Server implements OnRequestInterface
 
 
 	/**
-	 * @param ContainerInterface $container
-	 * @param EventProvider $provider
-	 * @param array $config
-	 * @throws Exception
+	 * @var ContainerInterface
 	 */
-	public function __construct(
-		public ContainerInterface $container,
-		public EventProvider      $provider,
-		array                     $config = [])
-	{
-	}
+	#[Container(ContainerInterface::class)]
+	public ContainerInterface $container;
+
+
+	/**
+	 * @var EventProvider
+	 */
+	#[Container(EventProvider::class)]
+	public EventProvider $provider;
 
 
 	/**
