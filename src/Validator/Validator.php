@@ -72,10 +72,12 @@ class Validator
 
 
 	/**
+	 * @param ServerRequestInterface|Request $request
 	 * @return bool
 	 */
-	public function run(): bool
+	public function run(ServerRequestInterface|Request $request): bool
 	{
+		$this->bindData($request);
 		foreach ($this->rules as $name => $rule) {
 			if (!$rule->dispatch($this->formData, $name)) {
 				return false;
