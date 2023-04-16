@@ -16,6 +16,7 @@ use Psr\Container\NotFoundExceptionInterface;
 use Psr\Http\Message\RequestInterface;
 use Psr\Http\Message\ResponseInterface;
 use Swoole\Http\Request;
+use Kiri\Di\Inject\Service;
 use Swoole\Http\Response;
 use Kiri\Di\Inject\Container;
 use Kiri\Router\Constrict\ConstrictRequest;
@@ -60,6 +61,13 @@ class Server implements OnRequestInterface
 
 
 	/**
+	 * @var \Kiri\Router\Request
+	 */
+	#[Service('request')]
+	public RequestInterface $request;
+
+
+	/**
 	 * @throws ContainerExceptionInterface
 	 * @throws NotFoundExceptionInterface
 	 * @throws Exception
@@ -68,7 +76,7 @@ class Server implements OnRequestInterface
 	{
 		$this->emitter = $this->container->get(HttpResponseEmitter::class);
 
-		$exception = Kiri::service()->get('request')->exception;
+		$exception = $this->request->exception;
 		if (!in_array(ExceptionHandlerInterface::class, class_implements($exception))) {
 			$exception = ExceptionHandlerDispatcher::class;
 		}
@@ -91,7 +99,7 @@ class Server implements OnRequestInterface
 
 			$dispatcher = $this->router->query($request->server['request_uri'], $request->getMethod());
 
-			$middleware = [];
+			$middleware = $this->request->middlewares;
 			if (!($dispatcher instanceof Kiri\Router\Base\NotFoundController)) {
 				$middlewareManager = \Kiri::getDi()->get(MiddlewareManager::class);
 
