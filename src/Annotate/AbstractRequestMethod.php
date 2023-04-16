@@ -14,14 +14,6 @@ abstract class AbstractRequestMethod
 
 
 	/**
-	 * @param string $path
-	 */
-	public function __construct(readonly public string $path)
-	{
-	}
-
-
-	/**
 	 * @param object $class
 	 * @param string $method
 	 * @return void

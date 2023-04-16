@@ -5,13 +5,22 @@ namespace Kiri\Router\Annotate;
 
 use Exception;
 use Kiri\Router\Constrict\RequestMethod;
-use Kiri\Router\AnnotateRouteInterface;
+use Kiri\Router\InjectRouteInterface;
 use Kiri\Router\Router;
 use ReflectionException;
 
 #[\Attribute(\Attribute::TARGET_METHOD | \Attribute::IS_REPEATABLE)]
 class Delete extends AbstractRequestMethod implements InjectRouteInterface
 {
+
+
+
+	/**
+	 * @param string $path
+	 */
+	public function __construct(readonly public string $path)
+	{
+	}
 
 
 

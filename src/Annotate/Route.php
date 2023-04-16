@@ -17,7 +17,6 @@ class Route extends AbstractRequestMethod implements InjectRouteInterface
 	 */
 	public function __construct(readonly public string $path, readonly public RequestMethod $method)
 	{
-		parent::__construct($this->path);
 	}
 
 

@@ -4,7 +4,7 @@ declare(strict_types=1);
 namespace Kiri\Router\Annotate;
 
 use Exception;
-use Kiri\Router\AnnotateRouteInterface;
+use Kiri\Router\InjectRouteInterface;
 use Kiri\Router\Router;
 use ReflectionException;
 
@@ -20,7 +20,6 @@ class Other extends AbstractRequestMethod implements InjectRouteInterface
 	 */
 	public function __construct(readonly public string $method, string $path, string $formValidate = '')
 	{
-		parent::__construct($path, $formValidate);
 	}
 
 
