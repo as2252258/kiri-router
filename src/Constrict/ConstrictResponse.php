@@ -36,7 +36,7 @@ class ConstrictResponse extends Message implements ResponseInterface
 	 * @param ContentType $type
 	 * @return $this
 	 */
-	public function write(mixed $data, int $statusCode = 200, ContentType $type = ContentType::JSON): static
+	public function write(mixed $data, int $statusCode = 200, ContentType $type = ContentType::HTML): static
 	{
 		if ($data instanceof \Stringable) {
 			$this->getBody()->write($data->__toString());

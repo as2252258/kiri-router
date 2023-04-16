@@ -78,7 +78,7 @@ class Response implements ResponseInterface
 	 * @param ContentType $type
 	 * @return Response
 	 */
-	public function write(mixed $data, int $statusCode = 200, ContentType $type = ContentType::JSON): static
+	public function write(mixed $data, int $statusCode = 200, ContentType $type = ContentType::HTML): static
 	{
 		return $this->__call__(__FUNCTION__, $data, $statusCode, $type);
 	}
