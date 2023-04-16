@@ -3,6 +3,7 @@
 namespace Kiri\Router\Validator;
 
 use Kiri\Di\Interface\InjectParameterInterface;
+use Kiri\Router\Base\Middleware;
 use Kiri\Router\Interface\ValidatorInterface;
 use ReflectionException;
 
@@ -24,6 +25,7 @@ class BindForm implements InjectParameterInterface
 	 * @param string $method
 	 * @return mixed
 	 * @throws ReflectionException
+	 * @throws \Exception
 	 */
 	public function dispatch(object $class, string $method): mixed
 	{
@@ -38,6 +40,10 @@ class BindForm implements InjectParameterInterface
 				}
 			}
 		}
+
+		$manager = \Kiri::getDi()->get(Middleware::class);
+		$manager->set($class::class, $method, ValidatorMiddleware::class, [$validator]);
+
 		return $validator;
 	}
 

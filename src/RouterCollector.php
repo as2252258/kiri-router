@@ -127,17 +127,19 @@ class RouterCollector implements \ArrayAccess, \IteratorAggregate
 			}
 		}
 		$hashMap->put('handler', $handler);
-		$this->registerMiddleware($path);
+
+		$this->registerMiddleware($handler->getClass(), $handler->getMethod());
 	}
 
 
 	/**
-	 * @param string $path
+	 * @param string $class
+	 * @param string $method
 	 * @return void
 	 * @throws ReflectionException
 	 * @throws Exception
 	 */
-	public function registerMiddleware(string $path): void
+	public function registerMiddleware(string $class, string $method): void
 	{
 		$middlewares = array_column($this->groupTack, 'middleware');
 		if (count($middlewares) > 0) {
@@ -147,7 +149,7 @@ class RouterCollector implements \ArrayAccess, \IteratorAggregate
 					$middleware = [$middleware];
 				}
 				foreach ($middleware as $value) {
-					$manager->addPathMiddleware($path, $value);
+					$manager->set($class, $method, $value);
 				}
 			}
 		}
@@ -158,6 +160,7 @@ class RouterCollector implements \ArrayAccess, \IteratorAggregate
 	 * @param string $path
 	 * @param string $method
 	 * @return Handler|null
+	 * @throws ReflectionException
 	 */
 	public function query(string $path, string $method): ?Handler
 	{

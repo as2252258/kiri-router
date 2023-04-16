@@ -39,11 +39,11 @@ abstract class AbstractRequestMethod
 			/** @var Middleware $instance */
 			$instance = $value->newInstance();
 
-			$middlewareManager->addPathMiddleware($this->path, $instance->middleware);
+			$middlewareManager->set($class::class, $method, $instance->middleware);
 		}
 
 		if ($this->formValidate !== '') {
-			$middlewareManager->addPathMiddleware($this->path, new ValidatorMiddleware($this->getFormRule()));
+			$middlewareManager->set($class::class, $method, ValidatorMiddleware::class, [$this->getFormRule()]);
 		}
 	}
 

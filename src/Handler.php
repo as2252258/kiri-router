@@ -22,6 +22,39 @@ class Handler implements RequestHandlerInterface
 
 
 	/**
+	 * @return bool
+	 */
+	public function isClosure(): bool
+	{
+		return $this->handler instanceof \Closure;
+	}
+
+
+	/**
+	 * @return string|null
+	 */
+	public function getClass(): ?string
+	{
+		if ($this->isClosure()) {
+			return null;
+		}
+		return $this->handler[0]::class;
+	}
+
+
+	/**
+	 * @return string|null
+	 */
+	public function getMethod(): ?string
+	{
+		if ($this->isClosure()) {
+			return null;
+		}
+		return $this->handler[1];
+	}
+
+
+	/**
 	 * @param ServerRequestInterface $request
 	 * @return ResponseInterface
 	 * @throws ReflectionException

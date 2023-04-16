@@ -6,6 +6,7 @@ namespace Kiri\Router;
 
 use Exception;
 use Kiri;
+use Kiri\Router\Base\Middleware as MiddlewareManager;
 use Psr\Container\ContainerInterface;
 use Kiri\Di\Context;
 use Kiri\Events\EventProvider;
@@ -89,7 +90,14 @@ class Server implements OnRequestInterface
 
 			$dispatcher = $this->router->query($request->server['request_uri'], $request->getMethod());
 
-			$PsrResponse = (new HttpRequestHandler([], $dispatcher))->handle($PsrRequest);
+			$middleware = [];
+			if (!($dispatcher instanceof Kiri\Router\Base\NotFoundController)) {
+				$middlewareManager = \Kiri::getDi()->get(MiddlewareManager::class);
+
+				$middleware = $middlewareManager->get($dispatcher->getClass(), $dispatcher->getMethod());
+			}
+
+			$PsrResponse = (new HttpRequestHandler($middleware, $dispatcher))->handle($PsrRequest);
 		} catch (\Throwable $throwable) {
 			\Kiri::getLogger()->error($throwable->getMessage(), [$throwable]);
 			$PsrResponse = $this->exception->emit($throwable, di(ConstrictResponse::class));
