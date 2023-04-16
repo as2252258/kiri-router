@@ -1,6 +1,6 @@
 <?php
 
-namespace Kiri\Router\Inject;
+namespace Kiri\Router\Annotate;
 
 use Kiri\Router\Constrict\RequestMethod;
 use Kiri\Router\InjectRouteInterface;

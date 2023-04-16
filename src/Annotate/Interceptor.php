@@ -1,11 +1,11 @@
 <?php
 declare(strict_types=1);
 
-namespace Kiri\Router\Inject;
+namespace Kiri\Router\Annotate;
 
 
 #[\Attribute(\Attribute::TARGET_METHOD)]
-class Filter
+class Interceptor
 {
 
 	public function __construct()

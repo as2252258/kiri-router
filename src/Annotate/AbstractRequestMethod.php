@@ -1,7 +1,7 @@
 <?php
 declare(strict_types=1);
 
-namespace Kiri\Router\Inject;
+namespace Kiri\Router\Annotate;
 
 use Kiri\Router\Base\Middleware as MiddlewareManager;
 use Kiri\Router\Interface\ValidatorInterface;

@@ -1,7 +1,7 @@
 <?php
 declare(strict_types=1);
 
-namespace Kiri\Router\Inject;
+namespace Kiri\Router\Annotate;
 
 use Kiri\Di\Interface\InjectPropertyInterface;
 

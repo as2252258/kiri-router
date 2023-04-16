@@ -1,10 +1,10 @@
 <?php
 declare(strict_types=1);
 
-namespace Kiri\Router\Inject;
+namespace Kiri\Router\Annotate;
 
 use Exception;
-use Kiri\Router\InjectRouteInterface;
+use Kiri\Router\AnnotateRouteInterface;
 use Kiri\Router\Router;
 use ReflectionException;
 
