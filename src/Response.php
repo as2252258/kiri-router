@@ -22,7 +22,7 @@ class Response implements ResponseInterface
 	 * @param ContentType $contentType
 	 * @return Response
 	 */
-	public function withContentType(ContentType $contentType): static
+	public function withContentType(ContentType $contentType): ResponseInterface
 	{
 		return $this->__call__(__FUNCTION__, $contentType);
 	}
