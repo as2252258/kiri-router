@@ -6,6 +6,7 @@ namespace Kiri\Router\Base;
 use Kiri\Router\Handler;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
+use Psr\Http\Server\MiddlewareInterface;
 
 abstract class AbstractHandler
 {
@@ -34,10 +35,11 @@ abstract class AbstractHandler
 			return $this->handler->handle($request);
 		}
 
+		/** @var MiddlewareInterface $middleware */
 		$middleware = di($this->middlewares[$this->offset]);
 		$this->offset += 1;
 
-		return $middleware->process($request);
+		return $middleware->process($request, $this);
 	}
 
 }
