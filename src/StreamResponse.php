@@ -3,6 +3,8 @@ declare(strict_types=1);
 
 namespace Kiri\Router;
 
+use Psr\Http\Message\ResponseInterface;
+
 class StreamResponse extends Response
 {
 
@@ -13,7 +15,7 @@ class StreamResponse extends Response
 	 * @param object $response
 	 * @return void
 	 */
-	public function write(object $response): void
+	public function end(object $response): void
 	{
 		$body = $this->getBody();
 		$total = ceil($this->limit / $body->getSize());
@@ -25,4 +27,5 @@ class StreamResponse extends Response
 		}
 		$response->end();
 	}
+
 }
