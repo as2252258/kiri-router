@@ -5,6 +5,7 @@ namespace Kiri\Router;
 
 use InvalidArgumentException;
 use Kiri\Di\Context;
+use Kiri\Router\Constrict\ConstrictResponse;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\StreamInterface;
 
@@ -78,7 +79,7 @@ class Response implements ResponseInterface
 	 * @param ContentType $type
 	 * @return Response
 	 */
-	public function write(mixed $data, int $statusCode = 200, ContentType $type = ContentType::HTML): static
+	public function write(mixed $data, int $statusCode = 200, ContentType $type = ContentType::HTML): ResponseInterface
 	{
 		return $this->__call__(__FUNCTION__, $data, $statusCode, $type);
 	}
@@ -92,7 +93,7 @@ class Response implements ResponseInterface
 	private function __call__(string $method, ...$params): mixed
 	{
 		if (!Context::exists(ResponseInterface::class)) {
-			$response = Context::set(ResponseInterface::class, new static());
+			$response = Context::set(ResponseInterface::class, new ConstrictResponse());
 		} else {
 			$response = Context::get(ResponseInterface::class);
 		}

@@ -37,9 +37,11 @@ class Message extends Component implements MessageInterface
 	/**
 	 *
 	 */
-	public function init(): void
+	public function __construct()
 	{
 		$this->stream = new Stream();
+
+		parent::__construct();
 	}
 
 
