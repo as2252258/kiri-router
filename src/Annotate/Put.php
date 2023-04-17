@@ -35,8 +35,6 @@ class Put extends AbstractRequestMethod implements InjectRouteInterface
 	{
 		// TODO: Implement dispatch() method.
 		Router::addRoute(RequestMethod::REQUEST_PUT, $this->path, [$class, $method]);
-
-		$this->registerMiddleware($class, $method);
 	}
 
 }

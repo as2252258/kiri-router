@@ -36,8 +36,6 @@ class Options extends AbstractRequestMethod implements InjectRouteInterface
 	{
 		// TODO: Implement dispatch() method.
 		Router::addRoute(RequestMethod::REQUEST_OPTIONS, $this->path, [$class, $method]);
-
-		$this->registerMiddleware($class, $method);
 	}
 
 

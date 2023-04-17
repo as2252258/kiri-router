@@ -36,8 +36,6 @@ class Get extends AbstractRequestMethod implements InjectRouteInterface
 	{
 		// TODO: Implement dispatch() method.
 		Router::addRoute(RequestMethod::REQUEST_GET, $this->path, [$class, $method]);
-
-		$this->registerMiddleware($class, $method);
 	}
 
 }

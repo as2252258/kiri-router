@@ -30,7 +30,5 @@ class Route extends AbstractRequestMethod implements InjectRouteInterface
 	{
 		// TODO: Implement dispatch() method.
 		Router::addRoute($this->method, $this->path, [$class, $method]);
-
-		$this->registerMiddleware($class, $method);
 	}
 }
