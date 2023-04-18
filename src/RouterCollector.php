@@ -73,7 +73,7 @@ class RouterCollector implements \ArrayAccess, \IteratorAggregate
 				$this->register($route, $value, $handler);
 			}
 		} catch (Throwable $throwable) {
-			error($throwable->getMessage(), [throwable($throwable)]);
+			error($throwable);
 		}
 	}
 

@@ -209,7 +209,7 @@ class Router
 		try {
 			include "$files";
 		} catch (\Throwable $throwable) {
-			var_dump($throwable->getMessage());
+			error($throwable);
 		}
 	}
 
