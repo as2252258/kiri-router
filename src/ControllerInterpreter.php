@@ -41,7 +41,7 @@ class ControllerInterpreter
 	{
 		$reflection = new \ReflectionFunction($method);
 		if ($reflection->getReturnType()->getName() !== 'Psr\Http\Message\ResponseInterface') {
-			throw new Exception('Request Handler returns must implements on Psr\Http\Message\ResponseInterface');
+			die('Request Handler returns must implements on Psr\Http\Message\ResponseInterface');
 		}
 		$params = \Kiri::getDi()->resolveMethodParams($reflection);
 		return new Handler($method, $params);
