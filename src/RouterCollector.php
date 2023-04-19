@@ -88,7 +88,11 @@ class RouterCollector implements \ArrayAccess, \IteratorAggregate
 				} else if (is_string($closure)) {
 					$closure = explode('@', $closure);
 				}
-				$this->dump[$value][$route] = $closure instanceof Closure ? 'Closure' : $closure;
+				$this->dump[] = [
+					'method'   => $value,
+					'path'     => $route,
+					'callback' => $closure instanceof Closure ? 'Closure' : $closure
+				];
 				$this->register($route, $value, $handler);
 			}
 		} catch (Throwable $throwable) {
