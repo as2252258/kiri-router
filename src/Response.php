@@ -263,6 +263,16 @@ class Response implements ResponseInterface
 		return $this->__call__(__FUNCTION__, $name, $value);
 	}
 
+
+	/**
+	 * @param array $headers
+	 * @return ResponseInterface
+	 */
+	public function withHeaders(array $headers): ResponseInterface
+	{
+		return $this->__call__(__FUNCTION__, $headers);
+	}
+
 	/**
 	 * Return an instance with the specified header appended with the given value.
 	 *

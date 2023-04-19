@@ -251,6 +251,17 @@ class Message extends Component implements MessageInterface
 		return $this;
 	}
 
+
+	/**
+	 * @param array $headers
+	 * @return $this
+	 */
+	public function withHeaders(array $headers): static
+	{
+		$this->headers = $headers;
+		return $this;
+	}
+
 	/**
 	 * Return an instance with the specified header appended with the given value.
 	 *
