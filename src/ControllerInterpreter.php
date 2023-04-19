@@ -85,19 +85,7 @@ class ControllerInterpreter
 		$container = \Kiri::getDi();
 		$parameters = $container->getMethodParams($reflectionMethod);
 
-		$method = $reflectionMethod->getName();
-
-		/** @var ResponseInterface $response */
-		$response = \Kiri::service()->get('response');
-		$call = static function (RequestInterface $request) use ($response, $class, $method, $parameters) {
-			if (!$class->beforeAction($request)) {
-				return $response->withStatus(500);
-			}
-			$response = call_user_func([$class, $method], $parameters);
-			$class->afterAction($response);
-			return $response;
-		};
-		return new Handler($call, [\Kiri::service()->get('request')]);
+		return new Handler([$class, $reflectionMethod->getName()], $parameters);
 	}
 
 }
