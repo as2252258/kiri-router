@@ -29,9 +29,8 @@ class HttpResponseEmitter implements ResponseEmitter
 
 	/**
 	 * @param Response $proxy
-	 * @param \Swoole\Http\Response $response
+	 * @param object $response
 	 * @return void
-	 * @throws Exception
 	 */
 	private function writeParams(ResponseInterface $proxy, object $response): void
 	{
