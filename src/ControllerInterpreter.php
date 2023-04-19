@@ -87,9 +87,9 @@ class ControllerInterpreter
 
 		$method = $reflectionMethod->getName();
 
-		$call = static function (RequestInterface $request) use ($class, $method, $parameters) {
-			/** @var ResponseInterface $response */
-			$response = \Kiri::service()->get('response');
+		/** @var ResponseInterface $response */
+		$response = \Kiri::service()->get('response');
+		$call = static function (RequestInterface $request) use ($response, $class, $method, $parameters) {
 			if (!$class->beforeAction($request)) {
 				return $response->withStatus(500);
 			}
