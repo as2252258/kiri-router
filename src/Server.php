@@ -88,7 +88,8 @@ class Server implements OnRequestInterface
 			/** @var ConstrictRequest $PsrRequest */
 			$PsrRequest = $this->initRequestAndResponse($request);
 
-			$dispatcher = $this->router->query($request->server['request_uri'], $request->getMethod());
+			$request_uri = $request->getMethod() == 'OPTIONS' ? '/*' : $request->server['request_uri'];
+			$dispatcher = $this->router->query($request_uri, $request->getMethod());
 
 			$middleware = $this->request->middlewares;
 			if (!($dispatcher instanceof Kiri\Router\Base\NotFoundController)) {
