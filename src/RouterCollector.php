@@ -27,6 +27,9 @@ class RouterCollector implements \ArrayAccess, \IteratorAggregate
 	private array $_item = [];
 
 
+	private array $dump = [];
+
+
 	public array $groupTack = [];
 
 
@@ -39,6 +42,15 @@ class RouterCollector implements \ArrayAccess, \IteratorAggregate
 	public function __construct()
 	{
 		$this->methods = new HashMap();
+	}
+
+
+	/**
+	 * @return array
+	 */
+	public function getDump(): array
+	{
+		return $this->dump;
 	}
 
 
@@ -71,6 +83,12 @@ class RouterCollector implements \ArrayAccess, \IteratorAggregate
 				if ($value instanceof RequestMethod) {
 					$value = $value->getString();
 				}
+				if (is_array($closure)) {
+					$closure[0] = is_object($closure[0]) ? get_class($closure[0]) : $closure;
+				} else if (is_string($closure)) {
+					$closure = explode('@', $closure);
+				}
+				$this->dump[$value][$route] = $closure instanceof Closure ? 'Closure' : $closure;
 				$this->register($route, $value, $handler);
 			}
 		} catch (Throwable $throwable) {
