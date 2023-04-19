@@ -5,6 +5,7 @@ namespace Kiri\Router;
 
 use Closure;
 use Kiri\Di\Context;
+use Kiri\Router\Base\Controller;
 use Psr\Http\Message\RequestInterface;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
@@ -28,6 +29,22 @@ class Handler implements RequestHandlerInterface
 	public function __construct(public array|Closure $handler, public array $parameter)
 	{
 		$this->request = \Kiri::service()->get('request');
+		if (is_array($this->handler)) {
+			[$controller, $action, $parameter] = [...$this->handler, $this->parameter];
+			$this->handler = static function (RequestInterface $request) use ($controller, $action, $parameter) {
+				/** @var Controller $controller */
+				if ($controller->beforeAction($request)) {
+					$response = call_user_func([$controller, $action], ...$parameter);
+					$controller->afterAction($response);
+					return $response;
+				} else {
+					/** @var Response $response */
+					$response = \Kiri::service()->get('response');
+					return $response->withStatus(500, 'BeforeAction error');
+				}
+			};
+			$this->parameter = [$this->request];
+		}
 	}
 
 
@@ -72,19 +89,7 @@ class Handler implements RequestHandlerInterface
 	public function handle(ServerRequestInterface $request): ResponseInterface
 	{
 		// TODO: Implement handle() method.
-		if ($this->handler instanceof Closure) {
-			return call_user_func($this->handler, ...$this->parameter);
-		}
-		[$controller, $action] = $this->handler;
-		if ($controller->beforeAction($this->request)) {
-			$response = call_user_func($this->handler, ...$this->parameter);
-	        $controller->afterAction($response);
-		} else {
-			/** @var Response $response */
-			$response = \Kiri::service()->get('response');
-			$response->withStatus(500,'BeforeAction error');
-		}
-		return $response;
+		return call_user_func($this->handler, ...$this->parameter);
 	}
 
 }
