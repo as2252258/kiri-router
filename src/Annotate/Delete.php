@@ -18,10 +18,9 @@ class Delete extends AbstractRequestMethod implements InjectRouteInterface
 	/**
 	 * @param string $path
 	 */
-	public function __construct(readonly public string $path)
+	public function __construct(readonly public string $path, readonly public string $version = 'v1')
 	{
 	}
-
 
 
 	/**
@@ -34,7 +33,9 @@ class Delete extends AbstractRequestMethod implements InjectRouteInterface
 	public function dispatch(object $class, string $method): void
 	{
 		// TODO: Implement dispatch() method.
-		Router::addRoute(RequestMethod::REQUEST_DELETE, $this->path, [$class, $method]);
+		$path = $this->version . '/' . ltrim($this->path, '/');
+
+		Router::addRoute(RequestMethod::REQUEST_DELETE, $path, [$class, $method]);
 	}
 
 

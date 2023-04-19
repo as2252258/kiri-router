@@ -14,12 +14,11 @@ class Post extends AbstractRequestMethod implements InjectRouteInterface
 {
 
 
-
-
 	/**
 	 * @param string $path
+	 * @param string $version
 	 */
-	public function __construct(readonly public string $path)
+	public function __construct(readonly public string $path, readonly public string $version = 'v1')
 	{
 	}
 
@@ -34,7 +33,9 @@ class Post extends AbstractRequestMethod implements InjectRouteInterface
 	public function dispatch(object $class, string $method): void
 	{
 		// TODO: Implement dispatch() method.
-		Router::addRoute(RequestMethod::REQUEST_POST, $this->path, [$class, $method]);
+		$path = $this->version . '/' . ltrim($this->path, '/');
+
+		Router::addRoute(RequestMethod::REQUEST_POST, $path, [$class, $method]);
 	}
 
 

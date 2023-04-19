@@ -62,13 +62,7 @@ class Handler implements RequestHandlerInterface
 	public function handle(ServerRequestInterface $request): ResponseInterface
 	{
 		// TODO: Implement handle() method.
-		$result = call_user_func($this->handler, ...$this->parameter);
-		if ($result instanceof ResponseInterface) {
-			return $result;
-		} else {
-			$response = \Kiri::getDi()->get(ResponseInterface::class);
-			return $response->rewrite();
-		}
+		return call_user_func($this->handler, ...$this->parameter);
 	}
 
 }

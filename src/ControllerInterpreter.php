@@ -4,6 +4,9 @@ declare(strict_types=1);
 namespace Kiri\Router;
 
 use Closure;
+use Exception;
+use Psr\Http\Message\RequestInterface;
+use Psr\Http\Message\ResponseInterface;
 use ReflectionClass;
 use ReflectionException;
 use ReflectionMethod;
@@ -32,12 +35,16 @@ class ControllerInterpreter
 	 * @param Closure $method
 	 * @return Handler
 	 * @throws ReflectionException
+	 * @throws Exception
 	 */
 	public function addRouteByClosure(Closure $method): Handler
 	{
-		$reflection = \Kiri::getDi()->getFunctionParams($method);
-
-		return new Handler($method, $reflection);
+		$reflection = new \ReflectionFunction($method);
+		if ($reflection->getReturnType()->getName() !== 'Psr\Http\Message\ResponseInterface') {
+			throw new Exception('Request Handler returns must implements on Psr\Http\Message\ResponseInterface');
+		}
+		$params = \Kiri::getDi()->resolveMethodParams($reflection);
+		return new Handler($method, $params);
 	}
 
 
@@ -63,6 +70,7 @@ class ControllerInterpreter
 	 * @param ReflectionClass $reflectionClass
 	 * @return Handler
 	 * @throws ReflectionException
+	 * @throws Exception
 	 */
 	public function resolveMethod(object $class, string|\ReflectionMethod $reflectionMethod, ReflectionClass $reflectionClass): Handler
 	{
@@ -70,10 +78,26 @@ class ControllerInterpreter
 			$reflectionMethod = $reflectionClass->getMethod($reflectionMethod);
 		}
 
+		if ($reflectionMethod->getReturnType()->getName() !== 'Psr\Http\Message\ResponseInterface') {
+			throw new Exception('Request Handler returns must implements on Psr\Http\Message\ResponseInterface');
+		}
+
 		$container = \Kiri::getDi();
 		$parameters = $container->getMethodParams($reflectionMethod);
 
-		return new Handler([$class, $reflectionMethod->getName()], $parameters);
+		$method = $reflectionMethod->getName();
+
+		$call = static function (RequestInterface $request) use ($class, $method, $parameters) {
+			/** @var ResponseInterface $response */
+			$response = \Kiri::service()->get('response');
+			if (!$class->beforeAction($request)) {
+				return $response->withStatus(500);
+			}
+			$response = call_user_func([$class, $method], $parameters);
+			$class->afterAction($response);
+			return $response;
+		};
+		return new Handler($call, \Kiri::service()->get('request'));
 	}
 
 }

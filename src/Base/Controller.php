@@ -5,12 +5,13 @@ namespace Kiri\Router\Base;
 
 
 use Kiri;
+use Kiri\Router\Response;
+use Kiri\Router\Request;
 use Psr\Container\ContainerInterface;
 use Psr\Log\LoggerInterface;
 use Psr\Http\Message\RequestInterface;
 use Psr\Http\Message\ResponseInterface;
 use Kiri\Di\Inject\Service;
-use Kiri\Di\Inject\Container;
 use ReflectionException;
 
 /**
@@ -24,14 +25,14 @@ abstract class Controller
 
 
 	/**
-	 * @var Kiri\Router\Request
+	 * @var Request
 	 */
 	#[Service('request')]
 	public RequestInterface $request;
 
 
 	/**
-	 * @var Kiri\Router\Response
+	 * @var Response
 	 */
 	#[Service('response')]
 	public ResponseInterface $response;
@@ -64,6 +65,25 @@ abstract class Controller
 	{
 		// TODO: Implement __get() method.
 		return $this->{'get' . ucfirst($name)}();
+	}
+
+
+	/**
+	 * @param Request $request
+	 * @return true
+	 */
+	public function beforeAction(RequestInterface $request): bool
+	{
+		return true;
+	}
+
+
+	/**
+	 * @param Response $response
+	 * @return void
+	 */
+	public function afterAction(ResponseInterface $response): void
+	{
 	}
 
 
