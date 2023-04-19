@@ -97,7 +97,7 @@ class ControllerInterpreter
 			$class->afterAction($response);
 			return $response;
 		};
-		return new Handler($call, \Kiri::service()->get('request'));
+		return new Handler($call, [\Kiri::service()->get('request')]);
 	}
 
 }
