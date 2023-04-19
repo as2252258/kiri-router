@@ -91,7 +91,7 @@ class Server implements OnRequestInterface
 			$request_uri = $request->getMethod() == 'OPTIONS' ? '/*' : $request->server['request_uri'];
 			$dispatcher = $this->router->query($request_uri, $request->getMethod());
 
-			$middleware = $this->request->middlewares;
+			$middleware = [];
 			if (!($dispatcher instanceof Kiri\Router\Base\NotFoundController)) {
 				$middlewareManager = \Kiri::getDi()->get(MiddlewareManager::class);
 
