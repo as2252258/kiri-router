@@ -15,12 +15,6 @@ use ReflectionException;
 class Handler implements RequestHandlerInterface
 {
 
-
-	/**
-	 * @var RequestInterface|mixed|null
-	 */
-	private RequestInterface $request;
-
 	/**
 	 * @param array|Closure $handler
 	 * @param array $parameter
@@ -28,23 +22,6 @@ class Handler implements RequestHandlerInterface
 	 */
 	public function __construct(public array|Closure $handler, public array $parameter)
 	{
-		$this->request = \Kiri::service()->get('request');
-		if (is_array($this->handler)) {
-			[$controller, $action, $parameter] = [...$this->handler, $this->parameter];
-			$this->handler = static function (RequestInterface $request) use ($controller, $action, $parameter) {
-				/** @var Controller $controller */
-				if ($controller->beforeAction($request)) {
-					$response = call_user_func([$controller, $action], ...$parameter);
-					$controller->afterAction($response);
-					return $response;
-				} else {
-					/** @var Response $response */
-					$response = \Kiri::service()->get('response');
-					return $response->withStatus(500, 'BeforeAction error');
-				}
-			};
-			$this->parameter = [$this->request];
-		}
 	}
 
 
