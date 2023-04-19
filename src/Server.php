@@ -47,20 +47,6 @@ class Server implements OnRequestInterface
 
 
 	/**
-	 * @var ContainerInterface
-	 */
-	#[Container(ContainerInterface::class)]
-	public ContainerInterface $container;
-
-
-	/**
-	 * @var EventProvider
-	 */
-	#[Container(EventProvider::class)]
-	public EventProvider $provider;
-
-
-	/**
 	 * @var \Kiri\Router\Request
 	 */
 	#[Service('request')]
@@ -68,21 +54,26 @@ class Server implements OnRequestInterface
 
 
 	/**
-	 * @throws ContainerExceptionInterface
-	 * @throws NotFoundExceptionInterface
+	 * @var \Kiri\Router\Response
+	 */
+	#[Service('response')]
+	public ResponseInterface $response;
+
+
+	/**
 	 * @throws Exception
 	 */
 	public function init(): void
 	{
-		$this->emitter = $this->container->get(HttpResponseEmitter::class);
+		$this->emitter = di(HttpResponseEmitter::class);
 
 		$exception = $this->request->exception;
 		if (!in_array(ExceptionHandlerInterface::class, class_implements($exception))) {
 			$exception = ExceptionHandlerDispatcher::class;
 		}
-		$this->exception = $this->container->get($exception);
+		$this->exception = di($exception);
 
-		$this->router = $this->container->get(DataGrip::class)->get(ROUTER_TYPE_HTTP);
+		$this->router = di(DataGrip::class)->get(ROUTER_TYPE_HTTP);
 	}
 
 
@@ -123,20 +114,14 @@ class Server implements OnRequestInterface
 	 */
 	private function initRequestAndResponse(Request $request): RequestInterface
 	{
-		/** @var \Kiri\Router\Response $response */
-		$response = Kiri::service()->get('response');
-
-
-		$cookie = $request->cookie ?? [];
-
 		/** @var ConstrictResponse $PsrResponse */
 		$PsrResponse = Context::set(ResponseInterface::class, new ConstrictResponse());
-		$PsrResponse->withContentType($response->contentType);
+		$PsrResponse->withContentType($this->response->contentType);
 
 		$serverRequest = (new ConstrictRequest())->withDataHeaders($request->getData())
 			->withUri(Uri::parse($request))
 			->withProtocolVersion($request->server['server_protocol'])
-			->withCookieParams($cookie)
+			->withCookieParams($request->cookie ?? [])
 			->withQueryParams($request->get ?? [])
 			->withUploadedFiles($request->files ?? [])
 			->withMethod($request->getMethod())
