@@ -28,9 +28,12 @@ class CoreMiddleware implements MiddlewareInterface
 	{
 		/** @var ResponseInterface $response */
 		$response = \Kiri::service()->get('response');
-		$response->withHeader('Access-Control-Allow-Headers', $request->header('Access-Control-Allow-Headers'))
-			->withHeader('Access-Control-Request-Method', $request->header('Access-Control-Allow-Origin'))
-			->withHeader('Access-Control-Allow-Origin', $request->header('Access-Control-Allow-Headers'));
+//		$response->withHeader('Access-Control-Allow-Headers', $request->header('Access-Control-Allow-Headers'))
+//			->withHeader('Access-Control-Request-Method', $request->header('Access-Control-Allow-Origin'))
+//			->withHeader('Access-Control-Allow-Origin', $request->header('Access-Control-Allow-Headers'));
+		$response->withHeader('Access-Control-Allow-Headers', '*')
+			->withHeader('Access-Control-Request-Method', '*')
+			->withHeader('Access-Control-Allow-Origin', '*');
 		return $handler->handle($request);
 	}
 
