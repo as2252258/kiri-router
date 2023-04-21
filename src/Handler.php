@@ -35,6 +35,19 @@ class Handler implements RequestHandlerInterface
 
 
 	/**
+	 * @param string $interface
+	 * @return bool
+	 */
+	public function implement(string $interface): bool
+	{
+		if (!$this->isClosure()) {
+			return $this->handler[0] instanceof $interface;
+		}
+		return false;
+	}
+
+
+	/**
 	 * @return string|null
 	 */
 	public function getClass(): ?string
