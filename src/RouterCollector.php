@@ -166,20 +166,35 @@ class RouterCollector implements \ArrayAccess, \IteratorAggregate
 	public function registerMiddleware(string $class, string $method): void
 	{
 		$middlewares = Kiri::service()->get('request')->middlewares;
-		$middlewares = [...$middlewares, ...array_column($this->groupTack, 'middleware')];
 		if (count($middlewares) > 0) {
-			$manager = Kiri::getDi()->get(Middleware::class);
-			foreach ($middlewares as $middleware) {
-				if (is_string($middleware)) {
-					$middleware = [$middleware];
-				}
-				foreach ($middleware as $value) {
-					$manager->set($class, $method, $value);
-				}
-			}
+			$this->appendMiddleware($middlewares, $class, $method);
+		}
+		$middlewares = array_column($this->groupTack, 'middleware');
+		if (count($middlewares) > 0) {
+			$this->appendMiddleware($middlewares, $class, $method);
 		}
 	}
 
+
+	/**
+	 * @param array $middlewares
+	 * @param $class
+	 * @param $method
+	 * @return void
+	 * @throws
+	 */
+	private function appendMiddleware(array $middlewares, $class, $method): void
+	{
+		$manager = Kiri::getDi()->get(Middleware::class);
+		foreach ($middlewares as $middleware) {
+			if (is_string($middleware)) {
+				$middleware = [$middleware];
+			}
+			foreach ($middleware as $value) {
+				$manager->set($class, $method, $value);
+			}
+		}
+	}
 
 	/**
 	 * @param string $path
