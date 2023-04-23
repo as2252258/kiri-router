@@ -28,6 +28,10 @@ use Kiri\Router\Base\ExceptionHandlerDispatcher;
 class Server implements OnRequestInterface
 {
 
+
+	/**
+	 * @var RouterCollector
+	 */
 	public RouterCollector $router;
 
 
@@ -61,15 +65,16 @@ class Server implements OnRequestInterface
 	 */
 	public function init(): void
 	{
-		$this->emitter = di(HttpResponseEmitter::class);
+		$container = Kiri::getDi();
+		$this->emitter = $container->get(HttpResponseEmitter::class);
 
 		$exception = $this->request->exception;
 		if (!in_array(ExceptionHandlerInterface::class, class_implements($exception))) {
 			$exception = ExceptionHandlerDispatcher::class;
 		}
-		$this->exception = di($exception);
+		$this->exception = $container->get($exception);
 
-		$this->router = di(DataGrip::class)->get(ROUTER_TYPE_HTTP);
+		$this->router = $container->get(DataGrip::class)->get(ROUTER_TYPE_HTTP);
 	}
 
 
