@@ -19,7 +19,7 @@ class StreamResponse extends Response
 	{
 		$body = $this->getBody();
 		$total = ceil($this->limit / $body->getSize());
-
+		$response->header('Content-Length', [$body->getSize()]);
 		for ($i = 0; $i < $total; $i++) {
 			$body->seek($i);
 
