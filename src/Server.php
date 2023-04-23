@@ -7,19 +7,14 @@ namespace Kiri\Router;
 use Exception;
 use Kiri;
 use Kiri\Router\Base\Middleware as MiddlewareManager;
-use Psr\Container\ContainerInterface;
 use Kiri\Di\Context;
-use Kiri\Events\EventProvider;
 use Kiri\Router\Interface\ExceptionHandlerInterface;
-use Psr\Container\ContainerExceptionInterface;
-use Psr\Container\NotFoundExceptionInterface;
 use Psr\Http\Message\RequestInterface;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\UriInterface;
 use Swoole\Http\Request;
 use Kiri\Di\Inject\Service;
 use Swoole\Http\Response;
-use Kiri\Di\Inject\Container;
 use Kiri\Router\Constrict\ConstrictRequest;
 use Kiri\Router\Constrict\ConstrictResponse;
 use Kiri\Router\Constrict\Uri;
@@ -132,9 +127,6 @@ class Server implements OnRequestInterface
 		/** @var ConstrictRequest $PsrRequest */
 		return Context::set(RequestInterface::class, $serverRequest);
 	}
-
-
-
 
 
 	/**
