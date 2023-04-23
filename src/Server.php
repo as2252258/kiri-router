@@ -15,6 +15,7 @@ use Psr\Container\ContainerExceptionInterface;
 use Psr\Container\NotFoundExceptionInterface;
 use Psr\Http\Message\RequestInterface;
 use Psr\Http\Message\ResponseInterface;
+use Psr\Http\Message\UriInterface;
 use Swoole\Http\Request;
 use Kiri\Di\Inject\Service;
 use Swoole\Http\Response;
@@ -120,7 +121,7 @@ class Server implements OnRequestInterface
 		$PsrResponse->withContentType($this->response->contentType);
 
 		$serverRequest = (new ConstrictRequest())->withDataHeaders($request->getData())
-			->withUri(Uri::parse($request))
+			->withUri(static::parse($request))
 			->withProtocolVersion($request->server['server_protocol'])
 			->withCookieParams($request->cookie ?? [])
 			->withQueryParams($request->get ?? [])
@@ -131,6 +132,29 @@ class Server implements OnRequestInterface
 		/** @var ConstrictRequest $PsrRequest */
 		return Context::set(RequestInterface::class, $serverRequest);
 	}
+
+
+
+
+
+	/**
+	 * @param Request $request
+	 * @return UriInterface
+	 */
+	public static function parse(Request $request): UriInterface
+	{
+		$uri = new Uri();
+		$uri->withQuery($request->server['query_string'] ?? '')
+			->withPath($request->server['path_info'])
+			->withPort($request->server['server_port']);
+		if (isset($request->server['https']) && $request->server['https'] !== 'off') {
+			$uri->withScheme('https');
+		} else {
+			$uri->withScheme('http');
+		}
+		return $uri;
+	}
+
 
 
 }
