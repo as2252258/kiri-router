@@ -89,6 +89,7 @@ class ServerRequest
 			error($throwable);
 			$PsrResponse = $this->exception->emit($throwable, di(ConstrictResponse::class));
 		} finally {
+			var_dump($this->emitter, $PsrResponse, $response);
 			$this->emitter->sender($PsrResponse, $response);
 		}
 	}
