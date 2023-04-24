@@ -74,6 +74,9 @@ class ControllerInterpreter
 	 */
 	public function resolveMethod(object $class, string|\ReflectionMethod $reflectionMethod, ReflectionClass $reflectionClass): Handler
 	{
+		if (empty($reflectionMethod)) {
+			return new Handler([$class, $reflectionMethod], []);
+		}
 		if (is_string($reflectionMethod)) {
 			$reflectionMethod = $reflectionClass->getMethod($reflectionMethod);
 		}
