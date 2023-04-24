@@ -86,10 +86,8 @@ class ServerRequest
 
 			$PsrResponse = (new HttpRequestHandler($middleware, $dispatcher))->handle($request);
 		} catch (\Throwable $throwable) {
-			error($throwable);
 			$PsrResponse = $this->exception->emit($throwable, di(ConstrictResponse::class));
 		} finally {
-			var_dump($this->emitter, $PsrResponse, $response);
 			$this->emitter->sender($PsrResponse, $response);
 		}
 	}

@@ -22,9 +22,11 @@ class ExceptionHandlerDispatcher implements ExceptionHandlerInterface
 	 * @param Throwable $exception
 	 * @param object $response
 	 * @return ResponseInterface
+	 * @throws
 	 */
 	public function emit(Throwable $exception, object $response): ResponseInterface
 	{
+		error($exception);
 		$response->withContentType(ContentType::HTML)->withBody(new Stream(jTraceEx($exception, null, true)));
 		if ($exception->getCode() == 404) {
 			return $response->withStatus(404);
