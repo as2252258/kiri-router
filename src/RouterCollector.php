@@ -112,6 +112,9 @@ class RouterCollector implements \ArrayAccess, \IteratorAggregate
 		if (is_array($closure)) {
 			[$class, $method] = $closure;
 		} else {
+			if (!str_contains($closure,'@')) {
+				$closure .= '@';
+			}
 			[$className, $method] = explode('@', $closure);
 
 			$class = Kiri::getDi()->get($this->resetName($className));
