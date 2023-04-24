@@ -8,7 +8,12 @@ use Kiri\Di\Context;
 use Kiri\Router\Constrict\ConstrictResponse;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\StreamInterface;
+use ReflectionException;
 
+
+/**
+ * 
+ */
 class Response implements ResponseInterface
 {
 
@@ -17,6 +22,24 @@ class Response implements ResponseInterface
 	 * @var ContentType
 	 */
 	public ContentType $contentType = ContentType::JSON;
+
+
+	/**
+	 * @var string|SwooleHttpResponseEmitterInterface
+	 */
+	public string|SwooleHttpResponseEmitterInterface $emmit = SwooleHttpResponseEmitterInterface::class;
+
+
+	/**
+	 * @return void
+	 * @throws ReflectionException
+	 */
+	public function init(): void
+	{
+		if (is_string($this->emmit)) {
+			$this->emmit = di($this->emmit);
+		}
+	}
 
 
 	/**

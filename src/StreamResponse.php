@@ -3,8 +3,10 @@ declare(strict_types=1);
 
 namespace Kiri\Router;
 
-use Psr\Http\Message\ResponseInterface;
 
+/**
+ *
+ */
 class StreamResponse extends Response
 {
 

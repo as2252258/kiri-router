@@ -4,11 +4,11 @@ declare(strict_types=1);
 namespace Kiri\Router;
 
 use Exception;
-use Kiri\Di\Interface\ResponseEmitter;
+use Kiri\Di\Interface\ResponseEmitterInterface;
 use Psr\Http\Message\ResponseInterface;
 
 
-class HttpResponseEmitter implements ResponseEmitter
+class SwooleHttpResponseEmitterInterface implements ResponseEmitterInterface
 {
 
 
