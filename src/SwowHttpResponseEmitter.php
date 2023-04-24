@@ -5,7 +5,7 @@ namespace Kiri\Router;
 use Kiri\Di\Interface\ResponseEmitterInterface;
 use Psr\Http\Message\ResponseInterface;
 
-class SwowHttpResponseEmitterInterface implements ResponseEmitterInterface
+class SwowHttpResponseEmitter implements ResponseEmitterInterface
 {
 
 

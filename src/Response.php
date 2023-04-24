@@ -5,6 +5,7 @@ namespace Kiri\Router;
 
 use InvalidArgumentException;
 use Kiri\Di\Context;
+use Kiri\Di\Interface\ResponseEmitterInterface;
 use Kiri\Router\Constrict\ConstrictResponse;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\StreamInterface;
@@ -25,9 +26,9 @@ class Response implements ResponseInterface
 
 
 	/**
-	 * @var string|SwooleHttpResponseEmitterInterface
+	 * @var string|ResponseEmitterInterface
 	 */
-	public string|SwooleHttpResponseEmitterInterface $emmit = SwooleHttpResponseEmitterInterface::class;
+	public string|ResponseEmitterInterface $emmit = SwooleHttpResponseEmitter::class;
 
 
 	/**

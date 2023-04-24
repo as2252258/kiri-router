@@ -8,7 +8,7 @@ use Kiri\Di\Interface\ResponseEmitterInterface;
 use Psr\Http\Message\ResponseInterface;
 
 
-class SwooleHttpResponseEmitterInterface implements ResponseEmitterInterface
+class SwooleHttpResponseEmitter implements ResponseEmitterInterface
 {
 
 
