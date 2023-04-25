@@ -66,6 +66,17 @@ class Request implements ServerRequestInterface
 
 
 	/**
+	 * @param string $name
+	 * @return mixed
+	 */
+	public function __get(string $name): mixed
+	{
+		// TODO: Implement __get() method.
+		return $this->__call__('get' . ucfirst($name));
+	}
+
+
+	/**
 	 * Retrieves the HTTP protocol version as a string.
 	 *
 	 * The string MUST contain only the HTTP version number (e.g., "1.1", "1.0").
