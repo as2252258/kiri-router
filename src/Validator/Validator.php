@@ -51,10 +51,10 @@ class Validator
 	}
 
 
-	/**
-	 * @param ServerRequestInterface|Request $request
-	 * @return Validator
-	 */
+    /**
+     * @param ServerRequestInterface|Request $request
+     * @return Validator
+     */
 	public function bindData(ServerRequestInterface|Request $request): static
 	{
 		if ($request->isPost) {
@@ -64,6 +64,12 @@ class Validator
 		}
 		foreach ($data as $key => $value) {
 			if (property_exists($this->formData, $key)) {
+                $type = new \ReflectionProperty($this->formData, $key);
+                $value = match ($type->getType()->getName()) {
+                    'int' => (int)$value,
+                    'float' => (float)$value,
+                    default => $value
+                };
 				$this->formData->{$key} = $value;
 			}
 		}
