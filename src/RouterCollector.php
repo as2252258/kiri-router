@@ -141,8 +141,8 @@ class RouterCollector implements \ArrayAccess, \IteratorAggregate
 	 * @param string $method
 	 * @param Handler $handler
 	 * @return void
-	 * @throws ReflectionException
-	 */
+	 * @throws Exception
+     */
 	public function register(string $path, string $method, Handler $handler): void
 	{
 		$hashMap = HashMap::Tree($this->methods, $method);
