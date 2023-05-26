@@ -11,7 +11,7 @@ use Psr\Container\ContainerInterface;
 use Psr\Log\LoggerInterface;
 use Psr\Http\Message\RequestInterface;
 use Psr\Http\Message\ResponseInterface;
-use Kiri\Di\Inject\Service;
+use Kiri\Di\Inject\Container;
 use ReflectionException;
 
 /**
@@ -27,14 +27,14 @@ abstract class Controller
 	/**
 	 * @var Request
 	 */
-	#[Service('request')]
+	#[Container(RequestInterface::class)]
 	public RequestInterface $request;
 
 
 	/**
 	 * @var Response
 	 */
-	#[Service('response')]
+	#[Container(ResponseInterface::class)]
 	public ResponseInterface $response;
 
 

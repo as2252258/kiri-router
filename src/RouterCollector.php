@@ -163,12 +163,11 @@ class RouterCollector implements \ArrayAccess, \IteratorAggregate
 	 * @param string $class
 	 * @param string $method
 	 * @return void
-	 * @throws ReflectionException
 	 * @throws Exception
 	 */
 	public function registerMiddleware(string $class, string $method): void
 	{
-		$middlewares = Kiri::service()->get('request')->middlewares;
+		$middlewares = \request()->middlewares;
 		if (count($middlewares) > 0) {
 			$this->appendMiddleware($middlewares, $class, $method);
 		}
