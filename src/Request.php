@@ -29,7 +29,17 @@ class Request implements ServerRequestInterface
 	public string $exception = ExceptionHandlerDispatcher::class;
 
 
-	/**
+    /**
+     * 初始化
+     */
+    public function __construct()
+    {
+        $this->middlewares = \config('request.middlewares', []);
+        $this->exception = \config('request.exception', ExceptionHandlerDispatcher::class);
+    }
+
+
+    /**
 	 * @return AuthorizationInterface|null
 	 */
 	public function getAuthority(): ?AuthorizationInterface
