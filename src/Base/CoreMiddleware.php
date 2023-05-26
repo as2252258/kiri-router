@@ -26,9 +26,7 @@ class CoreMiddleware implements MiddlewareInterface
 	 */
 	public function process(ServerRequestInterface $request, RequestHandlerInterface $handler): ResponseInterface
 	{
-		/** @var ResponseInterface $response */
-		$response = \Kiri::service()->get('response');
-		$response->withHeaders([
+		response()->withHeaders([
 			'Access-Control-Allow-Headers'  => '*',
 			'Access-Control-Request-Method' => '*',
 			'Access-Control-Allow-Origin'   => '*'
