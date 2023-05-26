@@ -4,9 +4,6 @@ declare(strict_types=1);
 namespace Kiri\Router\Annotate;
 
 use Kiri\Router\Base\Middleware as MiddlewareManager;
-use Kiri\Router\Interface\ValidatorInterface;
-use Kiri\Router\Validator\Validator;
-use Kiri\Router\Validator\ValidatorMiddleware;
 use ReflectionException;
 
 abstract class AbstractRequestMethod
