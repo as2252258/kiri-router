@@ -243,7 +243,7 @@ class ConstrictRequest extends Message implements RequestInterface, ServerReques
 	public function getServerParams(): array
 	{
 		// TODO: Implement getServerParams() method.
-		return $this->serverParams = [];
+		return $this->serverParams;
 	}
 
 
