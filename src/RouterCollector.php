@@ -67,8 +67,7 @@ class RouterCollector implements \ArrayAccess, \IteratorAggregate
 	 * @param array $method
 	 * @param string $route
 	 * @param string|array|Closure $closure
-	 * @throws ReflectionException
-	 */
+     */
 	public function addRoute(array $method, string $route, string|array|Closure $closure): void
 	{
 		try {
