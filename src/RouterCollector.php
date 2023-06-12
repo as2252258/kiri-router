@@ -154,7 +154,9 @@ class RouterCollector implements \ArrayAccess, \IteratorAggregate
     public function register(string $path, string $method, Handler $handler): void
     {
         $hashMap = HashMap::Tree($this->methods, $method);
-        foreach (str_split($path, 4) as $item) {
+
+        $lists = explode('/', $path);
+        foreach ($lists as $item) {
             if ($hashMap->has($item)) {
                 $hashMap = $hashMap->get($item);
             } else {
@@ -220,7 +222,7 @@ class RouterCollector implements \ArrayAccess, \IteratorAggregate
             $path = '/*';
         }
 
-        $lists = str_split($path, 4);
+        $lists = explode('/', $path);
         foreach ($lists as $item) {
             $parent = $parent->get($item);
             if ($parent === null) {
