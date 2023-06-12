@@ -24,268 +24,263 @@ class RouterCollector implements \ArrayAccess, \IteratorAggregate
 {
 
 
-	private array $_item = [];
+    private array $_item = [];
 
 
-	private array $dump = [];
+    private array $dump = [];
 
 
-	public array $groupTack = [];
+    public array $groupTack = [];
 
 
-	/**
-	 * @var HashMap
-	 */
-	private HashMap $methods;
-
-
-	public function __construct()
-	{
-		$this->methods = new HashMap();
-	}
-
-
-	/**
-	 * @return array
-	 */
-	public function getDump(): array
-	{
-		return $this->dump;
-	}
-
-
-	/**
-	 * @return Traversable
-	 */
-	public function getIterator(): Traversable
-	{
-		return new \ArrayIterator($this->_item);
-	}
-
-
-	/**
-	 * @param array $method
-	 * @param string $route
-	 * @param string|array|Closure $closure
+    /**
+     * @var HashMap
      */
-	public function addRoute(array $method, string $route, string|array|Closure $closure): void
-	{
-		try {
-			$route = $this->_splicing_routing($route);
-			$interpreter = Kiri::getDi()->get(ControllerInterpreter::class);
-			if ($closure instanceof Closure) {
-				$handler = $interpreter->addRouteByClosure($closure);
-			} else {
-				$handler = $this->resolve($closure, $interpreter);
-			}
-			foreach ($method as $value) {
-				if ($value instanceof RequestMethod) {
-					$value = $value->getString();
-				}
-				if (is_array($closure)) {
-					$closure[0] = is_object($closure[0]) ? get_class($closure[0]) : $closure;
-				} else if (is_string($closure)) {
-					$closure = explode('@', $closure);
-				}
-				$this->dump[] = [
-					'method'   => $value,
-					'path'     => $route,
-					'callback' => $closure instanceof Closure ? 'Closure' : $closure
-				];
-				$this->register($route, $value, $handler);
-			}
-		} catch (Throwable $throwable) {
-			error($throwable);
-		}
-	}
+    private HashMap $methods;
+
+    protected HashMap $default;
 
 
-	/**
-	 * @param string|array $closure
-	 * @param ControllerInterpreter $interpreter
-	 * @return Handler
-	 * @throws ReflectionException
-	 */
-	private function resolve(string|array $closure, ControllerInterpreter $interpreter): Handler
-	{
-		if (is_array($closure)) {
-			[$class, $method] = $closure;
-		} else {
-			if (!str_contains($closure,'@')) {
-				$closure .= '@';
-			}
-			[$className, $method] = explode('@', $closure);
-
-			$class = Kiri::getDi()->get($this->resetName($className));
-		}
-		return $interpreter->addRouteByString($class, $method);
-	}
-
-
-	/**
-	 * @param string $className
-	 * @return string
-	 */
-	private function resetName(string $className): string
-	{
-		$namespace = array_filter(array_column($this->groupTack, 'namespace'));
-		if (count($namespace) < 1) {
-			return $className;
-		}
-		return implode('\\', $namespace) . '\\' . $className;
-	}
-
-
-	/**
-	 * @param string $path
-	 * @param string $method
-	 * @param Handler $handler
-	 * @return void
-	 * @throws Exception
+    /**
+     * @throws ReflectionException
      */
-	public function register(string $path, string $method, Handler $handler): void
-	{
-		$hashMap = HashMap::Tree($this->methods, $method);
-		foreach (str_split($path, 4) as $item) {
-			if ($hashMap->has($item)) {
-				$hashMap = $hashMap->get($item);
-			} else {
-				$hashMap->put($item, $hashMap = new HashMap());
-			}
-		}
-		$hashMap->put('handler', $handler);
-		$this->registerMiddleware($handler->getClass(), $handler->getMethod());
-	}
+    public function __construct()
+    {
+        $this->methods = new HashMap();
+
+        $this->default = new HashMap();
+        $this->default->put('handler', new Handler([di(NotFoundController::class), 'fail'], []));
+    }
 
 
-	/**
-	 * @param string $class
-	 * @param string $method
-	 * @return void
-	 * @throws Exception
-	 */
-	public function registerMiddleware(string $class, string $method): void
-	{
-		$middlewares = \request()->middlewares;
-		if (count($middlewares) > 0) {
-			$this->appendMiddleware($middlewares, $class, $method);
-		}
-		$middlewares = array_column($this->groupTack, 'middleware');
-		if (count($middlewares) > 0) {
-			$this->appendMiddleware($middlewares, $class, $method);
-		}
-	}
+    /**
+     * @return array
+     */
+    public function getDump(): array
+    {
+        return $this->dump;
+    }
 
 
-	/**
-	 * @param array $middlewares
-	 * @param $class
-	 * @param $method
-	 * @return void
-	 * @throws
-	 */
-	private function appendMiddleware(array $middlewares, $class, $method): void
-	{
-		$manager = Kiri::getDi()->get(Middleware::class);
-		foreach ($middlewares as $middleware) {
-			if (is_string($middleware)) {
-				$middleware = [$middleware];
-			}
-			foreach ($middleware as $value) {
-				$manager->set($class, $method, $value);
-			}
-		}
-	}
-
-	/**
-	 * @param string $path
-	 * @param string $method
-	 * @return Handler|null
-	 * @throws ReflectionException
-	 */
-	public function query(string $path, string $method): ?Handler
-	{
-		if (!$this->methods->has($method)) {
-			return $this->NotFundHandler($path);
-		}
-		$parent = $this->methods->get($method);
-		foreach (str_split($path, 4) as $item) {
-			$parent = $parent->get($item);
-			if ($parent === null) {
-				return $this->NotFundHandler($path);
-			}
-		}
-		return $parent->get('handler');
-	}
+    /**
+     * @return Traversable
+     */
+    public function getIterator(): Traversable
+    {
+        return new \ArrayIterator($this->_item);
+    }
 
 
-	/**
-	 * @param string $path
-	 * @return Handler
-	 * @throws ReflectionException
-	 */
-	private function NotFundHandler(string $path): Handler
-	{
-		return new Handler([di(NotFoundController::class), 'fail'], []);
-	}
-
-	/**
-	 * @param string $route
-	 * @return string
-	 */
-	protected function _splicing_routing(string $route): string
-	{
-		$route = ltrim($route, '/');
-		$prefix = array_column($this->groupTack, 'prefix');
-		if (empty($prefix = array_filter($prefix))) {
-			return '/' . $route;
-		}
-		return '/' . implode('/', $prefix) . '/' . $route;
-	}
-
-
-	/**
-	 * @param mixed $offset
-	 * @return bool
-	 */
-	public function offsetExists(mixed $offset): bool
-	{
-		// TODO: Implement offsetExists() method.
-		return isset($this->_item[$offset]);
-	}
-
-
-	/**
-	 * @param mixed $offset
-	 * @return Router|null
-	 */
-	public function offsetGet(mixed $offset): ?Router
-	{
-		if ($this->offsetExists($offset)) {
-			return $this->_item[$offset];
-		}
-		return null;
-	}
+    /**
+     * @param array $method
+     * @param string $route
+     * @param string|array|Closure $closure
+     */
+    public function addRoute(array $method, string $route, string|array|Closure $closure): void
+    {
+        try {
+            $route = $this->_splicing_routing($route);
+            $interpreter = Kiri::getDi()->get(ControllerInterpreter::class);
+            if ($closure instanceof Closure) {
+                $handler = $interpreter->addRouteByClosure($closure);
+            } else {
+                $handler = $this->resolve($closure, $interpreter);
+            }
+            foreach ($method as $value) {
+                if ($value instanceof RequestMethod) {
+                    $value = $value->getString();
+                }
+                if (is_array($closure)) {
+                    $closure[0] = is_object($closure[0]) ? get_class($closure[0]) : $closure;
+                } else if (is_string($closure)) {
+                    $closure = explode('@', $closure);
+                }
+                $this->dump[] = [
+                    'method'   => $value,
+                    'path'     => $route,
+                    'callback' => $closure instanceof Closure ? 'Closure' : $closure
+                ];
+                $this->register($route, $value, $handler);
+            }
+        } catch (Throwable $throwable) {
+            error($throwable);
+        }
+    }
 
 
-	/**
-	 * @param mixed $offset
-	 * @param mixed $value
-	 * @return void
-	 */
-	public function offsetSet(mixed $offset, mixed $value): void
-	{
-		// TODO: Implement offsetSet() method.
-		$this->_item[$offset] = $value;
-	}
+    /**
+     * @param string|array $closure
+     * @param ControllerInterpreter $interpreter
+     * @return Handler
+     * @throws ReflectionException
+     */
+    private function resolve(string|array $closure, ControllerInterpreter $interpreter): Handler
+    {
+        if (is_array($closure)) {
+            [$class, $method] = $closure;
+        } else {
+            if (!str_contains($closure, '@')) {
+                $closure .= '@';
+            }
+            [$className, $method] = explode('@', $closure);
+
+            $class = Kiri::getDi()->get($this->resetName($className));
+        }
+        return $interpreter->addRouteByString($class, $method);
+    }
 
 
-	/**
-	 * @param mixed $offset
-	 * @return void
-	 */
-	public function offsetUnset(mixed $offset): void
-	{
-		unset($this->_item[$offset]);
-	}
+    /**
+     * @param string $className
+     * @return string
+     */
+    private function resetName(string $className): string
+    {
+        $namespace = array_filter(array_column($this->groupTack, 'namespace'));
+        if (count($namespace) < 1) {
+            return $className;
+        }
+        return implode('\\', $namespace) . '\\' . $className;
+    }
+
+
+    /**
+     * @param string $path
+     * @param string $method
+     * @param Handler $handler
+     * @return void
+     * @throws Exception
+     */
+    public function register(string $path, string $method, Handler $handler): void
+    {
+        $hashMap = HashMap::Tree($this->methods, $method);
+//		foreach (str_split($path, 4) as $item) {
+//			if ($hashMap->has($item)) {
+//				$hashMap = $hashMap->get($item);
+//			} else {
+        $hashMap->put($path, $hashMap = new HashMap());
+//			}
+//		}
+        $hashMap->put('handler', $handler);
+        $this->registerMiddleware($handler->getClass(), $handler->getMethod());
+    }
+
+
+    /**
+     * @param string $class
+     * @param string $method
+     * @return void
+     * @throws Exception
+     */
+    public function registerMiddleware(string $class, string $method): void
+    {
+        $middlewares = \request()->middlewares;
+        if (count($middlewares) > 0) {
+            $this->appendMiddleware($middlewares, $class, $method);
+        }
+        $middlewares = array_column($this->groupTack, 'middleware');
+        if (count($middlewares) > 0) {
+            $this->appendMiddleware($middlewares, $class, $method);
+        }
+    }
+
+
+    /**
+     * @param array $middlewares
+     * @param $class
+     * @param $method
+     * @return void
+     * @throws
+     */
+    private function appendMiddleware(array $middlewares, $class, $method): void
+    {
+        $manager = Kiri::getDi()->get(Middleware::class);
+        foreach ($middlewares as $middleware) {
+            if (is_string($middleware)) {
+                $middleware = [$middleware];
+            }
+            foreach ($middleware as $value) {
+                $manager->set($class, $method, $value);
+            }
+        }
+    }
+
+    /**
+     * @param string $path
+     * @param string $method
+     * @return Handler|null
+     */
+    public function query(string $path, string $method): ?Handler
+    {
+        if (!$this->methods->has($method)) {
+            return $this->default->get('handler');
+        }
+        $parent = $this->methods->get($method);
+
+        /** @var HashMap $parent */
+        $parent = $parent->get($path, $this->default);
+
+        return $parent->get('handler');
+    }
+
+
+    /**
+     * @param string $route
+     * @return string
+     */
+    protected function _splicing_routing(string $route): string
+    {
+        $route = ltrim($route, '/');
+        $prefix = array_column($this->groupTack, 'prefix');
+        if (empty($prefix = array_filter($prefix))) {
+            return '/' . $route;
+        }
+        return '/' . implode('/', $prefix) . '/' . $route;
+    }
+
+
+    /**
+     * @param mixed $offset
+     * @return bool
+     */
+    public function offsetExists(mixed $offset): bool
+    {
+        // TODO: Implement offsetExists() method.
+        return isset($this->_item[$offset]);
+    }
+
+
+    /**
+     * @param mixed $offset
+     * @return Router|null
+     */
+    public function offsetGet(mixed $offset): ?Router
+    {
+        if ($this->offsetExists($offset)) {
+            return $this->_item[$offset];
+        }
+        return null;
+    }
+
+
+    /**
+     * @param mixed $offset
+     * @param mixed $value
+     * @return void
+     */
+    public function offsetSet(mixed $offset, mixed $value): void
+    {
+        // TODO: Implement offsetSet() method.
+        $this->_item[$offset] = $value;
+    }
+
+
+    /**
+     * @param mixed $offset
+     * @return void
+     */
+    public function offsetUnset(mixed $offset): void
+    {
+        unset($this->_item[$offset]);
+    }
 }
