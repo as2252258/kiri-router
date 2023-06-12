@@ -228,8 +228,8 @@ class RouterCollector implements \ArrayAccess, \IteratorAggregate
             }
         }
 
-        /** @var HashMap $parent */
-        $parent = $parent->get($path, $this->default);
+//        /** @var HashMap $parent */
+//        $parent = $parent->get($path, $this->default);
 
         return $parent->get('handler');
     }
