@@ -154,13 +154,13 @@ class RouterCollector implements \ArrayAccess, \IteratorAggregate
     public function register(string $path, string $method, Handler $handler): void
     {
         $hashMap = HashMap::Tree($this->methods, $method);
-//		foreach (str_split($path, 4) as $item) {
-//			if ($hashMap->has($item)) {
-//				$hashMap = $hashMap->get($item);
-//			} else {
-        $hashMap->put($path, $hashMap = new HashMap());
-//			}
-//		}
+        foreach (str_split($path, 4) as $item) {
+            if ($hashMap->has($item)) {
+                $hashMap = $hashMap->get($item);
+            } else {
+                $hashMap->put($path, $hashMap = new HashMap());
+            }
+        }
         $hashMap->put('handler', $handler);
         $this->registerMiddleware($handler->getClass(), $handler->getMethod());
     }
@@ -212,13 +212,21 @@ class RouterCollector implements \ArrayAccess, \IteratorAggregate
      */
     public function query(string $path, string $method): ?Handler
     {
-        if (!$this->methods->has($method)) {
+        $parent = $this->methods->get($method);
+        if ($parent === null) {
             return $this->default->get('handler');
         }
         if ($method === 'OPTIONS') {
             $path = '/*';
         }
-        $parent = $this->methods->get($method);
+
+        $lists = str_split($path, 4);
+        foreach ($lists as $list) {
+            $parent = $parent->get($list);
+            if ($parent === null) {
+                return $this->default->get('handler');
+            }
+        }
 
         /** @var HashMap $parent */
         $parent = $parent->get($path, $this->default);
