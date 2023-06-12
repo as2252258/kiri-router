@@ -227,10 +227,6 @@ class RouterCollector implements \ArrayAccess, \IteratorAggregate
                 return $this->default->get(':_handler');
             }
         }
-
-//        /** @var HashMap $parent */
-//        $parent = $parent->get($path, $this->default);
-
         return $parent->get(':_handler');
     }
 
