@@ -148,9 +148,6 @@ class Uri implements UriInterface
 	public function getPath(): string
 	{
 		// TODO: Implement getPath() method.
-        if ($this->path === 'OPTIONS') {
-            $this->path = '/*';
-        }
 		return $this->path;
 	}
 

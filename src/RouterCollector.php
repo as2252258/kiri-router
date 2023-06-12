@@ -215,6 +215,9 @@ class RouterCollector implements \ArrayAccess, \IteratorAggregate
         if (!$this->methods->has($method)) {
             return $this->default->get('handler');
         }
+        if ($method === 'OPTIONS') {
+            $path = '/*';
+        }
         $parent = $this->methods->get($method);
 
         /** @var HashMap $parent */
