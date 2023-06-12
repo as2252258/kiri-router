@@ -49,7 +49,7 @@ class RouterCollector implements \ArrayAccess, \IteratorAggregate
         $this->methods = new HashMap();
 
         $this->default = new HashMap();
-        $this->default->put('handler', new Handler([di(NotFoundController::class), 'fail'], []));
+        $this->default->put(':_handler', new Handler([di(NotFoundController::class), 'fail'], []));
     }
 
 
@@ -158,10 +158,10 @@ class RouterCollector implements \ArrayAccess, \IteratorAggregate
             if ($hashMap->has($item)) {
                 $hashMap = $hashMap->get($item);
             } else {
-                $hashMap->put($path, $hashMap = new HashMap());
+                $hashMap->put($item, $hashMap = new HashMap());
             }
         }
-        $hashMap->put('handler', $handler);
+        $hashMap->put(':_handler', $handler);
         $this->registerMiddleware($handler->getClass(), $handler->getMethod());
     }
 
@@ -214,24 +214,24 @@ class RouterCollector implements \ArrayAccess, \IteratorAggregate
     {
         $parent = $this->methods->get($method);
         if ($parent === null) {
-            return $this->default->get('handler');
+            return $this->default->get(':_handler');
         }
         if ($method === 'OPTIONS') {
             $path = '/*';
         }
 
         $lists = str_split($path, 4);
-        foreach ($lists as $list) {
-            $parent = $parent->get($list);
+        foreach ($lists as $item) {
+            $parent = $parent->get($item);
             if ($parent === null) {
-                return $this->default->get('handler');
+                return $this->default->get(':_handler');
             }
         }
 
 //        /** @var HashMap $parent */
 //        $parent = $parent->get($path, $this->default);
 
-        return $parent->get('handler');
+        return $parent->get(':_handler');
     }
 
 
