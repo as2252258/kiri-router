@@ -6,6 +6,7 @@ namespace Kiri\Router;
 use Closure;
 use Exception;
 use Kiri;
+use Kiri\Router\Base\Middleware as MiddlewareManager;
 use Kiri\Router\Constrict\RequestMethod;
 use ReflectionException;
 
@@ -178,7 +179,10 @@ class Router
 		$scanner->parse('App');
 
 		$this->read_dir_file(APP_PATH . 'routes');
-	}
+
+        $router = Kiri::getDi()->get(DataGrip::class)->get(ROUTER_TYPE_HTTP);
+        $router->reset();
+    }
 
 
 	/**

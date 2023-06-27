@@ -8,6 +8,7 @@ namespace Kiri\Router;
 use Closure;
 use Exception;
 use Kiri;
+use Kiri\Router\Base\Middleware as MiddlewareManager;
 use Kiri\Router\Base\NotFoundController;
 use Kiri\Router\Constrict\RequestMethod;
 use ReflectionException;
@@ -34,7 +35,7 @@ class RouterCollector implements \ArrayAccess, \IteratorAggregate
 
 
     /**
-     * @var HashMap
+     * @var array<string, array<string, HashMap>>
      */
     private HashMap $methods;
 
@@ -46,6 +47,30 @@ class RouterCollector implements \ArrayAccess, \IteratorAggregate
     public function __construct()
     {
         $this->methods = new HashMap();
+    }
+
+
+    /**
+     * @return void
+     * @throws ReflectionException
+     */
+    public function reset(): void
+    {
+        $middlewareManager = \Kiri::getDi()->get(MiddlewareManager::class);
+
+        /**
+         * @var string $method
+         * @var HashMap $handlers
+         */
+        foreach ($this->methods as $handlers) {
+
+            /** @var Handler $handler */
+            foreach ($handlers as $path => $handler) {
+                $middleware = $middlewareManager->get($handler->getClass(), $handler->getMethod());
+
+                $handlers->put($path, new HttpRequestHandler($middleware, $handler));
+            }
+        }
     }
 
 
@@ -200,11 +225,11 @@ class RouterCollector implements \ArrayAccess, \IteratorAggregate
      * @return Handler|null
      * @throws ReflectionException
      */
-    public function query(string $path, string $method): ?Handler
+    public function query(string $path, string $method): ?HttpRequestHandler
     {
         $parent = $this->methods->get($method);
         if ($parent === null) {
-            return new Handler([di(NotFoundController::class), 'fail'], []);
+            return new HttpRequestHandler([], new Handler([di(NotFoundController::class), 'fail'], []));
         }
         if ($method === 'OPTIONS') {
             $path = '/*';
