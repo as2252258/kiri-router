@@ -42,14 +42,10 @@ class RouterCollector implements \ArrayAccess, \IteratorAggregate
 
 
     /**
-     * @throws ReflectionException
      */
     public function __construct()
     {
         $this->methods = new HashMap();
-
-        $this->default = new HashMap();
-        $this->default->put(':_handler', new Handler([di(NotFoundController::class), 'fail'], []));
     }
 
 
@@ -154,16 +150,7 @@ class RouterCollector implements \ArrayAccess, \IteratorAggregate
     public function register(string $path, string $method, Handler $handler): void
     {
         $hashMap = HashMap::Tree($this->methods, $method);
-
-        $lists = explode('/', $path);
-        foreach ($lists as $item) {
-            if ($hashMap->has($item)) {
-                $hashMap = $hashMap->get($item);
-            } else {
-                $hashMap->put($item, $hashMap = new HashMap());
-            }
-        }
-        $hashMap->put(':_handler', $handler);
+        $hashMap->put($path, $handler);
         $this->registerMiddleware($handler->getClass(), $handler->getMethod());
     }
 
@@ -211,25 +198,18 @@ class RouterCollector implements \ArrayAccess, \IteratorAggregate
      * @param string $path
      * @param string $method
      * @return Handler|null
+     * @throws ReflectionException
      */
     public function query(string $path, string $method): ?Handler
     {
         $parent = $this->methods->get($method);
         if ($parent === null) {
-            return $this->default->get(':_handler');
+            return new Handler([di(NotFoundController::class), 'fail'], []);
         }
         if ($method === 'OPTIONS') {
             $path = '/*';
         }
-
-        $lists = explode('/', $path);
-        foreach ($lists as $item) {
-            $parent = $parent->get($item);
-            if ($parent === null) {
-                return $this->default->get(':_handler');
-            }
-        }
-        return $parent->get(':_handler');
+        return $parent->get($path);
     }
 
 
