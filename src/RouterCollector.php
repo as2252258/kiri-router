@@ -35,20 +35,9 @@ class RouterCollector implements \ArrayAccess, \IteratorAggregate
 
 
     /**
-     * @var array<string, array<string, HashMap>>
+     * @var array<string, Handler>
      */
-    private HashMap $methods;
-
-    protected HashMap $default;
-
-
-    /**
-     */
-    public function __construct()
-    {
-        $this->methods = new HashMap();
-    }
-
+    private array $methods = [];
 
     /**
      * @return void
