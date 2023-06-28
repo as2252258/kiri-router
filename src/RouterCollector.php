@@ -62,14 +62,12 @@ class RouterCollector implements \ArrayAccess, \IteratorAggregate
          * @var string $method
          * @var HashMap $handlers
          */
-        foreach ($this->methods as $handlers) {
+        foreach ($this->methods as $method => $handler) {
+            [$method, $path] = explode('_', $method);
 
-            /** @var Handler $handler */
-            foreach ($handlers as $path => $handler) {
-                $middleware = $middlewareManager->get($handler->getClass(), $handler->getMethod());
+            $middleware = $middlewareManager->get($handler->getClass(), $handler->getMethod());
 
-                $handlers->put($path, new HttpRequestHandler($middleware, $handler));
-            }
+            $handlers->put($path, new HttpRequestHandler($middleware, $handler));
         }
     }
 
@@ -174,8 +172,7 @@ class RouterCollector implements \ArrayAccess, \IteratorAggregate
      */
     public function register(string $path, string $method, Handler $handler): void
     {
-        $hashMap = HashMap::Tree($this->methods, $method);
-        $hashMap->put($path, $handler);
+        $this->methods[$method . '_' . $path] = $handler;
         $this->registerMiddleware($handler->getClass(), $handler->getMethod());
     }
 
@@ -227,14 +224,14 @@ class RouterCollector implements \ArrayAccess, \IteratorAggregate
      */
     public function query(string $path, string $method): ?HttpRequestHandler
     {
-        $parent = $this->methods->get($method);
-        if ($parent === null) {
-            return new HttpRequestHandler([], new Handler([di(NotFoundController::class), 'fail'], []));
-        }
         if ($method === 'OPTIONS') {
             $path = '/*';
         }
-        return $parent->get($path);
+        $parent = $this->methods[$method . '_' . $path] ?? null;
+        if ($parent === null) {
+            return new HttpRequestHandler([], new Handler([di(NotFoundController::class), 'fail'], []));
+        }
+        return $parent;
     }
 
 
