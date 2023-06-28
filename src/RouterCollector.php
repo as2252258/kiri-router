@@ -63,11 +63,9 @@ class RouterCollector implements \ArrayAccess, \IteratorAggregate
          * @var HashMap $handlers
          */
         foreach ($this->methods as $method => $handler) {
-            [$method, $path] = explode('_', $method);
-
             $middleware = $middlewareManager->get($handler->getClass(), $handler->getMethod());
 
-            $handlers->put($path, new HttpRequestHandler($middleware, $handler));
+            $this->methods[$method] = new HttpRequestHandler($middleware, $handler);
         }
     }
 
