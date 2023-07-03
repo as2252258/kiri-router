@@ -2,9 +2,12 @@
 
 namespace Kiri\Router;
 
+use Kiri\Router\Annotate\AutoController;
 use Kiri\Router\Base\Controller;
 use Psr\Http\Message\ResponseInterface;
 
+
+#[AutoController]
 class OptionsController extends Controller
 {
 
@@ -17,7 +20,7 @@ class OptionsController extends Controller
         return $this->response->withHeaders(['Access-Control-Allow-Headers' => '*',
             'Access-Control-Request-Method' => '*',
             'Access-Control-Allow-Origin' => '*'
-        ])->html('');
+        ])->html();
     }
 
 }
