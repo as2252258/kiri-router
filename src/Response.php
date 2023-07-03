@@ -89,7 +89,7 @@ class Response implements ResponseInterface
      * @param int $statusCode
      * @return ResponseInterface
      */
-    public function html(string $content, int $statusCode = 200): ResponseInterface
+    public function html(string $content = '', int $statusCode = 200): ResponseInterface
     {
         return $this->__call__(__FUNCTION__, $content, $statusCode);
     }
