@@ -171,7 +171,7 @@ class Router
 
 
 	/**
-	 * @throws
+	 * @throws Exception
 	 */
 	public function scan_build_route(): void
 	{

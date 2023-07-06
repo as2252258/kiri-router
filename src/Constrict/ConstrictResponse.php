@@ -76,7 +76,7 @@ class ConstrictResponse extends Message implements ResponseInterface
 	 * @param int $statusCode
 	 * @return $this
 	 */
-	public function html(string $content, int $statusCode = 200): static
+	public function html(string $content = '', int $statusCode = 200): static
 	{
 		$this->getBody()->write($content);
 		return $this->withContentType(ContentType::HTML)->withStatus($statusCode);
