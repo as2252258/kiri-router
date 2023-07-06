@@ -10,8 +10,6 @@ use Kiri\Router\Base\Middleware as MiddlewareManager;
 use Kiri\Router\Constrict\RequestMethod;
 use ReflectionException;
 
-const ROUTER_TYPE_HTTP = 'http';
-
 /**
  *
  *
