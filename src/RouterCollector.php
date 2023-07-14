@@ -39,25 +39,6 @@ class RouterCollector implements \ArrayAccess, \IteratorAggregate
      */
     private array $methods = [];
 
-    /**
-     * @return void
-     * @throws ReflectionException
-     */
-    public function reset(): void
-    {
-        $middlewareManager = \Kiri::getDi()->get(MiddlewareManager::class);
-
-        /**
-         * @var string $method
-         * @var HashMap $handlers
-         */
-        foreach ($this->methods as $method => $handler) {
-            $middleware = $middlewareManager->get($handler->getClass(), $handler->getMethod());
-
-            $this->methods[$method] = new HttpRequestHandler($middleware, $handler);
-        }
-    }
-
 
     /**
      * @return array
@@ -209,14 +190,14 @@ class RouterCollector implements \ArrayAccess, \IteratorAggregate
      * @return Handler|null
      * @throws ReflectionException
      */
-    public function query(string $path, string $method): ?HttpRequestHandler
+    public function query(string $path, string $method): ?Handler
     {
         if ($method === 'OPTIONS') {
             $path = '/*';
         }
         $parent = $this->methods[$method . '_' . $path] ?? null;
         if ($parent === null) {
-            return new HttpRequestHandler([], new Handler([di(NotFoundController::class), 'fail'], []));
+            return new Handler([di(NotFoundController::class), 'fail'], []);
         }
         return $parent;
     }

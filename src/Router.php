@@ -197,9 +197,6 @@ class Router
         $scanner->parse('App');
 
         $this->read_dir_file(APP_PATH . 'routes');
-
-        $router = Kiri::getDi()->get(DataGrip::class)->get(ROUTER_TYPE_HTTP);
-        $router->reset();
     }
 
 
