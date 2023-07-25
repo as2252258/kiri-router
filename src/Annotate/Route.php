@@ -12,10 +12,11 @@ class Route extends AbstractRequestMethod implements InjectRouteInterface
 {
 
 
-	/**
-	 * @param string $path
-	 * @param RequestMethod $method
-	 */
+    /**
+     * @param string $path
+     * @param RequestMethod $method
+     * @param string $version
+     */
 	public function __construct(readonly public string $path, readonly public RequestMethod $method, readonly public string $version = 'v1')
 	{
 	}

@@ -4,12 +4,14 @@ declare(strict_types=1);
 namespace Kiri\Router\Annotate;
 
 
+use ReflectionException;
+
 #[\Attribute(\Attribute::TARGET_CLASS)]
 class AutoController
 {
 
 	/**
-	 * @throws \ReflectionException
+	 * @throws ReflectionException
 	 */
 	public function dispatch(object $object): void
 	{
