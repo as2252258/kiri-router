@@ -6,6 +6,7 @@ namespace Kiri\Router\Annotate;
 use Exception;
 use Kiri\Router\Constrict\RequestMethod;
 use Kiri\Router\Interface\InjectRouteInterface;
+use Kiri\Router\OptionsController;
 use Kiri\Router\Router;
 use ReflectionException;
 
@@ -17,8 +18,9 @@ class Put extends AbstractRequestMethod implements InjectRouteInterface
     /**
      * @param string $path
      * @param string $version
+     * @param bool $enableOption
      */
-	public function __construct(readonly public string $path, readonly public string $version = 'v1')
+	public function __construct(readonly public string $path, readonly public string $version = 'v1', readonly public bool $enableOption = true)
 	{
 	}
 
@@ -36,6 +38,10 @@ class Put extends AbstractRequestMethod implements InjectRouteInterface
 		$path = '/' . ltrim($this->path, '/');
 
 		Router::addRoute(RequestMethod::REQUEST_PUT, $path, [$class, $method]);
+        if ($this->enableOption) {
+            $options = [di(OptionsController::class), 'index'];
+            Router::addRoute([RequestMethod::REQUEST_OPTIONS], $path, $options);
+        }
 	}
 
 }
