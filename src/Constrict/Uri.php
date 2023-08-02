@@ -22,7 +22,7 @@ class Uri implements UriInterface
     /**
      * @param Request $request
      */
-    public function __construct(readonly public Request $request)
+    public function __construct(public Request $request)
     {
     }
 
