@@ -8,6 +8,7 @@ use Exception;
 use Kiri;
 use Kiri\Router\Base\Middleware as MiddlewareManager;
 use Kiri\Router\Constrict\RequestMethod;
+use Kiri\Server\Events\OnWorkerStart;
 use ReflectionException;
 
 /**
