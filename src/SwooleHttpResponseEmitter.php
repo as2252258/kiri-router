@@ -5,26 +5,34 @@ namespace Kiri\Router;
 
 use Exception;
 use Kiri\Di\Interface\ResponseEmitterInterface;
+use Kiri\Server\Events\OnAfterRequest;
+use Psr\Container\ContainerExceptionInterface;
+use Psr\Container\NotFoundExceptionInterface;
 use Psr\Http\Message\ResponseInterface;
+use ReflectionException;
 
 
 class SwooleHttpResponseEmitter implements ResponseEmitterInterface
 {
 
 
-	/**
-	 * @param Response $proxy
-	 * @param object $response
-	 * @return void
-	 * @throws Exception
-	 */
+    /**
+     * @param Response $proxy
+     * @param object $response
+     * @return void
+     * @throws ContainerExceptionInterface
+     * @throws NotFoundExceptionInterface
+     * @throws ReflectionException
+     */
 	public function sender(ResponseInterface $proxy, object $response): void
 	{
 		// TODO: Implement sender() method.
 		$this->writeParams($proxy, $response);
 
 		$proxy->end($response);
-	}
+
+        event(new OnAfterRequest());
+    }
 
 
 	/**
