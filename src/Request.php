@@ -634,10 +634,10 @@ class Request implements ServerRequestInterface
     public function post(string $name, mixed $default = null): mixed
     {
         $parseBody = $this->getParsedBody();
-        if (is_array($parseBody)) {
-            return $parseBody[$name] ?? $default;
+        if ($parseBody instanceof \Closure) {
+            $this->withParsedBody($parseBody = call_user_func($parseBody));
         }
-        return $parseBody ?? $default;
+        return $parseBody[$name] ?? $default;
     }
 
 
