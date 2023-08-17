@@ -33,8 +33,6 @@ class Route extends AbstractRequestMethod implements InjectRouteInterface
 		// TODO: Implement dispatch() method.
 		$path = '/' . ltrim($this->path, '/');
 
-        var_dump($path);
-
 		Router::addRoute([$this->method], $path, [$class, $method]);
 	}
 }
