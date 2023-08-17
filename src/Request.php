@@ -71,7 +71,6 @@ class Request implements ServerRequestInterface
             $response = Context::get(RequestInterface::class);
         }
         return $response->{$method}(...$params);
-
     }
 
 
@@ -635,7 +634,7 @@ class Request implements ServerRequestInterface
     {
         $parseBody = $this->getParsedBody();
         if ($parseBody instanceof \Closure) {
-            $this->withParsedBody($parseBody = call_user_func($parseBody));
+            $parseBody = $this->withParsedBody(call_user_func($parseBody))->getParsedBody();
         }
         return $parseBody[$name] ?? $default;
     }
