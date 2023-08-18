@@ -11,106 +11,107 @@ class Validator
 {
 
 
-	/**
-	 * @var ValidatorInterface[]
-	 */
-	private array $rules = [];
+    /**
+     * @var ValidatorInterface[]
+     */
+    private array $rules = [];
 
 
-	private string $message;
+    private string $message;
 
 
-	private object $formData;
+    private object $formData;
 
 
-	/**
-	 * @param object $formData
-	 */
-	public function setFormData(object $formData): void
-	{
-		$this->formData = $formData;
-	}
+    /**
+     * @param object $formData
+     */
+    public function setFormData(object $formData): void
+    {
+        $this->formData = $formData;
+    }
 
 
-	/**
-	 * @return object
-	 */
-	public function getFormData(): object
-	{
-		return $this->formData;
-	}
+    /**
+     * @return object
+     */
+    public function getFormData(): object
+    {
+        return $this->formData;
+    }
 
-	/**
-	 * @param string $name
-	 * @param ValidatorInterface $rule
-	 * @return void
-	 */
-	public function addRule(string $name, ValidatorInterface $rule): void
-	{
-		$this->rules[$name] = $rule;
-	}
+    /**
+     * @param string $name
+     * @param ValidatorInterface $rule
+     * @return void
+     */
+    public function addRule(string $name, ValidatorInterface $rule): void
+    {
+        $this->rules[$name] = $rule;
+    }
 
 
     /**
      * @param ServerRequestInterface|Request $request
      * @return Validator
      */
-	public function bindData(ServerRequestInterface|Request $request): static
-	{
-		if ($request->isPost) {
-			$data = $request->getParsedBody();
-		} else {
-			$data = $request->getQueryParams();
-		}
-		foreach ($data as $key => $value) {
-			if (property_exists($this->formData, $key)) {
+    public function bindData(ServerRequestInterface|Request $request): static
+    {
+        if ($request->isPost) {
+            $data = $request->getParsedBody();
+        } else {
+            $data = $request->getQueryParams();
+        }
+        foreach ($data as $key => $value) {
+            if (property_exists($this->formData, $key)) {
                 $type = new \ReflectionProperty($this->formData, $key);
-                var_dump($type->getType());
-                $value = match ($type->getType()?->getName()) {
-                    'int' => (int)$value,
-                    'float' => (float)$value,
-                    default => $value
-                };
-				$this->formData->{$key} = $value;
-			}
-		}
-		return $this;
-	}
+                if (!($type->getType() instanceof \ReflectionUnionType)) {
+                    $value = match ($type->getType()?->getName()) {
+                        'int'   => (int)$value,
+                        'float' => (float)$value,
+                        default => $value
+                    };
+                }
+                $this->formData->{$key} = $value;
+            }
+        }
+        return $this;
+    }
 
 
-	/**
-	 * @param ServerRequestInterface|Request $request
-	 * @return bool
-	 */
-	public function run(ServerRequestInterface|Request $request): bool
-	{
-		foreach ($this->rules as $name => $rule) {
-			if (!$rule->dispatch($this->formData, $name)) {
-				return false;
-			}
-		}
-		return true;
-	}
+    /**
+     * @param ServerRequestInterface|Request $request
+     * @return bool
+     */
+    public function run(ServerRequestInterface|Request $request): bool
+    {
+        foreach ($this->rules as $name => $rule) {
+            if (!$rule->dispatch($this->formData, $name)) {
+                return false;
+            }
+        }
+        return true;
+    }
 
 
-	/**
-	 * @param $field
-	 * @return bool
-	 */
-	private function addError($field): bool
-	{
-		$this->message = $field . ' error';
-		return false;
-	}
+    /**
+     * @param $field
+     * @return bool
+     */
+    private function addError($field): bool
+    {
+        $this->message = $field . ' error';
+        return false;
+    }
 
 
-	/**
-	 * @return string
-	 */
-	public function error(): string
-	{
-		return $this->message;
-	}
+    /**
+     * @return string
+     */
+    public function error(): string
+    {
+        return $this->message;
+    }
 
 
 }
