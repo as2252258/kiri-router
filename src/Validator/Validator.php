@@ -59,6 +59,9 @@ class Validator
 	{
 		if ($request->isPost) {
 			$data = $request->getParsedBody();
+            if ($data instanceof \Closure) {
+                $data = $request->withParsedBody(call_user_func($data))->getParsedBody();
+            }
 		} else {
 			$data = $request->getQueryParams();
 		}
