@@ -65,7 +65,7 @@ class Validator
 		foreach ($data as $key => $value) {
 			if (property_exists($this->formData, $key)) {
                 $type = new \ReflectionProperty($this->formData, $key);
-                $value = match ($type?->getType()->getName()) {
+                $value = match ($type->getType()?->getName()) {
                     'int' => (int)$value,
                     'float' => (float)$value,
                     default => $value
