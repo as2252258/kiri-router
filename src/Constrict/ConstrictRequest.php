@@ -382,6 +382,9 @@ class ConstrictRequest extends Message implements RequestInterface, ServerReques
     public function getParsedBody(): object|array|null
     {
         // TODO: Implement getParsedBody() method.
+        if ($this->parsedBody instanceof \Closure) {
+            $this->parsedBody = call_user_func($this->parsedBody);
+        }
         return $this->parsedBody;
     }
 
