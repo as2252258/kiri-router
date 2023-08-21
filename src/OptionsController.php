@@ -2,12 +2,10 @@
 
 namespace Kiri\Router;
 
-use Kiri\Router\Annotate\AutoController;
 use Kiri\Router\Base\Controller;
 use Psr\Http\Message\ResponseInterface;
 
 
-#[AutoController]
 class OptionsController extends Controller
 {
 
