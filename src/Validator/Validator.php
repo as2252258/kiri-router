@@ -87,7 +87,7 @@ class Validator
     {
         foreach ($this->rules as $name => $rule) {
             if (!$rule->dispatch($this->formData, $name)) {
-                return false;
+                return $this->addError($name);
             }
         }
         return true;
