@@ -14,13 +14,13 @@ class Validator
     /**
      * @var ValidatorInterface[]
      */
-    private array $rules = [];
+    protected array $rules = [];
 
 
-    private string $message;
+    protected string $message = '';
 
 
-    private object $formData;
+    protected object $formData;
 
 
     /**
