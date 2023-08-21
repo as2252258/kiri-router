@@ -26,6 +26,6 @@ class Length implements ValidatorInterface
 	public function dispatch(object $class, string $name): bool
 	{
 		// TODO: Implement dispatch() method.
-		return mb_strlen($class->{$name}) === $this->value;
+		return mb_strlen((string)$class->{$name}) === $this->value;
 	}
 }
