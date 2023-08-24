@@ -41,6 +41,21 @@ class RouterCollector implements \ArrayAccess, \IteratorAggregate
 
 
     /**
+     * @var Handler
+     */
+    protected Handler $found;
+
+
+    /**
+     * @throws ReflectionException
+     */
+    public function __construct()
+    {
+        $this->found = new Handler([di(NotFoundController::class), 'fail'], []);
+    }
+
+
+    /**
      * @return array
      */
     public function getDump(): array
@@ -187,19 +202,11 @@ class RouterCollector implements \ArrayAccess, \IteratorAggregate
     /**
      * @param string $path
      * @param string $method
-     * @return Handler|null
-     * @throws ReflectionException
+     * @return Handler
      */
-    public function query(string $path, string $method): ?Handler
+    public function query(string $path, string $method): Handler
     {
-        if ($method === 'OPTIONS') {
-            $path = '/*';
-        }
-        $parent = $this->methods[$method . '_' . $path] ?? null;
-        if ($parent === null) {
-            return new Handler([di(NotFoundController::class), 'fail'], []);
-        }
-        return $parent;
+        return $this->methods[$method . '_' . $path] ?? $this->found;
     }
 
 
