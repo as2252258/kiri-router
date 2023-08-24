@@ -8,14 +8,12 @@ namespace Kiri\Router;
 use Closure;
 use Exception;
 use Kiri;
-use Kiri\Router\Base\Middleware as MiddlewareManager;
 use Kiri\Router\Base\NotFoundController;
 use Kiri\Router\Constrict\RequestMethod;
 use ReflectionException;
 use Throwable;
 use Traversable;
 use Kiri\Router\Base\Middleware;
-use Kiri\Core\HashMap;
 
 
 /**
