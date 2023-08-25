@@ -18,7 +18,6 @@ class Delete extends AbstractRequestMethod implements InjectRouteInterface
     /**
      * @param string $path
      * @param string $version
-     * @param bool $enableOption
      */
     public function __construct(readonly public string $path, readonly public string $version = 'v1')
 	{
