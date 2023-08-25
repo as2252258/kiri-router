@@ -204,6 +204,9 @@ class RouterCollector implements \ArrayAccess, \IteratorAggregate
      */
     public function query(string $path, string $method): Handler
     {
+        if ($method === 'OPTIONS') {
+            $path = '/*';
+        }
         return $this->methods[$method . '_' . $path] ?? $this->found;
     }
 
