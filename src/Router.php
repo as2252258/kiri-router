@@ -57,33 +57,23 @@ class Router
     /**
      * @param string $route
      * @param string $handler
-     * @param bool $enableOption
      * @throws ReflectionException
      */
-    public static function post(string $route, string $handler, bool $enableOption = true): void
+    public static function post(string $route, string $handler): void
     {
         $router = Kiri::getDi()->get(DataGrip::class)->get(static::$type);
         $router->addRoute([RequestMethod::REQUEST_POST], $route, $handler);
-        if ($enableOption) {
-            $options = [di(OptionsController::class), 'index'];
-            $router->addRoute([RequestMethod::REQUEST_OPTIONS], $route, $options);
-        }
     }
 
     /**
      * @param string $route
      * @param string $handler
-     * @param bool $enableOption
      * @throws ReflectionException
      */
-    public static function get(string $route, string $handler, bool $enableOption = true): void
+    public static function get(string $route, string $handler): void
     {
         $router = Kiri::getDi()->get(DataGrip::class)->get(static::$type);
         $router->addRoute([RequestMethod::REQUEST_GET], $route, $handler);
-        if ($enableOption) {
-            $options = [di(OptionsController::class), 'index'];
-            $router->addRoute([RequestMethod::REQUEST_OPTIONS], $route, $options);
-        }
     }
 
 
@@ -113,17 +103,12 @@ class Router
     /**
      * @param string $route
      * @param string $handler
-     * @param bool $enableOption
      * @throws ReflectionException
      */
-    public static function delete(string $route, string $handler, bool $enableOption = true): void
+    public static function delete(string $route, string $handler): void
     {
         $router = Kiri::getDi()->get(DataGrip::class)->get(static::$type);
         $router->addRoute([RequestMethod::REQUEST_DELETE], $route, $handler);
-        if ($enableOption) {
-            $options = [di(OptionsController::class), 'index'];
-            $router->addRoute([RequestMethod::REQUEST_OPTIONS], $route, $options);
-        }
     }
 
 
@@ -142,17 +127,12 @@ class Router
     /**
      * @param string $route
      * @param string $handler
-     * @param bool $enableOption
      * @throws ReflectionException
      */
-    public static function put(string $route, string $handler, bool $enableOption = true): void
+    public static function put(string $route, string $handler): void
     {
         $router = Kiri::getDi()->get(DataGrip::class)->get(static::$type);
         $router->addRoute([RequestMethod::REQUEST_PUT], $route, $handler);
-        if ($enableOption) {
-            $options = [di(OptionsController::class), 'index'];
-            $router->addRoute([RequestMethod::REQUEST_OPTIONS], $route, $options);
-        }
     }
 
 

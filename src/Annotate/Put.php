@@ -20,7 +20,7 @@ class Put extends AbstractRequestMethod implements InjectRouteInterface
      * @param string $version
      * @param bool $enableOption
      */
-	public function __construct(readonly public string $path, readonly public string $version = 'v1', readonly public bool $enableOption = true)
+	public function __construct(readonly public string $path, readonly public string $version = 'v1')
 	{
 	}
 
@@ -38,10 +38,6 @@ class Put extends AbstractRequestMethod implements InjectRouteInterface
 		$path = '/' . ltrim($this->path, '/');
 
 		Router::addRoute(RequestMethod::REQUEST_PUT, $path, [$class, $method]);
-        if ($this->enableOption) {
-            $options = [di(OptionsController::class), 'index'];
-            Router::addRoute([RequestMethod::REQUEST_OPTIONS], $path, $options);
-        }
 	}
 
 }
