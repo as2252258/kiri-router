@@ -11,50 +11,54 @@ class Middleware
 {
 
 
-	public HashMap $map;
+    /**
+     * @var array
+     */
+    protected array $manager = [];
 
 
-	/**
-	 *
-	 */
-	public function __construct()
-	{
-		$this->map = new HashMap();
-	}
+    /**
+     *
+     */
+    public function __construct()
+    {
+    }
 
 
-	/**
-	 * @param string $className
-	 * @param string $method
-	 * @param string|object $middleware
-	 * @return void
-	 * @throws Exception
-	 */
-	public function set(string $className, string $method, string|object $middleware): void
-	{
-		$path = $className . '::' . $method;
-		if ($this->map->has($path)) {
-			$values = $this->map->get($path);
-			if (in_array($middleware, $values)) {
-				return;
-			}
-			if (!in_array(MiddlewareInterface::class, class_implements($middleware))) {
-				return;
-			}
-		}
-		$this->map->append($path, $middleware);
-	}
+    /**
+     * @param string $className
+     * @param string $method
+     * @param string|object $middleware
+     * @return void
+     * @throws Exception
+     */
+    public function set(string $className, string $method, string|object $middleware): void
+    {
+        $path = $className . '::' . $method;
+        if (isset($this->manager[$path])) {
+            $values = $this->manager[$path];
+            if (in_array($middleware, $values)) {
+                return;
+            }
+            if (!in_array(MiddlewareInterface::class, class_implements($middleware))) {
+                return;
+            }
+        } else {
+            $this->manager[$path] = [];
+        }
+        $this->manager[$path][] = $middleware;
+    }
 
 
-	/**
-	 * @param string $className
-	 * @param string $method
-	 * @return array
-	 */
-	public function get(string $className, string $method): array
-	{
-		return $this->map->get($className . '::' . $method) ?? [];
-	}
+    /**
+     * @param string $className
+     * @param string $method
+     * @return array
+     */
+    public function get(string $className, string $method): array
+    {
+        return $this->manager[$className . '::' . $method] ?? [];
+    }
 
 
 }
