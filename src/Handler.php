@@ -9,6 +9,7 @@ use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Server\RequestHandlerInterface;
 use ReflectionException;
+use ReflectionIntersectionType;
 use ReflectionNamedType;
 use ReflectionUnionType;
 
@@ -18,9 +19,9 @@ class Handler implements RequestHandlerInterface
     /**
      * @param array|Closure $handler
      * @param array $parameter
-     * @param ReflectionNamedType|ReflectionUnionType|null $responseType
+     * @param ReflectionNamedType|ReflectionUnionType|ReflectionIntersectionType|null $responseType
      */
-    public function __construct(public array|Closure $handler, public array $parameter, public ReflectionNamedType|ReflectionUnionType|null $responseType)
+    public function __construct(public array|Closure $handler, public array $parameter, public ReflectionNamedType|ReflectionUnionType|ReflectionIntersectionType|null $responseType)
     {
     }
 
