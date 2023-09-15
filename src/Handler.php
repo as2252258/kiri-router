@@ -99,11 +99,13 @@ class Handler implements RequestHandlerInterface
             return $result;
         }
         if (is_object($result)) {
-            $result = '[object]';
-        } else if (is_array($result)) {
-            $result = json_encode($result, JSON_UNESCAPED_UNICODE);
+            return \response()->withBody(new Stream('[object]'));
         }
-        return \response()->withBody(new Stream($result));
+        if (is_array($result)) {
+            return \response()->withContentType(ContentType::JSON)->withBody(new Stream(json_encode($result, JSON_UNESCAPED_UNICODE)));
+        } else {
+            return \response()->withBody(new Stream($result));
+        }
     }
 
 }
