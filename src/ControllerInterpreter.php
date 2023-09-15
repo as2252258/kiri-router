@@ -80,11 +80,6 @@ class ControllerInterpreter
             $reflectionMethod = $reflectionClass->getMethod($reflectionMethod);
         }
 
-        $returnType = $reflectionMethod->getReturnType();
-        if (method_exists($returnType, 'getName') && $returnType->getName() !== 'Psr\Http\Message\ResponseInterface') {
-            die('Request Handler<' . $class::class . '::' . $reflectionMethod->getName() . '> returns must implements on Psr\Http\Message\ResponseInterface');
-        }
-
         $container  = \Kiri::getDi();
         $parameters = $container->getMethodParams($reflectionMethod);
 
