@@ -4,6 +4,7 @@ declare(strict_types=1);
 namespace Kiri\Router;
 
 use Closure;
+use Kiri\Di\Context;
 use Kiri\Router\Constrict\Stream;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
@@ -84,7 +85,7 @@ class Handler implements RequestHandlerInterface
             return $this->typeEncode();
         }
         call_user_func($this->handler, ...$this->parameter);
-        return response();
+        return \response();
     }
 
 
@@ -102,7 +103,7 @@ class Handler implements RequestHandlerInterface
         } else if (is_array($result)) {
             $result = json_encode($result, JSON_UNESCAPED_UNICODE);
         }
-        return response()->withBody(new Stream($result));
+        return \response()->withBody(new Stream($result));
     }
 
 }
