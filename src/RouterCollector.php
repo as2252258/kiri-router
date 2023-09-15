@@ -49,7 +49,11 @@ class RouterCollector implements \ArrayAccess, \IteratorAggregate
      */
     public function __construct()
     {
-        $this->found = new Handler([di(NotFoundController::class), 'fail'], []);
+        $found = di(NotFoundController::class);
+
+        $reflection = new \ReflectionMethod($found, 'fail');
+
+        $this->found = new Handler([$found, 'fail'], [], $reflection->getReturnType());
     }
 
 
@@ -79,7 +83,7 @@ class RouterCollector implements \ArrayAccess, \IteratorAggregate
     public function addRoute(array $method, string $route, string|array|Closure $closure): void
     {
         try {
-            $route = $this->_splicing_routing($route);
+            $route       = $this->_splicing_routing($route);
             $interpreter = Kiri::getDi()->get(ControllerInterpreter::class);
             if ($closure instanceof Closure) {
                 $handler = $interpreter->addRouteByClosure($closure);
@@ -204,9 +208,6 @@ class RouterCollector implements \ArrayAccess, \IteratorAggregate
      */
     public function query(string $path, string $method): Handler
     {
-        if ($method === 'OPTIONS') {
-            $path = '/*';
-        }
         return $this->methods[$method . '_' . $path] ?? $this->found;
     }
 
@@ -217,7 +218,7 @@ class RouterCollector implements \ArrayAccess, \IteratorAggregate
      */
     protected function _splicing_routing(string $route): string
     {
-        $route = ltrim($route, '/');
+        $route  = ltrim($route, '/');
         $prefix = array_column($this->groupTack, 'prefix');
         if (empty($prefix = array_filter($prefix))) {
             return '/' . $route;

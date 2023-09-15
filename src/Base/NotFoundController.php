@@ -10,12 +10,15 @@ class NotFoundController extends Controller
 {
 
 
-	/**
-	 * @return ResponseInterface
-	 */
-	public function fail(): ResponseInterface
-	{
-		return $this->response->withStatus(404, "not found page.");
-	}
+    /**
+     * @return ResponseInterface
+     */
+    public function fail(): ResponseInterface
+    {
+        if ($this->request->getMethod() == 'OPTIONS') {
+            return $this->response->withStatus(200, "");
+        }
+        return $this->response->withStatus(404, "not found page.");
+    }
 
 }
