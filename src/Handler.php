@@ -4,7 +4,6 @@ declare(strict_types=1);
 namespace Kiri\Router;
 
 use Closure;
-use Kiri\Di\Context;
 use Kiri\Router\Constrict\Stream;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;

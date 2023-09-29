@@ -47,11 +47,11 @@ abstract class Controller
 	}
 
 
-	/**
-	 * @return LoggerInterface
-	 * @throws ReflectionException
-	 */
-	private function getLogger(): LoggerInterface
+    /**
+     * @return Kiri\Error\StdoutLogger
+     * @throws ReflectionException
+     */
+	private function getLogger(): Kiri\Error\StdoutLogger
 	{
 		return Kiri::getDi()->get(LoggerInterface::class);
 	}
