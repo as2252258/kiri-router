@@ -72,6 +72,9 @@ class Validator
                         default => $value
                     };
                 }
+                if ($value === 'null') {
+                    $value = null;
+                }
                 $this->formData->{$key} = $value;
             }
         }
