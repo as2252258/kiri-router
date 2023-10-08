@@ -35,7 +35,7 @@ class Request implements ServerRequestInterface
     public function __construct()
     {
         $this->middlewares = \config('request.middlewares', []);
-        $this->exception = \config('request.exception', ExceptionHandlerDispatcher::class);
+        $this->exception   = \config('request.exception', ExceptionHandlerDispatcher::class);
     }
 
 
@@ -308,6 +308,19 @@ class Request implements ServerRequestInterface
     {
         // TODO: Implement withoutHeader() method.
         return $this->__call__(__FUNCTION__, $name);
+    }
+
+
+    /**
+     * @return array
+     */
+    public function all(): array
+    {
+        $data = $this->getParsedBody();
+        if (is_array($data)) {
+            return $data;
+        }
+        return [];
     }
 
     /**
