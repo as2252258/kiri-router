@@ -7,6 +7,10 @@ use Kiri\Router\Interface\ValidatorInterface;
 use Kiri\Router\Request;
 use Psr\Http\Message\ServerRequestInterface;
 
+
+/**
+ * class Validator
+ */
 class Validator
 {
 
