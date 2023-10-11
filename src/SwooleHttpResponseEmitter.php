@@ -49,6 +49,10 @@ class SwooleHttpResponseEmitter implements ResponseEmitterInterface
 		foreach ($proxy->getCookieParams() as $cookie) {
 			$response->setCookie(...$cookie);
 		}
+
+        $request = \request();
+
+		$response->header('Run-Time', microtime(true) - +$request->getServerParam('request_time_float'));
 		$response->header('Server', 'swoole');
 		$response->header('Swoole-Version', swoole_version());
 	}
