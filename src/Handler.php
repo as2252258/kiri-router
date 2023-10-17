@@ -4,7 +4,6 @@ declare(strict_types=1);
 namespace Kiri\Router;
 
 use Closure;
-use Kiri\Router\Constrict\Stream;
 use Kiri\Router\Format\ArrayFormat;
 use Kiri\Router\Format\IFormat;
 use Kiri\Router\Format\MixedFormat;
@@ -15,7 +14,6 @@ use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Server\RequestHandlerInterface;
 use ReflectionException;
 use ReflectionNamedType;
-use ReflectionType;
 
 class Handler implements RequestHandlerInterface
 {

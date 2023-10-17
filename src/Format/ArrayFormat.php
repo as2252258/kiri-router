@@ -18,8 +18,7 @@ class ArrayFormat implements IFormat
     {
         $result = json_encode($result);
 
-        return \response()->withContentType(ContentType::JSON)
-                          ->withBody(new Stream(json_encode($result, JSON_UNESCAPED_UNICODE)));
+        return \response()->withBody(new Stream(json_encode($result, JSON_UNESCAPED_UNICODE)));
     }
 
 
