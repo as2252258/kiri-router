@@ -23,13 +23,14 @@ class Handler implements RequestHandlerInterface
      * @var array|string[]
      */
     protected array $types = [
-        'array'  => ArrayFormat::class,
-        'mixed'  => MixedFormat::class,
-        'object' => MixedFormat::class,
-        'int'    => OtherFormat::class,
-        'string' => OtherFormat::class,
-        'bool'   => OtherFormat::class,
-        'void'   => VoidFormat::class,
+        'Psr\Http\Message\ResponseInterface' => ResponseInterface::class,
+        'array'                              => ArrayFormat::class,
+        'mixed'                              => MixedFormat::class,
+        'object'                             => MixedFormat::class,
+        'int'                                => OtherFormat::class,
+        'string'                             => OtherFormat::class,
+        'bool'                               => OtherFormat::class,
+        'void'                               => VoidFormat::class,
     ];
 
 
