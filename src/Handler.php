@@ -47,7 +47,7 @@ class Handler implements RequestHandlerInterface
      */
     public function __construct(public array|Closure $handler, public array $parameter, public ReflectionNamedType $reflectionType)
     {
-        $this->format = di($this->reflectionType->getName());
+        $this->format = di($this->types[$this->reflectionType->getName()]);
     }
 
 
