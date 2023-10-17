@@ -22,7 +22,9 @@ use ReflectionException;
  */
 class Router
 {
-    const METHODS = [];
+
+
+    const METHODS = [RequestMethod::REQUEST_POST, RequestMethod::REQUEST_GET, RequestMethod::REQUEST_OPTIONS, RequestMethod::REQUEST_DELETE, RequestMethod::REQUEST_PUT, RequestMethod::REQUEST_HEAD];
 
 
     /**
