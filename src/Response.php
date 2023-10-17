@@ -37,7 +37,7 @@ class Response implements ResponseInterface
     public function __construct()
     {
         $this->contentType = \config('response.content-type', ContentType::JSON);
-        $this->emmit = \config('response.emmit', SwooleHttpResponseEmitter::class);
+        $this->emmit       = \config('response.emmit', SwooleHttpResponseEmitter::class);
     }
 
     /**
@@ -125,12 +125,7 @@ class Response implements ResponseInterface
      */
     private function __call__(string $method, ...$params): mixed
     {
-        if (!Context::exists(ResponseInterface::class)) {
-            $response = Context::set(ResponseInterface::class, new ConstrictResponse());
-        } else {
-            $response = Context::get(ResponseInterface::class);
-        }
-        return $response->{$method}(...$params);
+        return \response()->{$method}(...$params);
     }
 
 
