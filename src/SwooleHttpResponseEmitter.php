@@ -4,12 +4,16 @@ declare(strict_types=1);
 namespace Kiri\Router;
 
 use Exception;
+use Kiri\Di\Inject\Container;
 use Kiri\Di\Interface\ResponseEmitterInterface;
+use Kiri\Events\EventDispatch;
+use Kiri\Events\EventProvider;
 use Kiri\Server\Events\OnAfterRequest;
 use Psr\Container\ContainerExceptionInterface;
 use Psr\Container\NotFoundExceptionInterface;
 use Psr\Http\Message\ResponseInterface;
 use ReflectionException;
+use SplPriorityQueue;
 
 
 /**
@@ -17,6 +21,42 @@ use ReflectionException;
  */
 class SwooleHttpResponseEmitter implements ResponseEmitterInterface
 {
+
+
+    /**
+     * @var EventProvider
+     */
+    #[Container(EventProvider::class)]
+    public EventProvider $provider;
+
+
+    /**
+     * @var EventDispatch
+     */
+    #[Container(EventDispatch::class)]
+    public EventDispatch $dispatch;
+
+
+    /**
+     * @var SplPriorityQueue
+     */
+    protected SplPriorityQueue $events;
+
+
+    /**
+     * @var OnAfterRequest
+     */
+    protected OnAfterRequest $afterRequest;
+
+
+    /**
+     * @return void
+     */
+    public function init(): void
+    {
+        $this->afterRequest = new OnAfterRequest();
+        $this->events       = $this->provider->getListenersForEvent($this->afterRequest);
+    }
 
 
     /**
@@ -35,7 +75,7 @@ class SwooleHttpResponseEmitter implements ResponseEmitterInterface
 
         $proxy->end($response);
 
-//        event(new OnAfterRequest());
+        $this->dispatch->execute($this->events, $this->afterRequest);
     }
 
 
