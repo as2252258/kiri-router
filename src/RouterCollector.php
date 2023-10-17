@@ -58,6 +58,15 @@ class RouterCollector implements \ArrayAccess, \IteratorAggregate
 
 
     /**
+     * @return Handler[]
+     */
+    public function getMethods(): array
+    {
+        return $this->methods;
+    }
+
+
+    /**
      * @return array
      */
     public function getDump(): array

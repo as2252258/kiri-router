@@ -26,6 +26,12 @@ class Handler implements RequestHandlerInterface
 
 
     /**
+     * @var array
+     */
+    protected array $middlewares = [];
+
+
+    /**
      * @param array|Closure $handler
      * @param array $parameter
      * @param ReflectionNamedType $reflectionType
@@ -41,6 +47,24 @@ class Handler implements RequestHandlerInterface
             default => ResponseFormat::class
         };
         $this->format = di($type);
+    }
+
+
+    /**
+     * @param array $middlewares
+     */
+    public function setMiddlewares(array $middlewares): void
+    {
+        $this->middlewares = $middlewares;
+    }
+
+
+    /**
+     * @return array
+     */
+    public function getMiddlewares(): array
+    {
+        return $this->middlewares;
     }
 
 

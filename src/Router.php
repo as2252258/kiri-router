@@ -179,6 +179,22 @@ class Router
         $scanner->parse('App');
 
         $this->read_dir_file(APP_PATH . 'routes');
+        $this->reset();
+    }
+
+
+    /**
+     * @return void
+     * @throws ReflectionException
+     */
+    public function reset(): void
+    {
+        $router     = Kiri::getDi()->get(DataGrip::class)->get(static::$type);
+        $middleware = \Kiri::getDi()->get(MiddlewareManager::class);
+        foreach ($router->getMethods() as $method) {
+            $middlewares = $middleware->get($method->getClass(), $method->getMethod());
+            $method->setMiddlewares($middlewares);
+        }
     }
 
 
