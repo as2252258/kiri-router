@@ -8,6 +8,7 @@ use Kiri\Router\Format\ArrayFormat;
 use Kiri\Router\Format\IFormat;
 use Kiri\Router\Format\MixedFormat;
 use Kiri\Router\Format\OtherFormat;
+use Kiri\Router\Format\ResponseFormat;
 use Kiri\Router\Format\VoidFormat;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
@@ -48,7 +49,14 @@ class Handler implements RequestHandlerInterface
      */
     public function __construct(public array|Closure $handler, public array $parameter, public ReflectionNamedType $reflectionType)
     {
-        $this->format = di($this->types[$this->reflectionType->getName()]);
+        $type         = match ($this->reflectionType->getName()) {
+            'array' => ArrayFormat::class,
+            'mixed', 'object' => MixedFormat::class,
+            'int', 'string', 'bool' => OtherFormat::class,
+            'void' => VoidFormat::class,
+            default => ResponseFormat::class
+        };
+        $this->format = di($type);
     }
 
 
