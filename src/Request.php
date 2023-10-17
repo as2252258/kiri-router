@@ -65,12 +65,7 @@ class Request implements ServerRequestInterface
      */
     private function __call__(string $method, ...$params): mixed
     {
-        if (!Context::exists(RequestInterface::class)) {
-            $response = Context::set(RequestInterface::class, new static());
-        } else {
-            $response = Context::get(RequestInterface::class);
-        }
-        return $response->{$method}(...$params);
+        return \request()->{$method}(...$params);
     }
 
 
