@@ -35,7 +35,7 @@ class SwooleHttpResponseEmitter implements ResponseEmitterInterface
 
         $proxy->end($response);
 
-        event(new OnAfterRequest());
+//        event(new OnAfterRequest());
     }
 
 

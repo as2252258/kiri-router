@@ -29,7 +29,7 @@ class SwowHttpResponseEmitter implements ResponseEmitterInterface
         $proxy->withHeader('Run-Time', $this->getRunTime($request));
         $response->sendHttpResponse($proxy);
 
-        event(new OnAfterRequest());
+//        event(new OnAfterRequest());
     }
 
 
