@@ -23,12 +23,21 @@ class RouterCollector implements \ArrayAccess, \IteratorAggregate
 {
 
 
+    /**
+     * @var array
+     */
     private array $_item = [];
 
 
+    /**
+     * @var array
+     */
     private array $dump = [];
 
 
+    /**
+     * @var array
+     */
     public array $groupTack = [];
 
 
