@@ -3,7 +3,6 @@ declare(strict_types=1);
 
 namespace Kiri\Router;
 
-use Exception;
 use Kiri\Di\Inject\Container;
 use Kiri\Di\Interface\ResponseEmitterInterface;
 use Kiri\Events\EventDispatch;
