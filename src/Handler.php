@@ -19,26 +19,10 @@ use ReflectionNamedType;
 class Handler implements RequestHandlerInterface
 {
 
-
-    /**
-     * @var array|string[]
-     */
-    protected array $types = [
-        ResponseInterface::class => ResponseInterface::class,
-        'array'                  => ArrayFormat::class,
-        'mixed'                  => MixedFormat::class,
-        'object'                 => MixedFormat::class,
-        'int'                    => OtherFormat::class,
-        'string'                 => OtherFormat::class,
-        'bool'                   => OtherFormat::class,
-        'void'                   => VoidFormat::class,
-    ];
-
-
     /**
      * @var IFormat
      */
-    protected IFormat $format;
+    protected mixed $format;
 
 
     /**
