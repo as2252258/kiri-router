@@ -8,9 +8,16 @@ use Psr\Http\Message\StreamInterface;
 class Stream implements StreamInterface
 {
 
-	public string $content = '';
+
+    /**
+     * @var resource|string
+     */
+	public mixed $content = '';
 
 
+    /**
+     * @var int 
+     */
 	public int $size = 0;
 
 
@@ -178,10 +185,10 @@ class Stream implements StreamInterface
 		// TODO: Implement write() method.
 		if (is_resource($this->content)) {
 			$this->content = fopen($string, 'wr');
-			$this->size = filesize($string);
+//			$this->size = filesize($string);
 		} else {
 			$this->content = $string;
-			$this->size = mb_strlen($string);
+//			$this->size = mb_strlen($string);
 		}
 		return $this->size;
 	}
