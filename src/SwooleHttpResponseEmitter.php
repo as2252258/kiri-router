@@ -30,9 +30,6 @@ class SwooleHttpResponseEmitter implements ResponseEmitterInterface
         // TODO: Implement sender() method.
         $this->writeParams($proxy, $response, $request);
 
-
-        var_dump($proxy);
-
         $proxy->end($response);
 
         event(new OnAfterRequest());
