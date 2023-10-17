@@ -13,16 +13,27 @@ class HttpRequestHandler extends AbstractHandler implements RequestHandlerInterf
 {
 
 
-	/**
-	 * @param ServerRequestInterface $request
-	 * @return ResponseInterface
-	 * @throws ReflectionException
-	 */
-	public function handle(ServerRequestInterface $request): ResponseInterface
-	{
-		// TODO: Implement handle() method.
-		return $this->execute($request);
-	}
+    /**
+     * @param ServerRequestInterface $request
+     * @return ResponseInterface
+     * @throws ReflectionException
+     */
+    public function run(ServerRequestInterface $request): ResponseInterface
+    {
+        $this->offset = 0;
+        return $this->handle($request);
+    }
+
+    /**
+     * @param ServerRequestInterface $request
+     * @return ResponseInterface
+     * @throws ReflectionException
+     */
+    public function handle(ServerRequestInterface $request): ResponseInterface
+    {
+        // TODO: Implement handle() method.
+        return $this->execute($request);
+    }
 
 
 }

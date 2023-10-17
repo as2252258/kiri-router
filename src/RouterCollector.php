@@ -67,6 +67,17 @@ class RouterCollector implements \ArrayAccess, \IteratorAggregate
 
 
     /**
+     * @param string $method
+     * @param HttpRequestHandler $handler
+     * @return void
+     */
+    public function setMethod(string $method, HttpRequestHandler $handler): void
+    {
+        $this->methods[$method] = $handler;
+    }
+
+
+    /**
      * @return array
      */
     public function getDump(): array
@@ -213,11 +224,11 @@ class RouterCollector implements \ArrayAccess, \IteratorAggregate
     /**
      * @param string $path
      * @param string $method
-     * @return Handler
+     * @return HttpRequestHandler
      */
-    public function query(string $path, string $method): Handler
+    public function query(string $path, string $method): HttpRequestHandler
     {
-        return $this->methods[$method . '_' . $path] ?? $this->found;
+        return $this->methods[$method . '_' . $path] ?? new HttpRequestHandler([], $this->found);
     }
 
 

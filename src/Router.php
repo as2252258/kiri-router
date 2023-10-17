@@ -191,9 +191,11 @@ class Router
     {
         $router     = Kiri::getDi()->get(DataGrip::class)->get(static::$type);
         $middleware = \Kiri::getDi()->get(MiddlewareManager::class);
-        foreach ($router->getMethods() as $method) {
+        foreach ($router->getMethods() as $name => $method) {
             $middlewares = $middleware->get($method->getClass(), $method->getMethod());
             $method->setMiddlewares($middlewares);
+
+            $router->setMethod($name, $method);
         }
     }
 
