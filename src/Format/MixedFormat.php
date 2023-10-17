@@ -22,7 +22,7 @@ class MixedFormat implements IFormat
         if (is_array($result)) {
             return \response()->withContentType(ContentType::JSON)->withBody(new Stream(json_encode($result, JSON_UNESCAPED_UNICODE)));
         } else {
-            return \response()->withBody(new Stream($result));
+            return \response()->withBody(new Stream((string)$result));
         }
     }
 
