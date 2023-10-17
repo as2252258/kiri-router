@@ -98,8 +98,7 @@ class Handler implements RequestHandlerInterface
     public function handle(ServerRequestInterface $request): ResponseInterface
     {
         $data = call_user_func($this->handler, ...$this->parameter);
-
-        return call_user_func([$this->format, 'call'], $data);
+        return $this->format->call($data);
     }
 
 }
