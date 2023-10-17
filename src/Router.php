@@ -193,9 +193,8 @@ class Router
         $middleware = \Kiri::getDi()->get(MiddlewareManager::class);
         foreach ($router->getMethods() as $name => $method) {
             $middlewares = $middleware->get($method->getClass(), $method->getMethod());
-            $method->setMiddlewares($middlewares);
 
-            $router->setMethod($name, $method);
+            $router->setMethod($name, new HttpRequestHandler($middlewares, $method));
         }
     }
 
