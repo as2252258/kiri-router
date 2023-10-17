@@ -390,6 +390,18 @@ class Response implements ResponseInterface
         return $this->__call__(__FUNCTION__);
     }
 
+
+    /**
+     * @param string $content
+     * @param int $statusCode
+     * @param ContentType $contentType
+     * @return ResponseInterface
+     */
+    public function raw(string $content, int $statusCode = 200, ContentType $contentType = ContentType::JSON): ResponseInterface
+    {
+        return $this->__call__(__FUNCTION__, $content, $statusCode, $contentType);
+    }
+
     /**
      * Return an instance with the specified status code and, optionally, reason phrase.
      *

@@ -19,43 +19,58 @@ class SwooleHttpResponseEmitter implements ResponseEmitterInterface
     /**
      * @param Response $proxy
      * @param object $response
+     * @param object $request
      * @return void
      * @throws ContainerExceptionInterface
      * @throws NotFoundExceptionInterface
      * @throws ReflectionException
      */
-	public function sender(ResponseInterface $proxy, object $response): void
-	{
-		// TODO: Implement sender() method.
-		$this->writeParams($proxy, $response);
+    public function sender(ResponseInterface $proxy, object $response, object $request): void
+    {
+        // TODO: Implement sender() method.
+        $this->writeParams($proxy, $response, $request);
 
-		$proxy->end($response);
+        $proxy->end($response);
 
         event(new OnAfterRequest());
     }
 
 
-	/**
-	 * @param Response $proxy
-	 * @param object $response
-	 * @return void
-	 */
-	private function writeParams(ResponseInterface $proxy, object $response): void
-	{
-		$response->setStatusCode($proxy->getStatusCode());
-		foreach ($proxy->getHeaders() as $name => $header) {
-			$response->header($name, $header);
-		}
-		foreach ($proxy->getCookieParams() as $cookie) {
-			$response->setCookie(...$cookie);
-		}
+    /**
+     * @param Response $proxy
+     * @param object $response
+     * @param object $request
+     * @return void
+     */
+    private function writeParams(ResponseInterface $proxy, object $response, object $request): void
+    {
+        $response->setStatusCode($proxy->getStatusCode());
+        $headers = $proxy->getHeaders();
+        if (count($headers) < 1) {
+            foreach ($headers as $name => $header) {
+                $response->header($name, $header);
+            }
+        }
+        $cookieParams = $proxy->getCookieParams();
+        if (count($cookieParams) < 1) {
+            foreach ($cookieParams as $cookie) {
+                $response->setCookie(...$cookie);
+            }
+        }
+        $response->header('Run-Time', $this->getRunTime($request));
+        $response->header('Server', 'swoole');
+        $response->header('Swoole-Version', swoole_version());
+    }
 
-        $request = \request();
 
-		$response->header('Run-Time', microtime(true) - +$request->getServerParam('request_time_float'));
-		$response->header('Server', 'swoole');
-		$response->header('Swoole-Version', swoole_version());
-	}
+    /**
+     * @param object $request
+     * @return float
+     */
+    protected function getRunTime(object $request): float
+    {
+        return microtime(true) - +$request->getServerParam('request_time_float');
+    }
 
 
 }

@@ -71,6 +71,19 @@ class ConstrictResponse extends Message implements ResponseInterface
 	}
 
 
+    /**
+     * @param string $content
+     * @param int $statusCode
+     * @param ContentType $contentType
+     * @return $this
+     */
+	public function raw(string $content, int $statusCode = 200, ContentType $contentType = ContentType::JSON): static
+	{
+		$this->getBody()->write($content);
+		return $this->withContentType($contentType)->withStatus($statusCode);
+	}
+
+
 	/**
 	 * @param string $content
 	 * @param int $statusCode

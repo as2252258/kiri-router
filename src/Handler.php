@@ -5,24 +5,51 @@ namespace Kiri\Router;
 
 use Closure;
 use Kiri\Router\Constrict\Stream;
+use Kiri\Router\Format\ArrayFormat;
+use Kiri\Router\Format\IFormat;
+use Kiri\Router\Format\MixedFormat;
+use Kiri\Router\Format\OtherFormat;
+use Kiri\Router\Format\VoidFormat;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Server\RequestHandlerInterface;
 use ReflectionException;
-use ReflectionIntersectionType;
 use ReflectionNamedType;
-use ReflectionUnionType;
+use ReflectionType;
 
 class Handler implements RequestHandlerInterface
 {
 
+
+    /**
+     * @var array|string[]
+     */
+    protected array $types = [
+        'array'  => ArrayFormat::class,
+        'mixed'  => MixedFormat::class,
+        'object' => MixedFormat::class,
+        'int'    => OtherFormat::class,
+        'string' => OtherFormat::class,
+        'bool'   => OtherFormat::class,
+        'void'   => VoidFormat::class,
+    ];
+
+
+    /**
+     * @var IFormat
+     */
+    protected IFormat $format;
+
+
     /**
      * @param array|Closure $handler
      * @param array $parameter
-     * @param ReflectionNamedType|ReflectionUnionType|ReflectionIntersectionType|null $responseType
+     * @param ReflectionNamedType $reflectionType
+     * @throws ReflectionException
      */
-    public function __construct(public array|Closure $handler, public array $parameter, public ReflectionNamedType|ReflectionUnionType|ReflectionIntersectionType|null $responseType)
+    public function __construct(public array|Closure $handler, public array $parameter, public ReflectionNamedType $reflectionType)
     {
+        $this->format = di($this->reflectionType->getName());
     }
 
 
@@ -79,32 +106,9 @@ class Handler implements RequestHandlerInterface
      */
     public function handle(ServerRequestInterface $request): ResponseInterface
     {
-        // TODO: Implement handle() method.
-        if ($this->responseType->getName() !== 'void') {
-            return $this->typeEncode();
-        }
-        call_user_func($this->handler, ...$this->parameter);
-        return \response();
-    }
+        $data = call_user_func($this->handler, ...$this->parameter);
 
-
-    /**
-     * @return ResponseInterface
-     */
-    protected function typeEncode(): ResponseInterface
-    {
-        $result = call_user_func($this->handler, ...$this->parameter);
-        if ($result instanceof ResponseInterface) {
-            return $result;
-        }
-        if (is_object($result)) {
-            return \response()->withBody(new Stream('[object]'));
-        }
-        if (is_array($result)) {
-            return \response()->withContentType(ContentType::JSON)->withBody(new Stream(json_encode($result, JSON_UNESCAPED_UNICODE)));
-        } else {
-            return \response()->withBody(new Stream($result));
-        }
+        return call_user_func([$this->format, 'call'], $data);
     }
 
 }

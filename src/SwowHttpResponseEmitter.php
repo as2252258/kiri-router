@@ -16,18 +16,30 @@ class SwowHttpResponseEmitter implements ResponseEmitterInterface
     /**
      * @param Response $proxy
      * @param object $response
+     * @param object $request
      * @return void
      * @throws ContainerExceptionInterface
      * @throws NotFoundExceptionInterface
      * @throws ReflectionException
      */
-	public function sender(ResponseInterface $proxy, object $response): void
+	public function sender(ResponseInterface $proxy, object $response, object $request): void
 	{
 		// TODO: Implement sender() method.
 		$proxy->withHeader('Server', 'Swow');
-		$response->sendHttpResponse($proxy);
+        $proxy->withHeader('Run-Time', $this->getRunTime($request));
+        $response->sendHttpResponse($proxy);
 
         event(new OnAfterRequest());
+    }
+
+
+    /**
+     * @param object $request
+     * @return float
+     */
+    protected function getRunTime(object $request): float
+    {
+        return microtime(true) - +$request->getServerParam('request_time_float');
     }
 
 }

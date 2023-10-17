@@ -73,8 +73,12 @@ class ControllerInterpreter
      */
     public function resolveMethod(object $class, string|\ReflectionMethod $reflectionMethod, ReflectionClass $reflectionClass): Handler
     {
+        $returnType = $reflectionMethod->getReturnType();
+        if ($returnType instanceof \ReflectionUnionType) {
+            throw new Exception("Return type error, cannot be multi type.");
+        }
         if (empty($reflectionMethod)) {
-            return new Handler([$class, $reflectionMethod], [], $reflectionMethod->getReturnType());
+            return new Handler([$class, $reflectionMethod], [], $returnType);
         }
         if (is_string($reflectionMethod)) {
             $reflectionMethod = $reflectionClass->getMethod($reflectionMethod);
@@ -83,7 +87,7 @@ class ControllerInterpreter
         $container  = \Kiri::getDi();
         $parameters = $container->getMethodParams($reflectionMethod);
 
-        return new Handler([$class, $reflectionMethod->getName()], $parameters, $reflectionMethod->getReturnType());
+        return new Handler([$class, $reflectionMethod->getName()], $parameters, $returnType);
     }
 
 }
