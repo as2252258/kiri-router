@@ -20,12 +20,12 @@ class ConstrictResponse extends Message implements ResponseInterface
 
 
 	/**
-	 * @param ContentType $type
+	 * @param ContentType $contentType
 	 * @return $this
 	 */
-	public function withContentType(ContentType $type): static
+	public function withContentType(ContentType $contentType): static
 	{
-		$this->withHeader('Content-Type', $type->toString());
+		$this->withHeader('Content-Type', $contentType->toString());
 		return $this;
 	}
 
@@ -48,13 +48,13 @@ class ConstrictResponse extends Message implements ResponseInterface
 
 
 	/**
-	 * @param mixed $data
+	 * @param mixed $content
 	 * @param int $statusCode
 	 * @return $this
 	 */
-	public function xml(array $data, int $statusCode = 200): static
+	public function xml(array $content, int $statusCode = 200): static
 	{
-		$this->getBody()->write(Help::toXml($data));
+		$this->getBody()->write(Help::toXml($content));
 		return $this->withContentType(ContentType::XML)->withStatus($statusCode);
 	}
 
