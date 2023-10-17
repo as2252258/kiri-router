@@ -240,6 +240,7 @@ class RouterCollector implements \ArrayAccess, \IteratorAggregate
      * @param string $path
      * @param string $method
      * @return HttpRequestHandler
+     * @throws ReflectionException
      */
     public function query(string $path, string $method): HttpRequestHandler
     {
