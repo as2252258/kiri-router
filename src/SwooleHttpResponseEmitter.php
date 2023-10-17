@@ -49,16 +49,12 @@ class SwooleHttpResponseEmitter implements ResponseEmitterInterface
     {
         $response->setStatusCode($proxy->getStatusCode());
         $headers = $proxy->getHeaders();
-        if (count($headers) < 1) {
-            foreach ($headers as $name => $header) {
-                $response->header($name, $header);
-            }
+        if (count($headers) > 0) foreach ($headers as $name => $header) {
+            $response->header($name, $header);
         }
         $cookieParams = $proxy->getCookieParams();
-        if (count($cookieParams) < 1) {
-            foreach ($cookieParams as $cookie) {
-                $response->setCookie(...$cookie);
-            }
+        if (count($cookieParams) > 0) foreach ($cookieParams as $cookie) {
+            $response->setCookie(...$cookie);
         }
         $response->header('Run-Time', $this->getRunTime($request));
         $response->header('Server', 'swoole');
