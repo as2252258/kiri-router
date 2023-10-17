@@ -196,7 +196,7 @@ class Router
         foreach ($router->getMethods() as $name => $method) {
             $middlewares = $middleware->get($method->getClass(), $method->getMethod());
 
-            $router->setMethod($name, new HttpRequestHandler($middlewares, $method));
+            $router->setHttpHandler($name, new HttpRequestHandler($middlewares, $method));
         }
     }
 
