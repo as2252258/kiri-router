@@ -12,6 +12,9 @@ use Psr\Http\Message\ResponseInterface;
 use ReflectionException;
 
 
+/**
+ * Swoole Http Response Emitter
+ */
 class SwooleHttpResponseEmitter implements ResponseEmitterInterface
 {
 
