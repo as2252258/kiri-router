@@ -15,13 +15,19 @@ abstract class AbstractHandler
 
     public int $offset = 0;
 
+    public array $middlewares = [];
+
 
     /**
      * @param array $middlewares
      * @param Handler $handler
+     * @throws ReflectionException
      */
-    public function __construct(public array $middlewares, public Handler $handler)
+    public function __construct(array $middlewares, public Handler $handler)
     {
+        foreach ($middlewares as $middleware) {
+            $this->middlewares[] = di($middleware);
+        }
     }
 
     /**
@@ -36,7 +42,7 @@ abstract class AbstractHandler
         }
 
         /** @var MiddlewareInterface $middleware */
-        $middleware   = di($this->middlewares[$this->offset]);
+        $middleware   = $this->middlewares[$this->offset];
         $this->offset += 1;
 
         return $middleware->process($request, $this);
