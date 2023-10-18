@@ -10,6 +10,10 @@ use Exception;
 use Kiri;
 use Kiri\Router\Base\NotFoundController;
 use Kiri\Router\Constrict\RequestMethod;
+use Kiri\Di\Inject\Container;
+use Psr\Container\ContainerExceptionInterface;
+use Psr\Container\ContainerInterface;
+use Psr\Container\NotFoundExceptionInterface;
 use ReflectionException;
 use Throwable;
 use Traversable;
@@ -57,6 +61,20 @@ class RouterCollector implements \ArrayAccess, \IteratorAggregate
      * @var Handler
      */
     protected Handler $found;
+
+
+    /**
+     * @var ControllerInterpreter
+     */
+    #[Container(ControllerInterpreter::class)]
+    public ControllerInterpreter $interpreter;
+
+
+    /**
+     * @var ContainerInterface
+     */
+    #[Container(ContainerInterface::class)]
+    public ContainerInterface $container;
 
 
     /**
@@ -119,11 +137,10 @@ class RouterCollector implements \ArrayAccess, \IteratorAggregate
     {
         try {
             $route       = $this->_splicing_routing($route);
-            $interpreter = Kiri::getDi()->get(ControllerInterpreter::class);
             if ($closure instanceof Closure) {
-                $handler = $interpreter->addRouteByClosure($closure);
+                $handler = $this->interpreter->addRouteByClosure($closure);
             } else {
-                $handler = $this->resolve($closure, $interpreter);
+                $handler = $this->resolve($closure, $this->interpreter);
             }
             foreach ($method as $value) {
                 if ($value instanceof RequestMethod) {
@@ -152,6 +169,8 @@ class RouterCollector implements \ArrayAccess, \IteratorAggregate
      * @param ControllerInterpreter $interpreter
      * @return Handler
      * @throws ReflectionException
+     * @throws ContainerExceptionInterface
+     * @throws NotFoundExceptionInterface
      */
     private function resolve(string|array $closure, ControllerInterpreter $interpreter): Handler
     {
@@ -163,7 +182,7 @@ class RouterCollector implements \ArrayAccess, \IteratorAggregate
             }
             [$className, $method] = explode('@', $closure);
 
-            $class = Kiri::getDi()->get($this->resetName($className));
+            $class = $this->container->get($this->resetName($className));
         }
         return $interpreter->addRouteByString($class, $method);
     }
@@ -225,7 +244,7 @@ class RouterCollector implements \ArrayAccess, \IteratorAggregate
      */
     private function appendMiddleware(array $middlewares, $class, $method): void
     {
-        $manager = Kiri::getDi()->get(Middleware::class);
+        $manager = $this->container->get(Middleware::class);
         foreach ($middlewares as $middleware) {
             if (is_string($middleware)) {
                 $middleware = [$middleware];
