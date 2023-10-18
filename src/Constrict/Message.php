@@ -185,7 +185,7 @@ class Message extends Component implements MessageInterface
 		if (isset($this->headers[$name])) {
 			$header = $this->headers[$name];
 
-			return is_string($header) ? [$header] : $header;
+			return \is_string($header) ? [$header] : $header;
 		}
 		return [];
 	}
@@ -212,7 +212,7 @@ class Message extends Component implements MessageInterface
 	public function getHeaderLine(string $name): string
 	{
 		// TODO: Implement getHeaderLine() method.
-		return implode(';', $this->getHeader($name));
+		return \implode(';', $this->getHeader($name));
 	}
 
 

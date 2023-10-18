@@ -97,7 +97,7 @@ class SwooleHttpResponseEmitter implements ResponseEmitterInterface
         }
         $response->header('Run-Time', $this->getRunTime($request));
         $response->header('Server', 'swoole');
-        $response->header('Swoole-Version', swoole_version());
+        $response->header('Swoole-Version', \swoole_version());
     }
 
 
