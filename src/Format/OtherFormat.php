@@ -3,7 +3,6 @@
 namespace Kiri\Router\Format;
 
 use Kiri\Router\Constrict\Stream;
-use Kiri\Router\ContentType;
 use Psr\Http\Message\ResponseInterface;
 
 class OtherFormat implements IFormat

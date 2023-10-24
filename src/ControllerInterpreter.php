@@ -5,8 +5,6 @@ namespace Kiri\Router;
 
 use Closure;
 use Exception;
-use Psr\Http\Message\RequestInterface;
-use Psr\Http\Message\ResponseInterface;
 use ReflectionClass;
 use ReflectionException;
 use ReflectionMethod;

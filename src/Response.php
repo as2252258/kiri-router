@@ -4,9 +4,7 @@ declare(strict_types=1);
 namespace Kiri\Router;
 
 use InvalidArgumentException;
-use Kiri\Di\Context;
 use Kiri\Di\Interface\ResponseEmitterInterface;
-use Kiri\Router\Constrict\ConstrictResponse;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\StreamInterface;
 use ReflectionException;

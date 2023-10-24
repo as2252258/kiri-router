@@ -8,7 +8,8 @@ class ResponseFormat implements IFormat
 {
 
     /**
-     * @inheritDoc
+     * @param $result
+     * @return ResponseInterface
      */
     public function call($result): ResponseInterface
     {

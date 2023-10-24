@@ -7,6 +7,11 @@ interface ValidatorInterface
 {
 
 
+    /**
+     * @param object $class
+     * @param string $name
+     * @return bool
+     */
 	public function dispatch(object $class, string $name): bool;
 
 }

@@ -3,7 +3,6 @@ declare(strict_types=1);
 
 namespace Kiri\Router;
 
-use Kiri\Di\Context;
 use Kiri\Router\Base\AuthorizationInterface;
 use Kiri\Router\Base\ExceptionHandlerDispatcher;
 use Psr\Http\Message\RequestInterface;

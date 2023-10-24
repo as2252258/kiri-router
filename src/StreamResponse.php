@@ -36,7 +36,6 @@ class StreamResponse extends Response
 			$response->write($body->read($this->limit));
 		}
 		$response->end();
-//        event(new OnAfterRequest());
 	}
 
 }
