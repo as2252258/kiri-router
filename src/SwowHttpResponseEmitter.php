@@ -61,7 +61,7 @@ class SwowHttpResponseEmitter implements ResponseEmitterInterface
      * @throws NotFoundExceptionInterface
      * @throws ReflectionException
      */
-	public function sender(ResponseInterface $proxy, object $response, object $request): void
+	public function xxxxxxxxxxxxxxxxxxxxxxxxxSender(ResponseInterface $proxy, object $response, object $request): void
 	{
 		// TODO: Implement sender() method.
 		$proxy->withHeader('Server', 'Swow');
