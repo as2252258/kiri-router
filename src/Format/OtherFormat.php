@@ -2,11 +2,18 @@
 
 namespace Kiri\Router\Format;
 
+use Kiri\Di\Inject\Container;
 use Kiri\Router\Constrict\Stream;
 use Psr\Http\Message\ResponseInterface;
 
 class OtherFormat implements IFormat
 {
+
+    /**
+     * @var ResponseInterface
+     */
+    #[Container(ResponseInterface::class)]
+    public ResponseInterface $response;
 
 
     /**
@@ -15,7 +22,7 @@ class OtherFormat implements IFormat
      */
     public function call(mixed $result): ResponseInterface
     {
-        return \response()->withBody(new Stream($result));
+        return $this->response->withBody(new Stream($result));
     }
 
 
