@@ -776,4 +776,22 @@ class Request implements ServerRequestInterface
         // TODO: Implement withoutAttribute() method.
         return $this->__call__(__FUNCTION__, $name);
     }
+
+
+    /**
+     * @return int
+     */
+    public function offset(): int
+    {
+        return $this->__call__(__FUNCTION__);
+    }
+
+
+    /**
+     * @return int
+     */
+    public function size(): int
+    {
+        return $this->__call__(__FUNCTION__);
+    }
 }

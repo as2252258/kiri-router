@@ -501,4 +501,33 @@ class ConstrictRequest extends Message implements RequestInterface, ServerReques
         // TODO: Implement withoutAttribute() method.
         return $this;
     }
+
+
+    /**
+     * @return int
+     */
+    public function offset(): int
+    {
+        $params = $this->getQueryParams();
+        $page = (int)($params['page'] ?? 1);
+        $size = $this->size();
+        if ($page < 1) {
+            $page = 1;
+        }
+        return ($size - $page) * $page;
+    }
+
+
+    /**
+     * @return int
+     */
+    public function size(): int
+    {
+        $params = $this->getQueryParams();
+        $size = (int)($params['size'] ?? 1);
+        if ($size < 1) {
+            $size = 1;
+        }
+        return $size;
+    }
 }
