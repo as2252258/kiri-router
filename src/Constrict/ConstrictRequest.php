@@ -519,6 +519,8 @@ class ConstrictRequest extends Message implements RequestInterface, ServerReques
 
 
     /**
+     * page slice num
+     *
      * @return int
      */
     public function size(): int
