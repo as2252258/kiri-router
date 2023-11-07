@@ -17,13 +17,15 @@ class MixedFormat implements IFormat
     public ResponseInterface $response;
 
 
-
     /**
      * @param mixed $result
      * @return ResponseInterface
      */
     public function call(mixed $result): ResponseInterface
     {
+        if ($result instanceof ResponseInterface) {
+            return $result;
+        }
         if (is_object($result)) {
             return $this->response->withBody(new Stream('[object]'));
         }

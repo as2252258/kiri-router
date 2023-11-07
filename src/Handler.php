@@ -28,18 +28,22 @@ class Handler implements RequestHandlerInterface
     /**
      * @param array|Closure $handler
      * @param array $parameter
-     * @param ReflectionNamedType $reflectionType
+     * @param ReflectionNamedType|null $reflectionType
      * @throws ReflectionException
      */
-    public function __construct(public array|Closure $handler, public array $parameter, public ReflectionNamedType $reflectionType)
+    public function __construct(public array|Closure $handler, public array $parameter, public ?ReflectionNamedType $reflectionType)
     {
-        $type         = match ($this->reflectionType->getName()) {
-            'array' => ArrayFormat::class,
-            'mixed', 'object' => MixedFormat::class,
-            'int', 'string', 'bool' => OtherFormat::class,
-            'void' => VoidFormat::class,
-            default => ResponseFormat::class
-        };
+        if ($this->reflectionType == null) {
+            $type = MixedFormat::class;
+        } else {
+            $type = match ($this->reflectionType->getName()) {
+                'array' => ArrayFormat::class,
+                'mixed', 'object' => MixedFormat::class,
+                'int', 'string', 'bool' => OtherFormat::class,
+                'void' => VoidFormat::class,
+                default => ResponseFormat::class
+            };
+        }
         $this->format = di($type);
     }
 
