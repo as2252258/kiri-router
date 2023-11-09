@@ -45,7 +45,7 @@ class BindForm implements InjectParameterInterface
             }
         }
 
-        $middleware            = new ValidatorMiddleware();
+        $middleware            = \instance(ValidatorMiddleware::class);
         $middleware->validator = $validator;
 
         $manager = \Kiri::getDi()->get(Middleware::class);
