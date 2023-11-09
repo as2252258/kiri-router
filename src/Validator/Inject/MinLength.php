@@ -3,14 +3,23 @@ declare(strict_types=1);
 
 namespace Kiri\Router\Validator\Inject;
 
+use Kiri\Di\Inject\Container;
 use Kiri\Router\Interface\ValidatorInterface;
+use Psr\Http\Message\RequestInterface;
 
 #[\Attribute(\Attribute::TARGET_PROPERTY)]
 class MinLength implements ValidatorInterface
 {
 
 
-	/**
+    /**
+     * @var RequestInterface
+     */
+    #[Container(RequestInterface::class)]
+    public RequestInterface $request;
+
+
+    /**
 	 * @param int $value
 	 */
 	public function __construct(readonly public int $value)
@@ -26,6 +35,14 @@ class MinLength implements ValidatorInterface
 	public function dispatch(object $class, string $name): bool
 	{
 		// TODO: Implement dispatch() method.
-		return mb_strlen((string)$class->{$name}) <= $this->value;
+        if ($this->request->getIsPost()) {
+            $data = $this->request->post($name, null);
+        } else {
+            $data = $this->request->query($name, null);
+        }
+        if ($data === null) {
+            return false;
+        }
+		return mb_strlen((string)$data) <= $this->value;
 	}
 }
