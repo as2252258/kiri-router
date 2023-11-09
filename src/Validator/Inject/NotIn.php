@@ -26,6 +26,9 @@ class NotIn implements ValidatorInterface
      */
     public function dispatch(mixed $data, object $class): bool
     {
+        if ($data === null) {
+            return false;
+        }
 		return !in_array($data, $this->value);
 	}
 }
