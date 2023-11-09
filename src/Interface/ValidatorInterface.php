@@ -8,10 +8,10 @@ interface ValidatorInterface
 
 
     /**
+     * @param mixed $data
      * @param object $class
-     * @param string $name
      * @return bool
      */
-	public function dispatch(object $class, string $name): bool;
+	public function dispatch(mixed $data, object $class): bool;
 
 }

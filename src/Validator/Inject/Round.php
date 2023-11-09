@@ -18,14 +18,13 @@ class Round implements ValidatorInterface
 	}
 
 
-	/**
-	 * @param object $class
-	 * @param string $name
-	 * @return bool
-	 */
-	public function dispatch(object $class, string $name): bool
-	{
-		// TODO: Implement dispatch() method.
-		return round($class->$name, $this->value) === $class->$name;
+    /**
+     * @param mixed $data
+     * @param object $class
+     * @return bool
+     */
+    public function dispatch(mixed $data, object $class): bool
+    {
+		return round($data, $this->value) === $data;
 	}
 }

@@ -5,6 +5,7 @@ namespace Kiri\Router\Validator;
 
 use Kiri\Router\Interface\ValidatorInterface;
 use Kiri\Router\Request;
+use Psr\Http\Message\RequestInterface;
 use Psr\Http\Message\ServerRequestInterface;
 
 
@@ -70,36 +71,48 @@ class Validator
             $data = $request->getQueryParams();
         }
         foreach ($data as $key => $value) {
-            if (property_exists($this->formData, $key)) {
-                $type = new \ReflectionProperty($this->formData, $key);
-                if (!($type->getType() instanceof \ReflectionUnionType)) {
-                    $value = match ($type->getType()?->getName()) {
-                        'int' => (int)$value,
-                        'float' => (float)$value,
-                        default => $value
-                    };
-                }
-                if ($value === 'Null') {
-                    $value = null;
-                }
-                $this->formData->{$key} = $value;
+            if (!property_exists($this->formData, $key)) {
+                $this->addError($key);
+                return $this;
             }
+            $type = new \ReflectionProperty($this->formData, $key);
+            if (!($type->getType() instanceof \ReflectionUnionType)) {
+                $value = match ($type->getType()?->getName()) {
+                    'int' => (int)$value,
+                    'float' => (float)$value,
+                    default => $value
+                };
+            }
+            if ($value === 'Null') {
+                $value = null;
+            }
+            $this->formData->{$key} = $value;
         }
         return $this;
     }
 
 
     /**
+     * @param RequestInterface $request
      * @return bool
      */
-    public function run(): bool
+    public function run(RequestInterface $request): bool
     {
+        if (!empty($this->message)) {
+            return false;
+        }
         foreach ($this->rules as $name => $rule) {
+            $value = $request->query($name, null);
+            if ($request->getIsPost()) {
+                $value = $request->post($name, null);
+            }
             foreach ($rule as $item) {
-                if (!$item->dispatch($this->formData, $name)) {
+                /** @var ValidatorInterface $item */
+                if (!$item->dispatch($value, $this->formData)) {
                     return $this->addError($name);
                 }
             }
+            $this->formData->{$name} = $value;
         }
         return true;
     }

@@ -10,12 +10,12 @@ class Ignore implements ValidatorInterface
 {
 
 
-	/**
-	 * @param object $class
-	 * @param string $name
-	 * @return bool
-	 */
-	public function dispatch(object $class, string $name): bool
+    /**
+     * @param mixed $data
+     * @param object $class
+     * @return bool
+     */
+	public function dispatch(mixed $data, object $class): bool
 	{
 		return true;
 	}

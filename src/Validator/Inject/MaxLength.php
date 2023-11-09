@@ -3,20 +3,11 @@ declare(strict_types=1);
 
 namespace Kiri\Router\Validator\Inject;
 
-use Kiri\Di\Inject\Container;
 use Kiri\Router\Interface\ValidatorInterface;
-use Psr\Http\Message\RequestInterface;
 
 #[\Attribute(\Attribute::TARGET_PROPERTY)]
 class MaxLength implements ValidatorInterface
 {
-
-
-    /**
-     * @var RequestInterface
-     */
-    #[Container(RequestInterface::class)]
-    public RequestInterface $request;
 
 
 
@@ -28,19 +19,13 @@ class MaxLength implements ValidatorInterface
 	}
 
 
-	/**
-	 * @param object $class
-	 * @param string $name
-	 * @return bool
-	 */
-	public function dispatch(object $class, string $name): bool
-	{
-		// TODO: Implement dispatch() method.
-        if ($this->request->getIsPost()) {
-            $data = $this->request->post($name, null);
-        } else {
-            $data = $this->request->query($name, null);
-        }
+    /**
+     * @param mixed $data
+     * @param object $class
+     * @return bool
+     */
+    public function dispatch(mixed $data, object $class): bool
+    {
         if ($data === null) {
             return false;
         }
