@@ -37,7 +37,7 @@ class ValidatorMiddleware implements MiddlewareInterface
     {
         $validator = $this->validator->bindData($request);
         if (!$validator->run($request)) {
-            return $this->response->html('400 Bad Request', 400);
+            return $this->response->html($validator->error(), 415);
         } else {
             return $handler->handle($request);
         }

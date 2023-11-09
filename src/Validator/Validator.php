@@ -51,7 +51,10 @@ class Validator
      */
     public function addRule(string $name, ValidatorInterface $rule): void
     {
-        $this->rules[$name] = $rule;
+        if (!isset($this->rules[$name])) {
+            $this->rules[$name] = [];
+        }
+        $this->rules[$name][] = $rule;
     }
 
 
@@ -71,7 +74,7 @@ class Validator
                 $type = new \ReflectionProperty($this->formData, $key);
                 if (!($type->getType() instanceof \ReflectionUnionType)) {
                     $value = match ($type->getType()?->getName()) {
-                        'int'   => (int)$value,
+                        'int' => (int)$value,
                         'float' => (float)$value,
                         default => $value
                     };
@@ -93,8 +96,10 @@ class Validator
     public function run(ServerRequestInterface|Request $request): bool
     {
         foreach ($this->rules as $name => $rule) {
-            if (!$rule->dispatch($this->formData, $name)) {
-                return $this->addError($name);
+            foreach ($rule as $item) {
+                if (!$item->dispatch($this->formData, $name)) {
+                    return $this->addError($name);
+                }
             }
         }
         return true;
@@ -107,7 +112,7 @@ class Validator
      */
     private function addError($field): bool
     {
-        $this->message = $field . ' error';
+        $this->message = 'Field ' . $field . ' param format fail.';
         return false;
     }
 
