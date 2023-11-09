@@ -36,7 +36,7 @@ class ValidatorMiddleware implements MiddlewareInterface
     public function process(ServerRequestInterface $request, RequestHandlerInterface $handler): ResponseInterface
     {
         $validator = $this->validator->bindData($request);
-        if (!$validator->run($request)) {
+        if (!$validator->run()) {
             return $this->response->html($validator->error(), 415);
         } else {
             return $handler->handle($request);

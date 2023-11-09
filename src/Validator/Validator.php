@@ -90,10 +90,9 @@ class Validator
 
 
     /**
-     * @param ServerRequestInterface|Request $request
      * @return bool
      */
-    public function run(ServerRequestInterface|Request $request): bool
+    public function run(): bool
     {
         foreach ($this->rules as $name => $rule) {
             foreach ($rule as $item) {
