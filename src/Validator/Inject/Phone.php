@@ -18,6 +18,9 @@ class Phone implements ValidatorInterface
      */
     public function dispatch(mixed $data, object $class): bool
     {
+        if ($data == null || !is_numeric($data)) {
+            return false;
+        }
         return preg_match(self::REG, $data);
     }
 }

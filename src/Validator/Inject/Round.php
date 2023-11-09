@@ -25,6 +25,9 @@ class Round implements ValidatorInterface
      */
     public function dispatch(mixed $data, object $class): bool
     {
-		return round($data, $this->value) === $data;
+        if ($data === null) {
+            return false;
+        }
+		return round((float)$data, $this->value) === $data;
 	}
 }
