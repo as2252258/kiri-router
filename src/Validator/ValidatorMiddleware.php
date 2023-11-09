@@ -4,6 +4,7 @@ declare(strict_types=1);
 namespace Kiri\Router\Validator;
 
 use Exception;
+use Kiri\Di\Inject\Container;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Server\MiddlewareInterface;
@@ -16,20 +17,29 @@ class ValidatorMiddleware implements MiddlewareInterface
 {
 
 
-	public Validator $validator;
+    public Validator $validator;
 
 
+    /**
+     * @var ResponseInterface
+     */
+    #[Container(ResponseInterface::class)]
+    public ResponseInterface $response;
 
-	/**
-	 * @param ServerRequestInterface $request
-	 * @param RequestHandlerInterface $handler
-	 * @return ResponseInterface
-	 * @throws Exception
-	 */
-	public function process(ServerRequestInterface $request, RequestHandlerInterface $handler): ResponseInterface
-	{
-		$this->validator->bindData($request);
 
-		return $handler->handle($request);
-	}
+    /**
+     * @param ServerRequestInterface $request
+     * @param RequestHandlerInterface $handler
+     * @return ResponseInterface
+     * @throws Exception
+     */
+    public function process(ServerRequestInterface $request, RequestHandlerInterface $handler): ResponseInterface
+    {
+        $validator = $this->validator->bindData($request);
+        if (!$validator->run($request)) {
+            return $this->response->html('400 Bad Request', 400);
+        } else {
+            return $handler->handle($request);
+        }
+    }
 }
