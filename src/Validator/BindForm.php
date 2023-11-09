@@ -31,7 +31,8 @@ class BindForm implements InjectParameterInterface
     public function dispatch(string $class, string $method): object
     {
         $validator = new Validator();
-        $reflect   = \Kiri::getDi()->getReflectionClass($this->formValidate);
+        $container = \Kiri::getDi();
+        $reflect   = $container->getReflectionClass($this->formValidate);
         $validator->setFormData($reflect->newInstanceWithoutConstructor());
         foreach ($reflect->getProperties() as $property) {
             foreach ($property->getAttributes() as $attribute) {
@@ -47,9 +48,7 @@ class BindForm implements InjectParameterInterface
 
         $middleware            = \instance(ValidatorMiddleware::class);
         $middleware->validator = $validator;
-
-        $manager = \Kiri::getDi()->get(Middleware::class);
-        $manager->set($class, $method, $middleware);
+        $container->get(Middleware::class)->set($class, $method, $middleware);
 
         return $validator->getFormData();
     }
