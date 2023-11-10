@@ -79,9 +79,10 @@ class Validator
         }
         $params = !$request->getIsPost() ? $request->getQueryParams() : $request->getParsedBody();
         $method = Kiri::getDi()->getReflectionClass($this->formData::class);
-        foreach ($this->rules as $name => $rule) {
-            $value = $params[$name] ?? null;
-            foreach ($rule as $item) {
+
+        foreach ($params as $name => $value) {
+            $rules = $this->rules[$name] ?? [];
+            foreach ($rules as $item) {
                 /** @var ValidatorInterface $item */
                 if (!$item->dispatch($value, $this->formData)) {
                     return $this->addError($name);
