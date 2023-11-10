@@ -3,10 +3,12 @@ declare(strict_types=1);
 
 namespace Kiri\Router\Validator;
 
+use Kiri;
 use Kiri\Router\Constrict\ConstrictRequest;
 use Kiri\Router\Interface\ValidatorInterface;
 use Psr\Http\Message\RequestInterface;
 use Psr\Http\Message\ServerRequestInterface;
+use ReflectionException;
 
 
 /**
@@ -68,6 +70,7 @@ class Validator
     /**
      * @param RequestInterface|ServerRequestInterface|ConstrictRequest $request
      * @return bool
+     * @throws ReflectionException
      */
     public function run(RequestInterface|ServerRequestInterface|ConstrictRequest $request): bool
     {
@@ -75,6 +78,7 @@ class Validator
             return false;
         }
         $params = !$request->getIsPost() ? $request->getQueryParams() : $request->getParsedBody();
+        $method = Kiri::getDi()->getReflectionClass($this->formData::class);
         foreach ($this->rules as $name => $rule) {
             $value = $params[$name] ?? null;
             foreach ($rule as $item) {
@@ -82,6 +86,17 @@ class Validator
                 if (!$item->dispatch($value, $this->formData)) {
                     return $this->addError($name);
                 }
+            }
+            $property = $method->getProperty($name);
+            if (!($property->getType() instanceof \ReflectionUnionType)) {
+                $value = match ($property->getType()?->getName()) {
+                    'int' => (int)$value,
+                    'float' => (float)$value,
+                    default => $value
+                };
+            }
+            if ($value === 'Null') {
+                $value = null;
             }
             $this->formData->{$name} = $value;
         }
