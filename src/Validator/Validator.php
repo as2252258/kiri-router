@@ -81,6 +81,9 @@ class Validator
         $method = Kiri::getDi()->getReflectionClass($this->formData::class);
 
         foreach ($params as $name => $value) {
+            if (!$method->hasProperty($name)) {
+                continue;
+            }
             $rules = $this->rules[$name] ?? [];
             foreach ($rules as $item) {
                 /** @var ValidatorInterface $item */
