@@ -3,6 +3,8 @@ declare(strict_types=1);
 
 namespace Kiri\Router\Validator;
 
+use GuzzleHttp\Psr7\ServerRequest;
+use Kiri\Router\Constrict\ConstrictRequest;
 use Kiri\Router\Interface\ValidatorInterface;
 use Kiri\Router\Request;
 use Psr\Http\Message\RequestInterface;
@@ -22,9 +24,15 @@ class Validator
     protected array $rules = [];
 
 
+    /**
+     * @var string
+     */
     protected string $message = '';
 
 
+    /**
+     * @var object
+     */
     protected object $formData;
 
 
@@ -60,52 +68,17 @@ class Validator
 
 
     /**
-     * @param ServerRequestInterface|Request $request
-     * @return Validator
-     */
-    public function bindData(ServerRequestInterface|Request $request): static
-    {
-        if ($request->isPost) {
-            $data = $request->getParsedBody();
-        } else {
-            $data = $request->getQueryParams();
-        }
-        foreach ($data as $key => $value) {
-            if (!property_exists($this->formData, $key)) {
-                $this->addError($key);
-                return $this;
-            }
-            $type = new \ReflectionProperty($this->formData, $key);
-            if (!($type->getType() instanceof \ReflectionUnionType)) {
-                $value = match ($type->getType()?->getName()) {
-                    'int' => (int)$value,
-                    'float' => (float)$value,
-                    default => $value
-                };
-            }
-            if ($value === 'Null') {
-                $value = null;
-            }
-            $this->formData->{$key} = $value;
-        }
-        return $this;
-    }
-
-
-    /**
-     * @param RequestInterface $request
+     * @param RequestInterface|ServerRequestInterface|ConstrictRequest $request
      * @return bool
      */
-    public function run(RequestInterface $request): bool
+    public function run(RequestInterface|ServerRequestInterface|ConstrictRequest $request): bool
     {
         if (!empty($this->message)) {
             return false;
         }
+        $params = !$request->getIsPost() ? $request->getQueryParams() : $request->getParsedBody();
         foreach ($this->rules as $name => $rule) {
-            $value = $request->query($name, null);
-            if ($request->getIsPost()) {
-                $value = $request->post($name, null);
-            }
+            $value = $params[$name] ?? null;
             foreach ($rule as $item) {
                 /** @var ValidatorInterface $item */
                 if (!$item->dispatch($value, $this->formData)) {
@@ -124,7 +97,7 @@ class Validator
      */
     private function addError($field): bool
     {
-        $this->message = 'Field ' . $field . ' param format fail.';
+        $this->message = 'Field ' . $field . ' value format fail.';
         return false;
     }
 
