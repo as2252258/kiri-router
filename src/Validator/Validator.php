@@ -3,10 +3,8 @@ declare(strict_types=1);
 
 namespace Kiri\Router\Validator;
 
-use GuzzleHttp\Psr7\ServerRequest;
 use Kiri\Router\Constrict\ConstrictRequest;
 use Kiri\Router\Interface\ValidatorInterface;
-use Kiri\Router\Request;
 use Psr\Http\Message\RequestInterface;
 use Psr\Http\Message\ServerRequestInterface;
 
