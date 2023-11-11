@@ -665,6 +665,21 @@ class Request implements ServerRequestInterface
 
 
     /**
+     * @param string $name
+     * @param int $default
+     * @return int
+     */
+    public function queryInt(string $name, int $default = 0): int
+    {
+        $data = $this->getQueryParams();
+        if (!isset($data[$name])) {
+            return (int)$data[$name];
+        }
+        return $default;
+    }
+
+
+    /**
      * Return an instance with the specified body parameters.
      *
      * These MAY be injected during instantiation.
