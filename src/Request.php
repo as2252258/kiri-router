@@ -672,7 +672,7 @@ class Request implements ServerRequestInterface
     public function queryInt(string $name, int $default = 0): int
     {
         $data = $this->getQueryParams();
-        if (!isset($data[$name])) {
+        if (isset($data[$name])) {
             return (int)$data[$name];
         }
         return $default;
