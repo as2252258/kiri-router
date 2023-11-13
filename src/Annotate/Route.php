@@ -17,22 +17,24 @@ class Route extends AbstractRequestMethod implements InjectRouteInterface
      * @param RequestMethod $method
      * @param string $version
      */
-	public function __construct(readonly public string $path, readonly public RequestMethod $method, readonly public string $version = 'v1')
-	{
-	}
+    public function __construct(readonly public string $path, readonly public RequestMethod $method, readonly public string $version = '')
+    {
+    }
 
 
-	/**
-	 * @param object $class
-	 * @param string $method
-	 * @return void
-	 * @throws ReflectionException
-	 */
-	public function dispatch(object $class, string $method): void
-	{
-		// TODO: Implement dispatch() method.
-		$path = '/' . ltrim($this->path, '/');
-
-		Router::addRoute([$this->method], $path, [$class, $method]);
-	}
+    /**
+     * @param object $class
+     * @param string $method
+     * @return void
+     * @throws ReflectionException
+     */
+    public function dispatch(object $class, string $method): void
+    {
+        // TODO: Implement dispatch() method.
+        $path = '/' . ltrim($this->path, '/');
+        if (!empty($this->version)) {
+            $path = '/' . trim($this->version) . $path;
+        }
+        Router::addRoute([$this->method], $path, [$class, $method]);
+    }
 }
