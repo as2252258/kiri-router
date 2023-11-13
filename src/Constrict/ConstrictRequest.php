@@ -3,10 +3,12 @@ declare(strict_types=1);
 
 namespace Kiri\Router\Constrict;
 
+use Kiri\Core\Xml;
 use Kiri\Router\Base\AuthorizationInterface;
 use Psr\Http\Message\RequestInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Message\UriInterface;
+use Swoole\Http\Request;
 
 class ConstrictRequest extends Message implements RequestInterface, ServerRequestInterface
 {
@@ -383,7 +385,7 @@ class ConstrictRequest extends Message implements RequestInterface, ServerReques
     {
         // TODO: Implement getParsedBody() method.
         if ($this->parsedBody instanceof \Closure) {
-            $this->parsedBody = call_user_func($this->parsedBody);
+            $this->parsedBody = call_user_func($this->parsedBody, $this->getBody()->getContents());
         }
         return $this->parsedBody;
     }
@@ -410,7 +412,7 @@ class ConstrictRequest extends Message implements RequestInterface, ServerReques
      * immutability of the message, and MUST return an instance that has the
      * updated body parameters.
      *
-     * @param null|array|object $data The deserialized body data. This will
+     * @param null|array|object|Request $data The deserialized body data. This will
      *     typically be in an array or object.
      * @return static
      * @throws \InvalidArgumentException if an unsupported argument type is
@@ -418,8 +420,17 @@ class ConstrictRequest extends Message implements RequestInterface, ServerReques
      */
     public function withParsedBody($data): static
     {
-        // TODO: Implement withParsedBody() method.
-        $this->parsedBody = $data;
+        $contentType      = $data->header['content-type'] ?? 'application/json';
+        $post             = $data->post;
+        $this->parsedBody = static function (string $content) use ($contentType, $post) {
+            if (\str_contains($contentType, 'json')) {
+                return \json_decode($content, true);
+            } else if (\str_contains($contentType, 'xml')) {
+                return Xml::toArray($content);
+            } else {
+                return $post ?? [];
+            }
+        };
         return $this;
     }
 
@@ -509,8 +520,8 @@ class ConstrictRequest extends Message implements RequestInterface, ServerReques
     public function offset(): int
     {
         $params = $this->getQueryParams();
-        $page = (int)($params['page'] ?? 1);
-        $size = $this->size();
+        $page   = (int)($params['page'] ?? 1);
+        $size   = $this->size();
         if ($page < 1) {
             $page = 1;
         }
@@ -526,7 +537,7 @@ class ConstrictRequest extends Message implements RequestInterface, ServerReques
     public function size(): int
     {
         $params = $this->getQueryParams();
-        $size = (int)($params['size'] ?? 1);
+        $size   = (int)($params['size'] ?? 1);
         if ($size < 1) {
             $size = 1;
         }
