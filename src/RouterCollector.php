@@ -136,7 +136,7 @@ class RouterCollector implements \ArrayAccess, \IteratorAggregate
     public function addRoute(array $method, string $route, string|array|Closure $closure): void
     {
         try {
-            $route       = $this->_splicing_routing($route);
+            $route = $this->_splicing_routing($route);
             if ($closure instanceof Closure) {
                 $handler = $this->interpreter->addRouteByClosure($closure);
             } else {
@@ -175,15 +175,13 @@ class RouterCollector implements \ArrayAccess, \IteratorAggregate
     private function resolve(string|array $closure, ControllerInterpreter $interpreter): Handler
     {
         if (is_array($closure)) {
-            [$class, $method] = $closure;
-        } else {
-            if (!str_contains($closure, '@')) {
-                $closure .= '@';
-            }
-            [$className, $method] = explode('@', $closure);
-
-            $class = $this->container->get($this->resetName($className));
+            return $interpreter->addRouteByString(... $closure);
         }
+        if (!str_contains($closure, '@')) {
+            $closure .= '@';
+        }
+        [$className, $method] = explode('@', $closure);
+        $class = $this->container->get($this->resetName($className));
         return $interpreter->addRouteByString($class, $method);
     }
 
