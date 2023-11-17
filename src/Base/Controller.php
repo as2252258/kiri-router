@@ -14,13 +14,11 @@ use Psr\Log\LoggerInterface;
 use Psr\Http\Message\RequestInterface;
 use Psr\Http\Message\ResponseInterface;
 use Kiri\Di\Inject\Container;
-use ReflectionException;
 use Kiri\Error\StdoutLogger;
 
 /**
  * Class WebController
  * @package Kiri\Web
- * @property-read ContainerInterface $container
  * @property-read LoggerInterface $logger
  */
 abstract class Controller
