@@ -7,19 +7,15 @@ namespace Kiri\Router\Base;
 use Kiri;
 use Kiri\Router\Response;
 use Kiri\Router\Request;
-use Psr\Container\ContainerExceptionInterface;
 use Psr\Container\ContainerInterface;
-use Psr\Container\NotFoundExceptionInterface;
 use Psr\Log\LoggerInterface;
 use Psr\Http\Message\RequestInterface;
 use Psr\Http\Message\ResponseInterface;
 use Kiri\Di\Inject\Container;
-use Kiri\Error\StdoutLogger;
 
 /**
  * Class WebController
  * @package Kiri\Web
- * @property-read LoggerInterface $logger
  */
 abstract class Controller
 {
@@ -47,25 +43,10 @@ abstract class Controller
 
 
     /**
-     * @return StdoutLogger
-     * @throws ContainerExceptionInterface
-     * @throws NotFoundExceptionInterface
+     * @var LoggerInterface
      */
-    protected function getLogger(): StdoutLogger
-    {
-        return $this->container->get(LoggerInterface::class);
-    }
-
-
-    /**
-     * @param string $name
-     * @return mixed
-     */
-    public function __get(string $name)
-    {
-        // TODO: Implement __get() method.
-        return $this->{'get' . ucfirst($name)}();
-    }
+    #[Container(LoggerInterface::class)]
+    public LoggerInterface $logger;
 
 
     /**
@@ -76,15 +57,5 @@ abstract class Controller
     {
         return true;
     }
-
-
-    /**
-     * @param Response $response
-     * @return void
-     */
-    public function afterAction(ResponseInterface $response): void
-    {
-    }
-
 
 }
