@@ -31,12 +31,22 @@ class Response implements ResponseInterface
 
     /**
      * 初始化
-     * @throws
      */
     public function __construct()
     {
         $this->contentType = \config('response.content-type', ContentType::JSON);
-        $this->emmit       = di(\config('response.emmit', SwooleHttpResponseEmitter::class));
+        $this->emmit       = \config('response.emmit', SwooleHttpResponseEmitter::class);
+    }
+
+    /**
+     * @return void
+     * @throws ReflectionException
+     */
+    public function init(): void
+    {
+        if (is_string($this->emmit)) {
+            $this->emmit = di($this->emmit);
+        }
     }
 
 

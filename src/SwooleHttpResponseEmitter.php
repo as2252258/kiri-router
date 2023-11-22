@@ -21,21 +21,6 @@ use SplPriorityQueue;
 class SwooleHttpResponseEmitter implements ResponseEmitterInterface
 {
 
-
-    /**
-     * @var EventProvider
-     */
-    #[Container(EventProvider::class)]
-    public EventProvider $provider;
-
-
-    /**
-     * @var EventDispatch
-     */
-    #[Container(EventDispatch::class)]
-    public EventDispatch $dispatch;
-
-
     /**
      * @var SplPriorityQueue
      */
@@ -49,9 +34,10 @@ class SwooleHttpResponseEmitter implements ResponseEmitterInterface
 
 
     /**
-     * @return void
+     * @param EventDispatch $dispatch
+     * @param EventProvider $provider
      */
-    public function init(): void
+    public function __construct(readonly public EventDispatch $dispatch, readonly public EventProvider $provider)
     {
         $this->afterRequest = new OnAfterRequest();
         $this->events       = $this->provider->getListenersForEvent($this->afterRequest);
