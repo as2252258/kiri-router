@@ -20,6 +20,18 @@ class ConstrictResponse extends Message implements ResponseInterface
 
 
     /**
+     * @param ContentType|null $contentType
+     */
+    public function __construct(?ContentType $contentType = null)
+    {
+        if ($contentType != null) {
+            $this->withHeader('Content-Type', $contentType->toString());
+        }
+        parent::__construct();
+    }
+
+
+    /**
      * @param ContentType $contentType
      * @return $this
      */
@@ -39,9 +51,9 @@ class ConstrictResponse extends Message implements ResponseInterface
     public function write(mixed $data, int $statusCode = 200, ContentType $type = ContentType::HTML): static
     {
         if ($data instanceof \Stringable) {
-            $this->getBody()->write($data->__toString());
+            $this->stream->write($data->__toString());
         } else {
-            $this->getBody()->write((string)$data);
+            $this->stream->write((string)$data);
         }
         return $this->withContentType($type)->withStatus($statusCode);
     }
@@ -54,7 +66,7 @@ class ConstrictResponse extends Message implements ResponseInterface
      */
     public function xml(array $content, int $statusCode = 200): static
     {
-        $this->getBody()->write(Help::toXml($content));
+        $this->stream->write(Help::toXml($content));
         return $this->withContentType(ContentType::XML)->withStatus($statusCode);
     }
 
@@ -66,7 +78,7 @@ class ConstrictResponse extends Message implements ResponseInterface
      */
     public function json(array $content, int $statusCode = 200): static
     {
-        $this->getBody()->write(json_encode($content));
+        $this->stream->write(json_encode($content, JSON_UNESCAPED_UNICODE));
         return $this->withContentType(ContentType::JSON)->withStatus($statusCode);
     }
 
@@ -79,7 +91,7 @@ class ConstrictResponse extends Message implements ResponseInterface
      */
     public function raw(string $content, int $statusCode = 200, ContentType $contentType = ContentType::JSON): static
     {
-        $this->getBody()->write($content);
+        $this->stream->write($content);
         return $this->withContentType($contentType)->withStatus($statusCode);
     }
 
@@ -91,7 +103,7 @@ class ConstrictResponse extends Message implements ResponseInterface
      */
     public function html(string $content = '', int $statusCode = 200): static
     {
-        $this->getBody()->write($content);
+        $this->stream->write($content);
         return $this->withContentType(ContentType::HTML)->withStatus($statusCode);
     }
 
@@ -176,6 +188,6 @@ class ConstrictResponse extends Message implements ResponseInterface
      */
     public function end(object $response): void
     {
-        $response->end($this->getBody()->getContents());
+        $response->end($this->stream->getContents());
     }
 }

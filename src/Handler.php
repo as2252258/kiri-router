@@ -10,6 +10,9 @@ use Kiri\Router\Format\MixedFormat;
 use Kiri\Router\Format\OtherFormat;
 use Kiri\Router\Format\ResponseFormat;
 use Kiri\Router\Format\VoidFormat;
+use Psr\Container\ContainerExceptionInterface;
+use Psr\Container\ContainerInterface;
+use Psr\Container\NotFoundExceptionInterface;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Server\RequestHandlerInterface;
@@ -26,25 +29,42 @@ class Handler implements RequestHandlerInterface
 
 
     /**
+     * @var ContainerInterface
+     */
+    protected ContainerInterface $container;
+
+
+    /**
      * @param array|Closure $handler
      * @param array $parameter
      * @param ReflectionNamedType|null $reflectionType
      * @throws ReflectionException
+     * @throws ContainerExceptionInterface
+     * @throws NotFoundExceptionInterface
      */
     public function __construct(public array|Closure $handler, public array $parameter, public ?ReflectionNamedType $reflectionType)
     {
-        if ($this->reflectionType == null) {
-            $type = MixedFormat::class;
+        $this->container = \Kiri::getDi();
+        if ($this->reflectionType != null) {
+            $this->format = $this->container->get($this->returnType());
         } else {
-            $type = match ($this->reflectionType->getName()) {
-                'array' => ArrayFormat::class,
-                'mixed', 'object' => MixedFormat::class,
-                'int', 'string', 'bool' => OtherFormat::class,
-                'void' => VoidFormat::class,
-                default => ResponseFormat::class
-            };
+            $this->format = $this->container->get(MixedFormat::class);
         }
-        $this->format = di($type);
+    }
+
+
+    /**
+     * @return string
+     */
+    protected function returnType(): string
+    {
+        return match ($this->reflectionType->getName()) {
+            'array'                 => ArrayFormat::class,
+            'mixed', 'object'       => MixedFormat::class,
+            'int', 'string', 'bool' => OtherFormat::class,
+            'void'                  => VoidFormat::class,
+            default                 => ResponseFormat::class
+        };
     }
 
 

@@ -8,6 +8,9 @@ use Exception;
 use Kiri;
 use Kiri\Router\Base\Middleware as MiddlewareManager;
 use Kiri\Router\Constrict\RequestMethod;
+use Psr\Container\ContainerExceptionInterface;
+use Psr\Container\ContainerInterface;
+use Psr\Container\NotFoundExceptionInterface;
 use ReflectionException;
 
 /**
@@ -175,23 +178,27 @@ class Router
      */
     public function scan_build_route(): void
     {
-        $scanner = Kiri::getDi()->get(Kiri\Di\Scanner::class);
+        $container = Kiri::getDi();
+        $scanner   = $container->get(Kiri\Di\Scanner::class);
         $scanner->read(APP_PATH . 'app/');
         $scanner->parse('App');
 
         $this->read_dir_file(APP_PATH . 'routes');
-        $this->reset();
+        $this->reset($container);
     }
 
 
     /**
+     * @param ContainerInterface $container
      * @return void
      * @throws ReflectionException
+     * @throws ContainerExceptionInterface
+     * @throws NotFoundExceptionInterface
      */
-    public function reset(): void
+    public function reset(ContainerInterface $container): void
     {
-        $router     = Kiri::getDi()->get(DataGrip::class)->get(static::$type);
-        $middleware = \Kiri::getDi()->get(MiddlewareManager::class);
+        $router     = $container->get(DataGrip::class)->get(static::$type);
+        $middleware = $container->get(MiddlewareManager::class);
         foreach ($router->getMethods() as $name => $method) {
             $middlewares = $middleware->get($method->getClass(), $method->getMethod());
 

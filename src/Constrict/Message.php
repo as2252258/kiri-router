@@ -26,7 +26,7 @@ class Message extends Component implements MessageInterface
 	/**
 	 * @var StreamInterface
 	 */
-	private StreamInterface $stream;
+	public StreamInterface $stream;
 
 	/**
 	 * @var array
