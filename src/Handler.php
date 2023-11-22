@@ -29,6 +29,9 @@ class Handler implements RequestHandlerInterface
     protected mixed $format;
 
 
+    protected array $methods = [];
+
+
     /**
      * @var ContainerInterface
      */
@@ -66,6 +69,21 @@ class Handler implements RequestHandlerInterface
             'void'                  => VoidFormat::class,
             default                 => ResponseFormat::class
         };
+    }
+
+
+    /**
+     * @param string $method
+     * @return void
+     * @throws ContainerExceptionInterface
+     * @throws NotFoundExceptionInterface
+     * @throws ReflectionException
+     */
+    public function setRequestMethod(string $method): void
+    {
+        if ($method == 'HEAD') {
+            $this->format = $this->container->get(NoBody::class);
+        }
     }
 
 

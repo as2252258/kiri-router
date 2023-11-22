@@ -146,6 +146,7 @@ class RouterCollector implements \ArrayAccess, \IteratorAggregate
                 if ($value instanceof RequestMethod) {
                     $value = $value->getString();
                 }
+                $handler->setRequestMethod($value);
                 if (is_array($closure)) {
                     $closure[0] = is_object($closure[0]) ? get_class($closure[0]) : $closure;
                 } else if (is_string($closure)) {
