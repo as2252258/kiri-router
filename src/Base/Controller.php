@@ -43,10 +43,10 @@ abstract class Controller
 
 
     /**
-     * @var LoggerInterface
+     * @var Kiri\Error\StdoutLogger
      */
     #[Container(LoggerInterface::class)]
-    public LoggerInterface $logger;
+    public Kiri\Error\StdoutLogger $logger;
 
 
     /**
