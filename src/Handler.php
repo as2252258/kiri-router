@@ -37,23 +37,19 @@ class Handler implements RequestHandlerInterface
 
     /**
      * @param array|Closure $handler
-     * @param string $method
      * @param array $parameter
      * @param ReflectionNamedType|null $reflectionType
      * @throws ContainerExceptionInterface
      * @throws NotFoundExceptionInterface
      * @throws ReflectionException
      */
-    public function __construct(public array|Closure $handler, string $method, public array $parameter, public ?ReflectionNamedType $reflectionType)
+    public function __construct(public array|Closure $handler, public array $parameter, public ?ReflectionNamedType $reflectionType)
     {
         $this->container = \Kiri::getDi();
         if ($this->reflectionType != null) {
             $this->format = $this->container->get($this->returnType());
         } else {
             $this->format = $this->container->get(MixedFormat::class);
-        }
-        if ($method === 'HEAD') {
-            $this->format = $this->container->get(NoBody::class);
         }
     }
 
