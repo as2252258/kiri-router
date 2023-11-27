@@ -525,7 +525,7 @@ class ConstrictRequest extends Message implements RequestInterface, ServerReques
         if ($page < 1) {
             $page = 1;
         }
-        return ($size - $page) * $page;
+        return ($page - 1) * $size;
     }
 
 
