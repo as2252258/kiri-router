@@ -30,10 +30,10 @@ class ConstrictRequest extends Message implements RequestInterface, ServerReques
      */
     private array|null|object $parsedBody = null;
 
-    private array $files       = [];
-    private array $queryParams = [];
-
+    private array $files        = [];
+    private array $queryParams  = [];
     private array $serverParams = [];
+    private array $_attributes  = [];
 
 
     /**
@@ -448,7 +448,7 @@ class ConstrictRequest extends Message implements RequestInterface, ServerReques
     public function getAttributes(): array
     {
         // TODO: Implement getAttributes() method.
-        return [];
+        return $this->_attributes;
     }
 
     /**
@@ -469,7 +469,7 @@ class ConstrictRequest extends Message implements RequestInterface, ServerReques
     public function getAttribute(string $name, $default = null): mixed
     {
         // TODO: Implement getAttribute() method.
-        return null;
+        return $this->_attributes[$name] ?? $default;
     }
 
     /**
@@ -490,6 +490,7 @@ class ConstrictRequest extends Message implements RequestInterface, ServerReques
     public function withAttribute(string $name, $value): static
     {
         // TODO: Implement withAttribute() method.
+        $this->_attributes[$name] = $value;
         return $this;
     }
 
@@ -510,6 +511,7 @@ class ConstrictRequest extends Message implements RequestInterface, ServerReques
     public function withoutAttribute(string $name): static
     {
         // TODO: Implement withoutAttribute() method.
+        unset($this->_attributes[$name]);
         return $this;
     }
 
