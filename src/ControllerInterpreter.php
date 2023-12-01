@@ -6,6 +6,7 @@ namespace Kiri\Router;
 use Closure;
 use Exception;
 use Psr\Container\ContainerExceptionInterface;
+use Psr\Container\ContainerInterface;
 use Psr\Container\NotFoundExceptionInterface;
 use ReflectionClass;
 use ReflectionException;
@@ -13,6 +14,14 @@ use ReflectionMethod;
 
 class ControllerInterpreter
 {
+
+
+    /**
+     * @param ContainerInterface $container
+     */
+    public function __construct(public ContainerInterface $container)
+    {
+    }
 
 
     /**
@@ -27,7 +36,7 @@ class ControllerInterpreter
     public function addRouteByString(object $class, string|ReflectionMethod $method, ?ReflectionClass $reflection = null): Handler
     {
         if (is_null($reflection)) {
-            $reflection = \Kiri::getDi()->getReflectionClass($class::class);
+            $reflection = $this->container->getReflectionClass($class::class);
         }
         return $this->resolveMethod($class, $method, $reflection);
     }
@@ -44,7 +53,7 @@ class ControllerInterpreter
     {
         $reflection = new \ReflectionFunction($method);
 
-        $params = \Kiri::getDi()->resolveMethodParams($reflection);
+        $params = $this->container->resolveMethodParams($reflection);
 
         return new Handler($method, $params, $reflection->getReturnType());
     }
@@ -62,7 +71,7 @@ class ControllerInterpreter
     public function addRouteByObject(object $class, string|ReflectionMethod $method, ?ReflectionClass $reflection = null): Handler
     {
         if (is_null($reflection)) {
-            $reflection = \Kiri::getDi()->getReflectionClass($class::class);
+            $reflection = $this->container->getReflectionClass($class::class);
         }
         return $this->resolveMethod($class, $method, $reflection);
     }
@@ -89,8 +98,7 @@ class ControllerInterpreter
             throw new Exception("Return type error, cannot be multi type.");
         }
 
-        $container  = \Kiri::getDi();
-        $parameters = $container->getMethodParams($reflectionMethod);
+        $parameters = $this->container->getMethodParams($reflectionMethod);
 
         return new Handler([$class, $reflectionMethod->getName()], $parameters, $returnType);
     }
