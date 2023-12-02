@@ -15,6 +15,7 @@ use Psr\Container\ContainerExceptionInterface;
 use Psr\Container\ContainerInterface;
 use Psr\Container\NotFoundExceptionInterface;
 use ReflectionException;
+use ReflectionMethod;
 use Throwable;
 use Traversable;
 use Kiri\Router\Base\Middleware;
@@ -78,13 +79,15 @@ class RouterCollector implements \ArrayAccess, \IteratorAggregate
 
 
     /**
+     * @throws ContainerExceptionInterface
+     * @throws NotFoundExceptionInterface
      * @throws ReflectionException
      */
     public function __construct()
     {
         $found = di(NotFoundController::class);
 
-        $reflection = new \ReflectionMethod($found, 'fail');
+        $reflection = new ReflectionMethod($found, 'fail');
 
         $this->found = new Handler([$found, 'fail'], [], $reflection->getReturnType());
     }

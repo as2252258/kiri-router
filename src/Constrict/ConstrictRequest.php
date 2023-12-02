@@ -545,4 +545,24 @@ class ConstrictRequest extends Message implements RequestInterface, ServerReques
         }
         return $size;
     }
+
+
+    /**
+     * @param Request $request
+     * @return static
+     */
+    public static function builder(Request $request): static
+    {
+        $static = (new static())->withUri(new Uri($request));
+        $static->withHeaders($request->header ?? []);
+        $static->withProtocolVersion($request->server['server_protocol']);
+        $static->withCookieParams($request->cookie ?? []);
+        $static->withServerParams($request->server);
+        $static->withQueryParams($request->get ?? []);
+        $static->withBody(new Stream($request->getContent()));
+        $static->withParsedBody($request);
+        $static->withUploadedFiles($request->files ?? []);
+        $static->withMethod($request->getMethod());
+        return $static;
+    }
 }

@@ -44,7 +44,6 @@ class Handler implements RequestHandlerInterface
      * @param ReflectionNamedType|null $reflectionType
      * @throws ContainerExceptionInterface
      * @throws NotFoundExceptionInterface
-     * @throws ReflectionException
      */
     public function __construct(public array|Closure $handler, public array $parameter, public ?ReflectionNamedType $reflectionType)
     {
@@ -77,7 +76,6 @@ class Handler implements RequestHandlerInterface
      * @return void
      * @throws ContainerExceptionInterface
      * @throws NotFoundExceptionInterface
-     * @throws ReflectionException
      */
     public function setRequestMethod(string $method): void
     {
