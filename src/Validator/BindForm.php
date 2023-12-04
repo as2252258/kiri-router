@@ -90,7 +90,7 @@ class BindForm implements InjectParameterInterface
             'int'    => 0,
             'bool'   => false,
             'string' => '',
-            default  => throw new Exception('暂不支持')
+            default  => throw new Exception('暂不支持的类型')
         };
     }
 
