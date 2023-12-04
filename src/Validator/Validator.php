@@ -38,10 +38,12 @@ class Validator
 
     /**
      * @param object $formData
+     * @return object
      */
-    public function setFormData(object $formData): void
+    public function setFormData(object $formData): object
     {
         $this->formData = $formData;
+        return $formData;
     }
 
 
