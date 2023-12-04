@@ -9,6 +9,8 @@ use Kiri\Router\Interface\ValidatorInterface;
 use Psr\Http\Message\RequestInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use ReflectionException;
+use ReflectionNamedType;
+use ReflectionUnionType;
 
 
 /**
@@ -37,6 +39,12 @@ class Validator
 
 
     /**
+     * @var array
+     */
+    protected array $types = [];
+
+
+    /**
      * @param object $formData
      * @return object
      */
@@ -44,6 +52,17 @@ class Validator
     {
         $this->formData = $formData;
         return $formData;
+    }
+
+
+    /**
+     * @param string $property
+     * @param ReflectionNamedType|ReflectionUnionType $types
+     * @return void
+     */
+    public function setTypes(string $property, ReflectionNamedType|ReflectionUnionType $types): void
+    {
+        $this->types[$property] = $types;
     }
 
 
@@ -81,10 +100,9 @@ class Validator
             return false;
         }
         $params = !$request->getIsPost() ? $request->getQueryParams() : $request->getParsedBody();
-        $method = Kiri::getDi()->getReflectionClass($this->formData::class);
 
         foreach ($params as $name => $value) {
-            if (!$method->hasProperty($name)) {
+            if (!isset($this->types[$name])) {
                 continue;
             }
             $rules = $this->rules[$name] ?? [];
@@ -94,9 +112,11 @@ class Validator
                     return $this->addError($name);
                 }
             }
-            $property = $method->getProperty($name);
-            if ($property->getType() instanceof \ReflectionUnionType) {
-                foreach ($property->getType()->getTypes() as $type) {
+
+            /** @var ReflectionNamedType|ReflectionUnionType $property */
+            $property = $this->types[$name];
+            if ($property instanceof ReflectionUnionType) {
+                foreach ($property->getTypes() as $type) {
                     $typeName = $type->getName();
                     if ($typeName == 'string' && is_string($value)) {
                         $this->formData->{$name} = $value;
@@ -119,10 +139,10 @@ class Validator
                     throw new \Exception('Fail type value.');
                 }
             } else {
-                $value = match ($property->getType()?->getName()) {
+                $value = match ($property->getName()) {
                     'int'   => (int)$value,
                     'float' => (float)$value,
-                    'bool' => $value == 'true',
+                    'bool'  => $value == 'true',
                     default => $value
                 };
             }

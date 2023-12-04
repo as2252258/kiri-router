@@ -46,6 +46,7 @@ class BindForm implements InjectParameterInterface
                     $validator->addRule($property->getName(), $rule);
                 }
             }
+            $validator->setTypes($property->getName(), $property->getType());
             if (!$property->hasDefaultValue()) {
                 $this->insertDefaultValue($property->getType(), $object, $property->getName());
             }
