@@ -139,17 +139,13 @@ class Validator
                     throw new \Exception('Fail type value.');
                 }
             } else {
-                $value = match ($property->getName()) {
+                $this->formData->{$name} = match ($property->getName()) {
                     'int'   => (int)$value,
                     'float' => (float)$value,
                     'bool'  => $value == 'true',
                     default => $value
                 };
             }
-            if ($value === 'Null') {
-                $value = null;
-            }
-            $this->formData->{$name} = $value;
         }
         return true;
     }
