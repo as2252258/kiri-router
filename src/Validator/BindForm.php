@@ -6,6 +6,7 @@ use Exception;
 use Kiri\Di\Interface\InjectParameterInterface;
 use Kiri\Router\Base\Middleware;
 use Kiri\Router\Interface\ValidatorInterface;
+use Kiri\Router\Validator\Inject\Binding;
 use ReflectionException;
 use ReflectionNamedType;
 use ReflectionUnionType;
@@ -37,6 +38,10 @@ class BindForm implements InjectParameterInterface
         $reflect   = $container->getReflectionClass($this->formValidate);
         $object    = $validator->setFormData($reflect->newInstanceWithoutConstructor());
         foreach ($reflect->getProperties() as $property) {
+//            $binding = $property->getAttributes(Binding::class);
+//            if (count($binding) < 1) {
+//                continue;
+//            }
             foreach ($property->getAttributes() as $attribute) {
                 if (!class_exists($attribute->getName())) {
                     continue;
