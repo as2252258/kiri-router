@@ -73,6 +73,7 @@ class Validator
      * @param RequestInterface|ServerRequestInterface|ConstrictRequest $request
      * @return bool
      * @throws ReflectionException
+     * @throws \Exception
      */
     public function run(RequestInterface|ServerRequestInterface|ConstrictRequest $request): bool
     {
@@ -94,10 +95,34 @@ class Validator
                 }
             }
             $property = $method->getProperty($name);
-            if (!($property->getType() instanceof \ReflectionUnionType)) {
+            if ($property->getType() instanceof \ReflectionUnionType) {
+                foreach ($property->getType()->getTypes() as $type) {
+                    $typeName = $type->getName();
+                    if ($typeName == 'string' && is_string($value)) {
+                        $this->formData->{$name} = $value;
+                        break;
+                    } else if ($typeName == 'int' && $value == ($int = intval($value))) {
+                        $this->formData->{$name} = $int;
+                        break;
+                    } else if ($typeName == 'bool' && in_array($value, ['true', 'false'])) {
+                        $this->formData->{$name} = $value == 'true';
+                        break;
+                    } else if ($typeName == 'float' && $value == ($flo = floatval($value))) {
+                        $this->formData->{$name} = $flo;
+                        break;
+                    } else if ($typeName == 'array' && is_array($value)) {
+                        $this->formData->{$name} = $value;
+                        break;
+                    }
+                }
+                if ($this->formData->{$name} != $value) {
+                    throw new \Exception('Fail type value.');
+                }
+            } else {
                 $value = match ($property->getType()?->getName()) {
-                    'int' => (int)$value,
+                    'int'   => (int)$value,
                     'float' => (float)$value,
+                    'bool' => $value == 'true',
                     default => $value
                 };
             }
