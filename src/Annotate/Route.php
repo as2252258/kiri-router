@@ -7,7 +7,7 @@ use Kiri\Router\Interface\InjectRouteInterface;
 use Kiri\Router\Router;
 use ReflectionException;
 
-#[\Attribute(\Attribute::TARGET_METHOD)]
+#[\Attribute(\Attribute::TARGET_METHOD | \Attribute::IS_REPEATABLE)]
 class Route extends AbstractRequestMethod implements InjectRouteInterface
 {
 
