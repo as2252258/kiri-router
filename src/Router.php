@@ -180,8 +180,7 @@ class Router
     {
         $container = Kiri::getDi();
         $scanner   = $container->get(Kiri\Di\Scanner::class);
-        $scanner->read(APP_PATH . 'app/');
-        $scanner->parse('App');
+        $scanner->load_directory(APP_PATH . 'app/');
 
         $this->read_dir_file(APP_PATH . 'routes');
         $this->reset($container);
