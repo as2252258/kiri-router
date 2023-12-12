@@ -7,7 +7,6 @@ use Kiri\Router\Handler;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Server\MiddlewareInterface;
-use ReflectionException;
 
 abstract class AbstractHandler
 {
@@ -21,7 +20,7 @@ abstract class AbstractHandler
     /**
      * @param array $middlewares
      * @param Handler $handler
-     * @throws ReflectionException
+     * @throws
      */
     public function __construct(array $middlewares, public Handler $handler)
     {
@@ -33,7 +32,7 @@ abstract class AbstractHandler
     /**
      * @param ServerRequestInterface $request
      * @return ResponseInterface
-     * @throws ReflectionException
+     * @throws
      */
     public function execute(ServerRequestInterface $request): ResponseInterface
     {

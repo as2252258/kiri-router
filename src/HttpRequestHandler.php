@@ -16,7 +16,7 @@ class HttpRequestHandler extends AbstractHandler implements RequestHandlerInterf
     /**
      * @param ServerRequestInterface $request
      * @return ResponseInterface
-     * @throws ReflectionException
+     * @throws
      */
     public function run(ServerRequestInterface $request): ResponseInterface
     {
@@ -27,7 +27,7 @@ class HttpRequestHandler extends AbstractHandler implements RequestHandlerInterf
     /**
      * @param ServerRequestInterface $request
      * @return ResponseInterface
-     * @throws ReflectionException
+     * @throws
      */
     public function handle(ServerRequestInterface $request): ResponseInterface
     {

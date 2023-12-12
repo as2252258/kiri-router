@@ -28,8 +28,7 @@ class BindForm implements InjectParameterInterface
      * @param string $class
      * @param string $method
      * @return mixed
-     * @throws ReflectionException
-     * @throws Exception
+     * @throws
      */
     public function dispatch(string $class, string $method): object
     {
@@ -38,10 +37,6 @@ class BindForm implements InjectParameterInterface
         $reflect   = $container->getReflectionClass($this->formValidate);
         $object    = $validator->setFormData($reflect->newInstanceWithoutConstructor());
         foreach ($reflect->getProperties() as $property) {
-//            $binding = $property->getAttributes(Binding::class);
-//            if (count($binding) < 1) {
-//                continue;
-//            }
             foreach ($property->getAttributes() as $attribute) {
                 if (!class_exists($attribute->getName())) {
                     continue;
@@ -70,7 +65,7 @@ class BindForm implements InjectParameterInterface
      * @param object $object
      * @param string $property
      * @return void
-     * @throws Exception
+     * @throws
      */
     private function insertDefaultValue(ReflectionNamedType|ReflectionUnionType $reflectionProperty, object $object, string $property): void
     {
@@ -87,7 +82,7 @@ class BindForm implements InjectParameterInterface
     /**
      * @param ReflectionNamedType $type
      * @return array|false|int|string
-     * @throws Exception
+     * @throws
      */
     private function defaultValue(ReflectionNamedType $type): array|false|int|string
     {

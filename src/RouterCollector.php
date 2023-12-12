@@ -79,9 +79,7 @@ class RouterCollector implements \ArrayAccess, \IteratorAggregate
 
 
     /**
-     * @throws ContainerExceptionInterface
-     * @throws NotFoundExceptionInterface
-     * @throws ReflectionException
+     * @throws
      */
     public function __construct()
     {
@@ -172,9 +170,7 @@ class RouterCollector implements \ArrayAccess, \IteratorAggregate
      * @param string|array $closure
      * @param ControllerInterpreter $interpreter
      * @return Handler
-     * @throws ReflectionException
-     * @throws ContainerExceptionInterface
-     * @throws NotFoundExceptionInterface
+     * @throws
      */
     private function resolve(string|array $closure, ControllerInterpreter $interpreter): Handler
     {
@@ -209,7 +205,7 @@ class RouterCollector implements \ArrayAccess, \IteratorAggregate
      * @param string $method
      * @param Handler $handler
      * @return void
-     * @throws Exception
+     * @throws
      */
     public function register(string $path, string $method, Handler $handler): void
     {
@@ -222,7 +218,7 @@ class RouterCollector implements \ArrayAccess, \IteratorAggregate
      * @param string $class
      * @param string $method
      * @return void
-     * @throws Exception
+     * @throws
      */
     public function registerMiddleware(string $class, string $method): void
     {
@@ -261,7 +257,7 @@ class RouterCollector implements \ArrayAccess, \IteratorAggregate
      * @param string $path
      * @param string $method
      * @return HttpRequestHandler
-     * @throws ReflectionException
+     * @throws
      */
     public function query(string $path, string $method): HttpRequestHandler
     {

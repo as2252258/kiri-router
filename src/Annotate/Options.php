@@ -27,8 +27,7 @@ class Options extends AbstractRequestMethod implements InjectRouteInterface
 	 * @param object $class
 	 * @param string $method
 	 * @return void
-	 * @throws ReflectionException
-	 * @throws Exception
+     * @throws
 	 */
 	public function dispatch(object $class, string $method): void
 	{

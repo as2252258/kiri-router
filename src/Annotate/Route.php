@@ -26,7 +26,6 @@ class Route extends AbstractRequestMethod implements InjectRouteInterface
      * @param object $class
      * @param string $method
      * @return void
-     * @throws ReflectionException
      */
     public function dispatch(object $class, string $method): void
     {

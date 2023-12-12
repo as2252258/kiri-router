@@ -3,7 +3,6 @@ declare(strict_types=1);
 
 namespace Kiri\Router\Validator;
 
-use Kiri;
 use Kiri\Router\Constrict\ConstrictRequest;
 use Kiri\Router\Interface\ValidatorInterface;
 use Psr\Http\Message\RequestInterface;
@@ -91,8 +90,7 @@ class Validator
     /**
      * @param RequestInterface|ServerRequestInterface|ConstrictRequest $request
      * @return bool
-     * @throws ReflectionException
-     * @throws \Exception
+     * @throws
      */
     public function run(RequestInterface|ServerRequestInterface|ConstrictRequest $request): bool
     {

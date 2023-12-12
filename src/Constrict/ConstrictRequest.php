@@ -172,7 +172,7 @@ class ConstrictRequest extends Message implements RequestInterface, ServerReques
      *
      * @param string $method Case-sensitive method.
      * @return static
-     * @throws \InvalidArgumentException for invalid HTTP methods.
+     * @throws
      */
     public function withMethod(string $method): static
     {
@@ -357,7 +357,7 @@ class ConstrictRequest extends Message implements RequestInterface, ServerReques
      *
      * @param array $uploadedFiles An array tree of UploadedFileInterface instances.
      * @return static
-     * @throws \InvalidArgumentException if an invalid structure is provided.
+     * @throws
      */
     public function withUploadedFiles(array $uploadedFiles): static
     {
@@ -415,7 +415,7 @@ class ConstrictRequest extends Message implements RequestInterface, ServerReques
      * @param null|array|object|Request $data The deserialized body data. This will
      *     typically be in an array or object.
      * @return static
-     * @throws \InvalidArgumentException if an unsupported argument type is
+     * @throws
      *     provided.
      */
     public function withParsedBody($data): static

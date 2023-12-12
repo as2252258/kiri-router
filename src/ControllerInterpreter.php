@@ -5,11 +5,8 @@ namespace Kiri\Router;
 
 use Closure;
 use Exception;
-use Psr\Container\ContainerExceptionInterface;
 use Psr\Container\ContainerInterface;
-use Psr\Container\NotFoundExceptionInterface;
 use ReflectionClass;
-use ReflectionException;
 use ReflectionMethod;
 
 class ControllerInterpreter
@@ -29,9 +26,7 @@ class ControllerInterpreter
      * @param string|ReflectionMethod $method
      * @param ReflectionClass|null $reflection
      * @return Handler
-     * @throws ContainerExceptionInterface
-     * @throws NotFoundExceptionInterface
-     * @throws ReflectionException
+     * @throws
      */
     public function addRouteByString(object $class, string|ReflectionMethod $method, ?ReflectionClass $reflection = null): Handler
     {
@@ -45,9 +40,7 @@ class ControllerInterpreter
     /**
      * @param Closure $method
      * @return Handler
-     * @throws ReflectionException
-     * @throws ContainerExceptionInterface
-     * @throws NotFoundExceptionInterface
+     * @throws
      */
     public function addRouteByClosure(Closure $method): Handler
     {
@@ -64,9 +57,7 @@ class ControllerInterpreter
      * @param string|ReflectionMethod $method
      * @param ReflectionClass|null $reflection
      * @return Handler
-     * @throws ContainerExceptionInterface
-     * @throws NotFoundExceptionInterface
-     * @throws ReflectionException
+     * @throws
      */
     public function addRouteByObject(object $class, string|ReflectionMethod $method, ?ReflectionClass $reflection = null): Handler
     {
@@ -82,10 +73,7 @@ class ControllerInterpreter
      * @param string|ReflectionMethod $reflectionMethod
      * @param ReflectionClass $reflectionClass
      * @return Handler
-     * @throws ReflectionException
-     * @throws ContainerExceptionInterface
-     * @throws NotFoundExceptionInterface
-     * @throws Exception
+     * @throws
      */
     public function resolveMethod(object $class, string|\ReflectionMethod $reflectionMethod, ReflectionClass $reflectionClass): Handler
     {

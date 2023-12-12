@@ -3,8 +3,6 @@ declare(strict_types=1);
 
 namespace Kiri\Router\Base;
 
-use Exception;
-use Kiri\Core\HashMap;
 use Psr\Http\Server\MiddlewareInterface;
 
 class Middleware
@@ -30,7 +28,7 @@ class Middleware
      * @param string $method
      * @param string|object $middleware
      * @return void
-     * @throws Exception
+     * @throws
      */
     public function set(string $className, string $method, string|object $middleware): void
     {

@@ -15,27 +15,25 @@ use ReflectionException;
 class StreamResponse extends Response
 {
 
-	public int $limit;
+    public int $limit;
 
 
     /**
      * @param object $response
      * @return void
-     * @throws ContainerExceptionInterface
-     * @throws NotFoundExceptionInterface
-     * @throws ReflectionException
+     * @throws
      */
-	public function end(object $response): void
-	{
-		$body = $this->getBody();
-		$total = ceil($this->limit / $body->getSize());
-		$response->header('Content-Length', [$body->getSize()]);
-		for ($i = 0; $i < $total; $i++) {
-			$body->seek($i);
+    public function end(object $response): void
+    {
+        $body  = $this->getBody();
+        $total = ceil($this->limit / $body->getSize());
+        $response->header('Content-Length', [$body->getSize()]);
+        for ($i = 0; $i < $total; $i++) {
+            $body->seek($i);
 
-			$response->write($body->read($this->limit));
-		}
-		$response->end();
-	}
+            $response->write($body->read($this->limit));
+        }
+        $response->end();
+    }
 
 }

@@ -4,7 +4,6 @@ declare(strict_types=1);
 namespace Kiri\Router\Constrict;
 
 use Kiri\Core\Help;
-use Kiri\Core\Xml;
 use Kiri\Router\ContentType;
 use Kiri\Router\StreamResponse;
 use Psr\Http\Message\ResponseInterface;
@@ -152,7 +151,7 @@ class ConstrictResponse extends Message implements ResponseInterface
      *     provided status code; if none is provided, implementations MAY
      *     use the defaults as suggested in the HTTP specification.
      * @return static
-     * @throws \InvalidArgumentException For invalid status code arguments.
+     * @throws
      */
     public function withStatus(int $code, string $reasonPhrase = ''): static
     {

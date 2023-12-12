@@ -3,7 +3,6 @@ declare(strict_types=1);
 
 namespace Kiri\Router\Validator;
 
-use Exception;
 use Kiri\Di\Inject\Container;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
@@ -31,7 +30,7 @@ class ValidatorMiddleware implements MiddlewareInterface
      * @param ServerRequestInterface $request
      * @param RequestHandlerInterface $handler
      * @return ResponseInterface
-     * @throws Exception
+     * @throws
      */
     public function process(ServerRequestInterface $request, RequestHandlerInterface $handler): ResponseInterface
     {

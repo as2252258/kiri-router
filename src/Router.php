@@ -4,14 +4,10 @@ declare(strict_types=1);
 namespace Kiri\Router;
 
 use Closure;
-use Exception;
 use Kiri;
 use Kiri\Router\Base\Middleware as MiddlewareManager;
 use Kiri\Router\Constrict\RequestMethod;
-use Psr\Container\ContainerExceptionInterface;
 use Psr\Container\ContainerInterface;
-use Psr\Container\NotFoundExceptionInterface;
-use ReflectionException;
 
 /**
  *
@@ -26,7 +22,7 @@ class Router
 {
 
 
-    const METHODS = [RequestMethod::REQUEST_POST, RequestMethod::REQUEST_GET, RequestMethod::REQUEST_OPTIONS, RequestMethod::REQUEST_DELETE, RequestMethod::REQUEST_PUT, RequestMethod::REQUEST_HEAD];
+    const array METHODS = [RequestMethod::REQUEST_POST, RequestMethod::REQUEST_GET, RequestMethod::REQUEST_OPTIONS, RequestMethod::REQUEST_DELETE, RequestMethod::REQUEST_PUT, RequestMethod::REQUEST_HEAD];
 
 
     /**
@@ -207,7 +203,7 @@ class Router
     /**
      * @param $path
      * @return void
-     * @throws Exception
+     * @throws
      */
     private function read_dir_file($path): void
     {
@@ -225,7 +221,7 @@ class Router
 
     /**
      * @param $files
-     * @throws Exception
+     * @throws
      */
     private function resolve_file($files): void
     {

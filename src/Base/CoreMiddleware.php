@@ -3,7 +3,6 @@ declare(strict_types=1);
 
 namespace Kiri\Router\Base;
 
-use Exception;
 use Kiri\Di\Inject\Container;
 use Kiri\Router\Request;
 use Kiri\Router\Response;
@@ -31,7 +30,7 @@ class CoreMiddleware implements MiddlewareInterface
      * @param Request $request
      * @param RequestHandlerInterface $handler
      * @return ResponseInterface
-     * @throws Exception
+     * @throws
      */
     public function process(ServerRequestInterface $request, RequestHandlerInterface $handler): ResponseInterface
     {

@@ -3,11 +3,9 @@ declare(strict_types=1);
 
 namespace Kiri\Router;
 
-use InvalidArgumentException;
 use Kiri\Di\Interface\ResponseEmitterInterface;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\StreamInterface;
-use ReflectionException;
 
 
 /**
@@ -40,7 +38,7 @@ class Response implements ResponseInterface
 
     /**
      * @return void
-     * @throws ReflectionException
+     * @throws
      */
     public function init(): void
     {
@@ -281,7 +279,7 @@ class Response implements ResponseInterface
      * @param string $name Case-insensitive header field name.
      * @param string|string[] $value Header value(s).
      * @return static
-     * @throws InvalidArgumentException for invalid header names or values.
+     * @throws
      */
     public function withHeader(string $name, $value): ResponseInterface
     {
@@ -313,7 +311,7 @@ class Response implements ResponseInterface
      * @param string $name Case-insensitive header field name to add.
      * @param string|string[] $value Header value(s).
      * @return static
-     * @throws InvalidArgumentException for invalid header names or values.
+     * @throws
      */
     public function withAddedHeader(string $name, $value): ResponseInterface
     {
@@ -361,7 +359,7 @@ class Response implements ResponseInterface
      *
      * @param StreamInterface $body Body.
      * @return static
-     * @throws InvalidArgumentException When the body is not valid.
+     * @throws
      */
     public function withBody(StreamInterface $body): ResponseInterface
     {
@@ -413,7 +411,7 @@ class Response implements ResponseInterface
      *     provided status code; if none is provided, implementations MAY
      *     use the defaults as suggested in the HTTP specification.
      * @return static
-     * @throws InvalidArgumentException For invalid status code arguments.
+     * @throws
      */
     public function withStatus(int $code, string $reasonPhrase = ''): ResponseInterface
     {

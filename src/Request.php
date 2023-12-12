@@ -224,7 +224,7 @@ class Request implements ServerRequestInterface
      * @param string $name Case-insensitive header field name.
      * @param string|string[] $value Header value(s).
      * @return static
-     * @throws \InvalidArgumentException for invalid header names or values.
+     * @throws
      */
     public function withHeader(string $name, $value): ServerRequestInterface
     {
@@ -278,7 +278,7 @@ class Request implements ServerRequestInterface
      * @param string $name Case-insensitive header field name to add.
      * @param string|string[] $value Header value(s).
      * @return static
-     * @throws \InvalidArgumentException for invalid header names or values.
+     * @throws
      */
     public function withAddedHeader(string $name, $value): ServerRequestInterface
     {
@@ -339,7 +339,7 @@ class Request implements ServerRequestInterface
      *
      * @param StreamInterface $body Body.
      * @return static
-     * @throws \InvalidArgumentException When the body is not valid.
+     * @throws
      */
     public function withBody(StreamInterface $body): ServerRequestInterface
     {
@@ -416,7 +416,7 @@ class Request implements ServerRequestInterface
      *
      * @param string $method Case-sensitive method.
      * @return static
-     * @throws \InvalidArgumentException for invalid HTTP methods.
+     * @throws
      */
     public function withMethod(string $method): ServerRequestInterface
     {
@@ -602,7 +602,7 @@ class Request implements ServerRequestInterface
      *
      * @param array $uploadedFiles An array tree of UploadedFileInterface instances.
      * @return static
-     * @throws \InvalidArgumentException if an invalid structure is provided.
+     * @throws
      */
     public function withUploadedFiles(array $uploadedFiles): ServerRequestInterface
     {
@@ -704,7 +704,7 @@ class Request implements ServerRequestInterface
      * @param null|array|object $data The deserialized body data. This will
      *     typically be in an array or object.
      * @return static
-     * @throws \InvalidArgumentException if an unsupported argument type is
+     * @throws
      *     provided.
      */
     public function withParsedBody($data): ServerRequestInterface

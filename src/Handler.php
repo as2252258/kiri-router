@@ -11,13 +11,10 @@ use Kiri\Router\Format\NoBody;
 use Kiri\Router\Format\OtherFormat;
 use Kiri\Router\Format\ResponseFormat;
 use Kiri\Router\Format\VoidFormat;
-use Psr\Container\ContainerExceptionInterface;
 use Psr\Container\ContainerInterface;
-use Psr\Container\NotFoundExceptionInterface;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Server\RequestHandlerInterface;
-use ReflectionException;
 use ReflectionNamedType;
 
 class Handler implements RequestHandlerInterface
@@ -42,8 +39,7 @@ class Handler implements RequestHandlerInterface
      * @param array|Closure $handler
      * @param array $parameter
      * @param ReflectionNamedType|null $reflectionType
-     * @throws ContainerExceptionInterface
-     * @throws NotFoundExceptionInterface
+     * @throws
      */
     public function __construct(public array|Closure $handler, public array $parameter, public ?ReflectionNamedType $reflectionType)
     {
@@ -74,8 +70,7 @@ class Handler implements RequestHandlerInterface
     /**
      * @param string $method
      * @return void
-     * @throws ContainerExceptionInterface
-     * @throws NotFoundExceptionInterface
+     * @throws
      */
     public function setRequestMethod(string $method): void
     {
@@ -134,7 +129,7 @@ class Handler implements RequestHandlerInterface
     /**
      * @param ServerRequestInterface $request
      * @return ResponseInterface
-     * @throws ReflectionException
+     * @throws
      */
     public function handle(ServerRequestInterface $request): ResponseInterface
     {

@@ -49,9 +49,7 @@ class SwooleHttpResponseEmitter implements ResponseEmitterInterface
      * @param object $response
      * @param object $request
      * @return void
-     * @throws ContainerExceptionInterface
-     * @throws NotFoundExceptionInterface
-     * @throws ReflectionException
+     * @throws
      */
     public function response(ResponseInterface $proxy, object $response, object $request): void
     {
