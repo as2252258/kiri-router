@@ -85,8 +85,7 @@ class RouterCollector implements \ArrayAccess, \IteratorAggregate
     {
         $found = di(NotFoundController::class);
 
-        $reflection = new ReflectionMethod($found, 'fail');
-
+        $reflection  = new ReflectionMethod($found, 'fail');
         $this->found = new Handler([$found, 'fail'], [], $reflection->getReturnType());
     }
 
@@ -153,16 +152,31 @@ class RouterCollector implements \ArrayAccess, \IteratorAggregate
                 } else if (is_string($closure)) {
                     $closure = explode('@', $closure);
                 }
-                $this->dump[] = [
-                    'method'   => $value,
-                    'path'     => $route,
-                    'callback' => $closure instanceof Closure ? 'Closure' : $closure
-                ];
                 $this->register($route, $value, $handler);
             }
         } catch (Throwable $throwable) {
             error($throwable);
         }
+    }
+
+
+    /**
+     * @return array
+     */
+    public function dump(): array
+    {
+        $array = [];
+        foreach ($this->methods as $methodPath => $handler) {
+            [$path, $method] = explode('_', $methodPath);
+
+            $controller = $handler->isClosure() ? '\Closure' : $handler->getClass() . '::' . $handler->getMethod();
+            $array[]    = [
+                'path'    => $path,
+                'method'  => $method,
+                'handler' => $controller
+            ];
+        }
+        return $array;
     }
 
 
