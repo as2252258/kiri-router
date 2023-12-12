@@ -3,6 +3,7 @@ declare(strict_types=1);
 
 namespace Kiri\Router\Constrict;
 
+use JetBrains\PhpStorm\ArrayShape;
 use Kiri\Core\Xml;
 use Kiri\Router\Base\AuthorizationInterface;
 use Psr\Http\Message\RequestInterface;
@@ -58,6 +59,17 @@ class ConstrictRequest extends Message implements RequestInterface, ServerReques
     {
         $this->authorization = $authorization;
         return $this;
+    }
+
+
+    /**
+     * @param string $name
+     * @return array|null
+     */
+    #[ArrayShape(['name' => 'string', 'type' => 'string', 'tmp_name' => 'string', 'error' => 'int', 'size' => 'int'])]
+    public function file(string $name): ?array
+    {
+        return $this->files[$name] ?? null;
     }
 
 

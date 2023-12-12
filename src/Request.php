@@ -3,6 +3,7 @@ declare(strict_types=1);
 
 namespace Kiri\Router;
 
+use JetBrains\PhpStorm\ArrayShape;
 use Kiri\Router\Base\AuthorizationInterface;
 use Kiri\Router\Base\ExceptionHandlerDispatcher;
 use Psr\Http\Message\RequestInterface;
@@ -641,6 +642,17 @@ class Request implements ServerRequestInterface
     {
         $parseBody = $this->getParsedBody();
         return $parseBody[$name] ?? $default;
+    }
+
+
+    /**
+     * @param string $name
+     * @return array|null
+     */
+    #[ArrayShape(['name' => 'string', 'type' => 'string', 'tmp_name' => 'string', 'error' => 'int', 'size' => 'int'])]
+    public function file(string $name): ?array
+    {
+        return $this->__call__(__FUNCTION__, $name);
     }
 
 
