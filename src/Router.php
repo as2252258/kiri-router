@@ -61,7 +61,7 @@ class Router
     /**
      * @param string $route
      * @param string $handler
-     * @throws ReflectionException
+     * @throws
      */
     public static function post(string $route, string $handler): void
     {
@@ -72,7 +72,7 @@ class Router
     /**
      * @param string $route
      * @param string $handler
-     * @throws ReflectionException
+     * @throws
      */
     public static function get(string $route, string $handler): void
     {
@@ -107,7 +107,7 @@ class Router
     /**
      * @param string $route
      * @param string $handler
-     * @throws ReflectionException
+     * @throws
      */
     public static function delete(string $route, string $handler): void
     {
@@ -119,7 +119,7 @@ class Router
     /**
      * @param string $route
      * @param string $handler
-     * @throws ReflectionException
+     * @throws
      */
     public static function head(string $route, string $handler): void
     {
@@ -131,7 +131,7 @@ class Router
     /**
      * @param string $route
      * @param string $handler
-     * @throws ReflectionException
+     * @throws
      */
     public static function put(string $route, string $handler): void
     {
@@ -144,7 +144,7 @@ class Router
      * @param array|RequestMethod $methods
      * @param string $route
      * @param array|string $handler
-     * @throws ReflectionException
+     * @throws
      */
     public static function addRoute(array|RequestMethod $methods, string $route, array|string $handler): void
     {
@@ -190,9 +190,7 @@ class Router
     /**
      * @param ContainerInterface $container
      * @return void
-     * @throws ReflectionException
-     * @throws ContainerExceptionInterface
-     * @throws NotFoundExceptionInterface
+     * @throws
      */
     public function reset(ContainerInterface $container): void
     {
