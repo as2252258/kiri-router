@@ -3,9 +3,9 @@ declare(strict_types=1);
 
 namespace Kiri\Router;
 
-use JetBrains\PhpStorm\ArrayShape;
 use Kiri\Router\Base\AuthorizationInterface;
 use Kiri\Router\Base\ExceptionHandlerDispatcher;
+use Kiri\Router\Constrict\File;
 use Psr\Http\Message\RequestInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Message\StreamInterface;
@@ -647,10 +647,9 @@ class Request implements ServerRequestInterface
 
     /**
      * @param string $name
-     * @return array|null
+     * @return File|null
      */
-    #[ArrayShape(['name' => 'string', 'type' => 'string', 'tmp_name' => 'string', 'error' => 'int', 'size' => 'int'])]
-    public function file(string $name): ?array
+    public function file(string $name): ?File
     {
         return $this->__call__(__FUNCTION__, $name);
     }
@@ -659,7 +658,7 @@ class Request implements ServerRequestInterface
     /**
      * @return bool
      */
-    public function getIsPost(): bool
+    public function isPost(): bool
     {
         return $this->getMethod() == 'POST';
     }

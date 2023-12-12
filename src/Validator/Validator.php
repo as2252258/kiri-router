@@ -97,7 +97,7 @@ class Validator
         if (!empty($this->message)) {
             return false;
         }
-        $params = !$request->getIsPost() ? $request->getQueryParams() : $request->getParsedBody();
+        $params = !$request->isPost() ? $request->getQueryParams() : $request->getParsedBody();
 
         foreach ($params as $name => $value) {
             if (!isset($this->types[$name])) {

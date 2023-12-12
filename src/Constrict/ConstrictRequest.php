@@ -64,19 +64,22 @@ class ConstrictRequest extends Message implements RequestInterface, ServerReques
 
     /**
      * @param string $name
-     * @return array|null
+     * @return File|null
      */
-    #[ArrayShape(['name' => 'string', 'type' => 'string', 'tmp_name' => 'string', 'error' => 'int', 'size' => 'int'])]
-    public function file(string $name): ?array
+    public function file(string $name): ?File
     {
-        return $this->files[$name] ?? null;
+        if (isset($this->files[$name])) {
+            return new File($this->files[$name]);
+        } else {
+            return null;
+        }
     }
 
 
     /**
      * @return bool
      */
-    public function getIsPost(): bool
+    public function isPost(): bool
     {
         return $this->method === 'POST';
     }
