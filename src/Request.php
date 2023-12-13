@@ -13,7 +13,6 @@ use Psr\Http\Message\UriInterface;
 
 
 /**
- * @property-read bool $isPost
  * @property-read AuthorizationInterface $authority
  */
 class Request implements ServerRequestInterface
