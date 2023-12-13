@@ -3,6 +3,7 @@ declare(strict_types=1);
 
 namespace Kiri\Router\Validator;
 
+use Exception;
 use Kiri\Router\Constrict\ConstrictRequest;
 use Kiri\Router\Interface\ValidatorInterface;
 use Psr\Http\Message\RequestInterface;
@@ -134,18 +135,38 @@ class Validator
                     }
                 }
                 if ($this->formData->{$name} != $value) {
-                    throw new \Exception('Fail type value.');
+                    throw new Exception('Fail type value.');
                 }
             } else {
                 $this->formData->{$name} = match ($property->getName()) {
                     'int'   => (int)$value,
                     'float' => (float)$value,
                     'bool'  => $value == 'true',
+                    'array' => $this->arrayCheck($property, $name, $value),
                     default => $value
                 };
             }
         }
         return true;
+    }
+
+
+    /**
+     * @param ReflectionNamedType $property
+     * @param string $name
+     * @param string|array $value
+     * @return array
+     * @throws Exception
+     */
+    protected function arrayCheck(ReflectionNamedType $property, string $name, string|array $value): array
+    {
+        if (empty($value) || !is_array($value)) {
+            if ($property->allowsNull()) {
+                $this->formData->{$name} = null;
+            }
+            throw new Exception('TypeError Cannot assign string to property ' . $name . ' of type array');
+        }
+        return $value;
     }
 
 
