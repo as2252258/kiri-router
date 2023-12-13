@@ -155,7 +155,7 @@ class Validator
      * @param ReflectionNamedType $property
      * @param string $name
      * @param string|array $value
-     * @return array
+     * @return array|null
      * @throws Exception
      */
     protected function arrayCheck(ReflectionNamedType $property, string $name, string|array $value): ?array
