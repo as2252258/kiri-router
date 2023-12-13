@@ -158,13 +158,13 @@ class Validator
      * @return array
      * @throws Exception
      */
-    protected function arrayCheck(ReflectionNamedType $property, string $name, string|array $value): array
+    protected function arrayCheck(ReflectionNamedType $property, string $name, string|array $value): ?array
     {
         if (empty($value) || !is_array($value)) {
             if ($property->allowsNull()) {
-                $this->formData->{$name} = null;
+                return null;
             }
-            throw new Exception('TypeError Cannot assign string to property ' . $name . ' of type array');
+            throw new Exception('Cannot assign non null values to property ' . $name . ' of type array');
         }
         return $value;
     }
