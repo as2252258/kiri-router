@@ -3,8 +3,11 @@
 namespace Kiri\Router\Validator\Types;
 
 
-class ArrayProxy extends TypesProxy
+class MixedProxy extends TypesProxy
 {
+
+
+    public array $types = [];
 
 
     /**
@@ -15,7 +18,11 @@ class ArrayProxy extends TypesProxy
      */
     public function dispatch(object $form, string $field, mixed $value): bool
     {
-        return $value == ($form->{$field} = $value);
+        try {
+            return $value == ($form->{$field} = $value);
+        } catch (\Throwable $throwable) {
+            return false;
+        }
     }
 
 }

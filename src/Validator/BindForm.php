@@ -5,9 +5,14 @@ namespace Kiri\Router\Validator;
 use Exception;
 use Kiri\Di\Interface\InjectParameterInterface;
 use Kiri\Router\Base\Middleware;
-use Kiri\Router\Interface\ValidatorInterface;
-use Kiri\Router\Validator\Inject\Binding;
-use ReflectionException;
+use Kiri\Router\Validator\RequestFilter\RequestFilterInterface;
+use Kiri\Router\Validator\Types\ArrayProxy;
+use Kiri\Router\Validator\Types\BoolProxy;
+use Kiri\Router\Validator\Types\FloatProxy;
+use Kiri\Router\Validator\Types\IntProxy;
+use Kiri\Router\Validator\Types\MixedProxy;
+use Kiri\Router\Validator\Types\StringProxy;
+use Kiri\Router\Validator\Types\TypesProxy;
 use ReflectionNamedType;
 use ReflectionUnionType;
 
@@ -42,14 +47,13 @@ class BindForm implements InjectParameterInterface
                     continue;
                 }
                 $rule = \inject($attribute->newInstance());
-                if ($rule instanceof ValidatorInterface) {
-                    $validator->addRule($property->getName(), $rule);
+                if ($rule instanceof RequestFilterInterface) {
+                    $validator->addRule($property->getName(), $rule->dispatch($object, $property->getName()));
                 }
             }
-            $validator->setTypes($property->getName(), $property->getType());
-            if (!$property->hasDefaultValue()) {
-                $this->insertDefaultValue($property->getType(), $object, $property->getName());
-            }
+
+            $typeProxy        = $this->_typeValidator($property);
+            $validator->addRule($property->getName(), [$typeProxy, false]);
         }
 
         $middleware            = \instance(ValidatorMiddleware::class);
@@ -61,39 +65,43 @@ class BindForm implements InjectParameterInterface
 
 
     /**
-     * @param ReflectionNamedType|ReflectionUnionType $reflectionProperty
-     * @param object $object
-     * @param string $property
-     * @return void
-     * @throws
+     * @param \ReflectionProperty $property
+     * @return object
+     * @throws Exception
      */
-    private function insertDefaultValue(ReflectionNamedType|ReflectionUnionType $reflectionProperty, object $object, string $property): void
+    private function _typeValidator(\ReflectionProperty $property): TypesProxy
     {
-        if ($reflectionProperty->allowsNull()) {
-            $object->{$property} = null;
-        } else if ($reflectionProperty instanceof ReflectionUnionType) {
-            $object->{$property} = $this->defaultValue($reflectionProperty->getTypes()[0]);
-        } else {
-            $object->{$property} = $this->defaultValue($reflectionProperty);
+        $getType = $property->getType();
+        $array   = ['allowsNull' => $property->getType()->allowsNull()];
+        if (!$getType instanceof ReflectionUnionType) {
+            return \Kiri::createObject(array_merge($array, [
+                'class' => $this->_typeProxy($getType)
+            ]));
         }
+        $types = [];
+        foreach ($getType->getTypes() as $type) {
+            $types[] = $type->getName();
+        }
+        return \Kiri::createObject(array_merge($array, [
+            'types' => $types,
+            'class' => MixedProxy::class
+        ]));
     }
 
 
     /**
      * @param ReflectionNamedType $type
-     * @return array|false|int|string
-     * @throws
+     * @return string
      */
-    private function defaultValue(ReflectionNamedType $type): array|false|int|string
+    private function _typeProxy(ReflectionNamedType $type): string
     {
         return match ($type->getName()) {
-            'array'  => [],
-            'int'    => 0,
-            'bool'   => false,
-            'string' => '',
-            default  => throw new Exception('暂不支持的类型')
+            'array'  => ArrayProxy::class,
+            'bool'   => BoolProxy::class,
+            'float'  => FloatProxy::class,
+            'int'    => IntProxy::class,
+            'string' => StringProxy::class,
         };
     }
-
 
 }

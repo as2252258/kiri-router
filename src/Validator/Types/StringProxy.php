@@ -2,7 +2,19 @@
 
 namespace Kiri\Router\Validator\Types;
 
-class StringProxy
+
+class StringProxy extends TypesProxy
 {
+
+
+    /**
+     * @param object $form
+     * @param mixed $value
+     * @return bool
+     */
+    public function dispatch(object $form, string $field, mixed $value): bool
+    {
+        return $value == ($form->{$field} = (string)$value);
+    }
 
 }

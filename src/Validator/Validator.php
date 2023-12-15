@@ -6,11 +6,13 @@ namespace Kiri\Router\Validator;
 use Exception;
 use Kiri\Router\Constrict\ConstrictRequest;
 use Kiri\Router\Interface\ValidatorInterface;
+use Kiri\Router\Validator\RequestFilter\RequiredValidatorFilter;
+use Kiri\Router\Validator\Types\TypesProxy;
 use Psr\Http\Message\RequestInterface;
 use Psr\Http\Message\ServerRequestInterface;
-use ReflectionException;
 use ReflectionNamedType;
 use ReflectionUnionType;
+use Kiri\Router\Validator\RequestFilter\ValidatorFilter as RValidator;
 
 
 /**
@@ -21,7 +23,7 @@ class Validator
 
 
     /**
-     * @var ValidatorInterface[]
+     * @var array<array<ValidatorInterface|TypesProxy>>
      */
     protected array $rules = [];
 
@@ -36,6 +38,12 @@ class Validator
      * @var object
      */
     protected object $formData;
+
+
+    /**
+     * @var array
+     */
+    protected array $ignoring = [];
 
 
     /**
@@ -56,17 +64,6 @@ class Validator
 
 
     /**
-     * @param string $property
-     * @param ReflectionNamedType|ReflectionUnionType $types
-     * @return void
-     */
-    public function setTypes(string $property, ReflectionNamedType|ReflectionUnionType $types): void
-    {
-        $this->types[$property] = $types;
-    }
-
-
-    /**
      * @return object
      */
     public function getFormData(): object
@@ -76,15 +73,22 @@ class Validator
 
     /**
      * @param string $name
-     * @param ValidatorInterface $rule
+     * @param array $rule
      * @return void
      */
-    public function addRule(string $name, ValidatorInterface $rule): void
+    public function addRule(string $name, array $rule): void
     {
         if (!isset($this->rules[$name])) {
             $this->rules[$name] = [];
         }
-        $this->rules[$name][] = $rule;
+        foreach ($rule as $item) {
+            [$dispatch, $isFirst] = $item;
+            if ($isFirst) {
+                array_unshift($this->rules[$name], $dispatch);
+            } else {
+                $this->rules[$name][] = $dispatch;
+            }
+        }
     }
 
 
@@ -99,74 +103,30 @@ class Validator
             return false;
         }
         $params = !$request->isPost() ? $request->getQueryParams() : $request->getParsedBody();
-
-        foreach ($params as $name => $value) {
-            if (!isset($this->types[$name])) {
-                continue;
-            }
-            $rules = $this->rules[$name] ?? [];
-            foreach ($rules as $item) {
-                /** @var ValidatorInterface $item */
-                if (!$item->dispatch($value, $this->formData)) {
-                    return $this->addError($name);
+        foreach ($this->rules as $name => $rules) {
+            /** @var TypesProxy $typeValidator */
+            if (!isset($params[$name])) {
+                if ($rules[0] instanceof RequiredValidatorFilter) {
+                    return $this->addError('The request field ' . $name . ' is mandatory and indispensable');
+                }
+                if (!$typeValidator->allowsNull) {
+                    return $this->addError('The request field ' . $name . ' parameter cannot be null');
                 }
             }
 
-            /** @var ReflectionNamedType|ReflectionUnionType $property */
-            $property = $this->types[$name];
-            if ($property instanceof ReflectionUnionType) {
-                foreach ($property->getTypes() as $type) {
-                    $typeName = $type->getName();
-                    if ($typeName == 'string' && is_string($value)) {
-                        $this->formData->{$name} = $value;
-                        break;
-                    } else if ($typeName == 'int' && $value == ($int = intval($value))) {
-                        $this->formData->{$name} = $int;
-                        break;
-                    } else if ($typeName == 'bool' && in_array($value, ['true', 'false'])) {
-                        $this->formData->{$name} = $value == 'true';
-                        break;
-                    } else if ($typeName == 'float' && $value == ($flo = floatval($value))) {
-                        $this->formData->{$name} = $flo;
-                        break;
-                    } else if ($typeName == 'array' && is_array($value)) {
-                        $this->formData->{$name} = $value;
-                        break;
-                    }
+            $typeValidator = array_pop($rules);
+            if (!$typeValidator->dispatch($this->formData, $name, $params[$name])) {
+                return $this->addError('The parameter type used in the request field ' . $name . ' is incorrect');
+            }
+
+            /** @var RValidator $rule */
+            foreach ($rules as $rule) {
+                if (!$rule->dispatch($this->formData->{$name})) {
+                    return $this->addError('Request field ' . $name . ' value format error');
                 }
-                if ($this->formData->{$name} != $value) {
-                    throw new Exception('Fail type value.');
-                }
-            } else {
-                $this->formData->{$name} = match ($property->getName()) {
-                    'int'   => (int)$value,
-                    'float' => (float)$value,
-                    'bool'  => $value == 'true',
-                    'array' => $this->arrayCheck($property, $name, $value),
-                    default => $value
-                };
             }
         }
         return true;
-    }
-
-
-    /**
-     * @param ReflectionNamedType $property
-     * @param string $name
-     * @param string|array $value
-     * @return array|null
-     * @throws Exception
-     */
-    protected function arrayCheck(ReflectionNamedType $property, string $name, string|array $value): ?array
-    {
-        if (empty($value) || !is_array($value)) {
-            if ($property->allowsNull()) {
-                return null;
-            }
-            throw new Exception('Cannot assign non null values to property ' . $name . ' of type array');
-        }
-        return $value;
     }
 
 
@@ -176,7 +136,7 @@ class Validator
      */
     private function addError($field): bool
     {
-        $this->message = 'Field ' . $field . ' value format fail.';
+        $this->message = $field;
         return false;
     }
 
