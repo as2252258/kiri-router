@@ -82,7 +82,8 @@ class Validator
             $this->rules[$name] = [];
         }
         foreach ($rule as $item) {
-            [$dispatch, $isFirst] = $item;
+            $isFirst  = array_pop($item);
+            $dispatch = count($item) > 1 ? $item : [$item[0], 'dispatch'];
             if ($isFirst) {
                 array_unshift($this->rules[$name], $dispatch);
             } else {
@@ -104,24 +105,25 @@ class Validator
         }
         $params = !$request->isPost() ? $request->getQueryParams() : $request->getParsedBody();
         foreach ($this->rules as $name => $rules) {
-            /** @var TypesProxy $typeValidator */
+            /** @var array<array<TypesProxy,string>> $typeValidator */
+            $typeValidator = array_pop($rules);
             if (!isset($params[$name])) {
                 if ($rules[0] instanceof RequiredValidatorFilter) {
                     return $this->addError('The request field ' . $name . ' is mandatory and indispensable');
                 }
-                if (!$typeValidator->allowsNull) {
+                if (!$typeValidator[0]->allowsNull) {
                     return $this->addError('The request field ' . $name . ' parameter cannot be null');
                 }
+                $params[$name] = null;
             }
 
-            $typeValidator = array_pop($rules);
-            if (!$typeValidator->dispatch($this->formData, $name, $params[$name])) {
+            if (!call_user_func($typeValidator, $this->formData, $name, $params[$name])) {
                 return $this->addError('The parameter type used in the request field ' . $name . ' is incorrect');
             }
 
-            /** @var RValidator $rule */
+            /** @var array $rule */
             foreach ($rules as $rule) {
-                if (!$rule->dispatch($this->formData->{$name})) {
+                if (!call_user_func($rule, $this->formData->{$name})) {
                     return $this->addError('Request field ' . $name . ' value format error');
                 }
             }

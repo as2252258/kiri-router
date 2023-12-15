@@ -13,6 +13,7 @@ use Kiri\Router\Validator\Types\IntProxy;
 use Kiri\Router\Validator\Types\MixedProxy;
 use Kiri\Router\Validator\Types\StringProxy;
 use Kiri\Router\Validator\Types\TypesProxy;
+use Kiri\Server\ServerInterface;
 use ReflectionNamedType;
 use ReflectionUnionType;
 
@@ -52,7 +53,7 @@ class BindForm implements InjectParameterInterface
                 }
             }
 
-            $typeProxy        = $this->_typeValidator($property);
+            $typeProxy = $this->_typeValidator($property);
             $validator->addRule($property->getName(), [$typeProxy, false]);
         }
 
@@ -72,28 +73,32 @@ class BindForm implements InjectParameterInterface
     private function _typeValidator(\ReflectionProperty $property): TypesProxy
     {
         $getType = $property->getType();
-        $array   = ['allowsNull' => $property->getType()->allowsNull()];
+        if (is_null($getType)) {
+            $service = \Kiri::getDi();
+            if ($service->has(ServerInterface::class)) {
+                $service->get(ServerInterface::class)->shutdown();
+            }
+            throw new Exception('Field ' . $property->getDeclaringClass()->getName() . '::' . $property->getName() . ' must have a numerical type set.');
+        }
+        $array = ['allowsNull' => $property->getType()->allowsNull()];
         if (!$getType instanceof ReflectionUnionType) {
-            return \Kiri::createObject(array_merge($array, [
-                'class' => $this->_typeProxy($getType)
-            ]));
+            $array = array_merge($array, ['class' => $this->_typeProxy($getType)]);
+        } else {
+            $types = [];
+            foreach ($getType->getTypes() as $type) {
+                $types[] = $type->getName();
+            }
+            $array = array_merge($array, ['types' => $types, 'class' => MixedProxy::class]);
         }
-        $types = [];
-        foreach ($getType->getTypes() as $type) {
-            $types[] = $type->getName();
-        }
-        return \Kiri::createObject(array_merge($array, [
-            'types' => $types,
-            'class' => MixedProxy::class
-        ]));
+        return \Kiri::createObject($array);
     }
 
 
     /**
      * @param ReflectionNamedType $type
-     * @return string
+     * @return string|null
      */
-    private function _typeProxy(ReflectionNamedType $type): string
+    private function _typeProxy(ReflectionNamedType $type): ?string
     {
         return match ($type->getName()) {
             'array'  => ArrayProxy::class,
@@ -101,6 +106,7 @@ class BindForm implements InjectParameterInterface
             'float'  => FloatProxy::class,
             'int'    => IntProxy::class,
             'string' => StringProxy::class,
+            default  => null
         };
     }
 
