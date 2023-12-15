@@ -93,8 +93,7 @@ class BindForm implements InjectParameterInterface
             $validator->setAlias($property->getName(), $rule->field);
         }
 
-        $typeProxy = $this->_typeValidator($property);
-        $validator->addRule($property->getName(), [$typeProxy, false]);
+        $validator->addRule($property->getName(), [$this->_typeValidator($property), 'dispatch', false]);
     }
 
 

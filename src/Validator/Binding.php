@@ -94,7 +94,7 @@ class Binding implements RequestFilterInterface
         if ($class['class'] === RequiredValidatorFilter::class) {
             $isFirst = true;
         }
-        return [Kiri::createObject($class), $isFirst];
+        return [Kiri::createObject($class), 'dispatch', $isFirst];
     }
 
 }

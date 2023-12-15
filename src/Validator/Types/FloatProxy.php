@@ -8,6 +8,7 @@ class FloatProxy extends TypesProxy
 
     /**
      * @param object $form
+     * @param string $field
      * @param mixed $value
      * @return bool
      */
