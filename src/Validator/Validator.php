@@ -41,6 +41,12 @@ class Validator
 
 
     /**
+     * @var array<string, string>
+     */
+    protected array $alias = [];
+
+
+    /**
      * @var array
      */
     protected array $ignoring = [];
@@ -69,6 +75,17 @@ class Validator
     public function getFormData(): object
     {
         return $this->formData;
+    }
+
+
+    /**
+     * @param string $alias
+     * @param string $property
+     * @return void
+     */
+    public function setAlias(string $alias, string $property): void
+    {
+        $this->alias[$alias] = $property;
     }
 
     /**
@@ -107,17 +124,18 @@ class Validator
         foreach ($this->rules as $name => $rules) {
             /** @var array<array<TypesProxy,string>> $typeValidator */
             $typeValidator = array_pop($rules);
-            if (!isset($params[$name])) {
+            $key = $this->alias[$name];
+            if (!isset($params[$key])) {
                 if ($rules[0] instanceof RequiredValidatorFilter) {
                     return $this->addError('The request field ' . $name . ' is mandatory and indispensable');
                 }
                 if (!$typeValidator[0]->allowsNull) {
                     return $this->addError('The request field ' . $name . ' parameter cannot be null');
                 }
-                $params[$name] = null;
+                $params[$key] = null;
             }
 
-            if (!call_user_func($typeValidator, $this->formData, $name, $params[$name])) {
+            if (!call_user_func($typeValidator, $this->formData, $name, $params[$key])) {
                 return $this->addError('The parameter type used in the request field ' . $name . ' is incorrect');
             }
 

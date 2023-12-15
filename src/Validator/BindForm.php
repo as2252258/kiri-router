@@ -51,8 +51,10 @@ class BindForm implements InjectParameterInterface
                 if ($rule instanceof RequestFilterInterface) {
                     $validator->addRule($property->getName(), $rule->dispatch($object, $property->getName()));
                 }
+                if ($rule instanceof Binding) {
+                    $validator->setAlias($attribute->getName(), $rule->field);
+                }
             }
-
             $typeProxy = $this->_typeValidator($property);
             $validator->addRule($property->getName(), [$typeProxy, false]);
         }
