@@ -71,7 +71,7 @@ class BindForm implements InjectParameterInterface
      * @return void
      * @throws Exception
      */
-    protected function properties(Validator $validator, ReflectionProperty $property, object $object)
+    protected function properties(Validator $validator, ReflectionProperty $property, object $object): void
     {
         $propertyContainer = $property->getAttributes(Container::class);
         if (count($propertyContainer) > 0) {
