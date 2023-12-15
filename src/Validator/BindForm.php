@@ -3,6 +3,8 @@
 namespace Kiri\Router\Validator;
 
 use Exception;
+use Kiri\Di\Inject\Config;
+use Kiri\Di\Inject\Container;
 use Kiri\Di\Interface\InjectParameterInterface;
 use Kiri\Router\Base\Middleware;
 use Kiri\Router\Validator\RequestFilter\RequestFilterInterface;
@@ -15,6 +17,7 @@ use Kiri\Router\Validator\Types\StringProxy;
 use Kiri\Router\Validator\Types\TypesProxy;
 use Kiri\Server\ServerInterface;
 use ReflectionNamedType;
+use ReflectionProperty;
 use ReflectionUnionType;
 use function inject;
 
@@ -45,22 +48,12 @@ class BindForm implements InjectParameterInterface
         $object    = $validator->setFormData($reflect->newInstanceWithoutConstructor());
         foreach ($reflect->getProperties() as $property) {
             $ignoring = $property->getAttributes(Ignoring::class);
-            $comment = $property->getDocComment();
+            $comment  = $property->getDocComment();
             if (count($ignoring) > 0 || ($comment && str_contains($comment, '@deprecated'))) {
                 continue;
             }
 
-            $binding = $property->getAttributes(Binding::class);
-            if (count($binding) == 1) {
-                /** @var Binding $rule */
-                $rule = $binding[0]->newInstance();
-
-                $validator->addRule($property->getName(), $rule->dispatch($object, $property->getName()));
-                $validator->setAlias($property->getName(), $rule->field);
-            }
-
-            $typeProxy = $this->_typeValidator($property);
-            $validator->addRule($property->getName(), [$typeProxy, false]);
+            $this->properties($validator, $property, $object);
         }
 
         $middleware            = \instance(ValidatorMiddleware::class);
@@ -72,11 +65,45 @@ class BindForm implements InjectParameterInterface
 
 
     /**
-     * @param \ReflectionProperty $property
-     * @return object
+     * @param Validator $validator
+     * @param ReflectionProperty $property
+     * @param object $object
+     * @return void
      * @throws Exception
      */
-    private function _typeValidator(\ReflectionProperty $property): TypesProxy
+    protected function properties(Validator $validator, ReflectionProperty $property, object $object)
+    {
+        $propertyContainer = $property->getAttributes(Container::class);
+        if (count($propertyContainer) > 0) {
+            ($propertyContainer[0]->newInstance())->dispatch($object, $property->getName());
+        }
+
+
+        $propertyConfig = $property->getAttributes(Config::class);
+        if (count($propertyConfig) > 0) {
+            ($propertyConfig[0]->newInstance())->dispatch($object, $property->getName());
+        }
+
+        $binding = $property->getAttributes(Binding::class);
+        if (count($binding) > 0) {
+            /** @var Binding $rule */
+            $rule = $binding[0]->newInstance();
+
+            $validator->addRule($property->getName(), $rule->dispatch($object, $property->getName()));
+            $validator->setAlias($property->getName(), $rule->field);
+        }
+
+        $typeProxy = $this->_typeValidator($property);
+        $validator->addRule($property->getName(), [$typeProxy, false]);
+    }
+
+
+    /**
+     * @param ReflectionProperty $property
+     * @return TypesProxy
+     * @throws Exception
+     */
+    private function _typeValidator(ReflectionProperty $property): TypesProxy
     {
         $getType = $property->getType();
         if (is_null($getType)) {
