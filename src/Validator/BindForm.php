@@ -16,6 +16,7 @@ use Kiri\Router\Validator\Types\TypesProxy;
 use Kiri\Server\ServerInterface;
 use ReflectionNamedType;
 use ReflectionUnionType;
+use function inject;
 
 #[\Attribute(\Attribute::TARGET_PARAMETER)]
 class BindForm implements InjectParameterInterface
@@ -43,15 +44,15 @@ class BindForm implements InjectParameterInterface
         $reflect   = $container->getReflectionClass($this->formValidate);
         $object    = $validator->setFormData($reflect->newInstanceWithoutConstructor());
         foreach ($reflect->getProperties() as $property) {
-            foreach ($property->getAttributes() as $attribute) {
-                if (!class_exists($attribute->getName())) {
-                    continue;
-                }
-                $rule = \inject($attribute->newInstance());
-                if ($rule instanceof RequestFilterInterface) {
-                    $validator->addRule($property->getName(), $rule->dispatch($object, $property->getName()));
-                }
-                if ($rule instanceof Binding) {
+            $ignoring = $property->getAttributes(Ignoring::class);
+            if (count($ignoring) == 0) {
+                $binding = $property->getAttributes(Binding::class);
+                if (count($binding) == 1) {
+                    $attribute = current($binding);
+                    $rule      = inject($attribute->newInstance());
+                    if ($rule instanceof RequestFilterInterface) {
+                        $validator->addRule($property->getName(), $rule->dispatch($object, $property->getName()));
+                    }
                     $validator->setAlias($attribute->getName(), $rule->field);
                 }
             }
