@@ -45,17 +45,20 @@ class BindForm implements InjectParameterInterface
         $object    = $validator->setFormData($reflect->newInstanceWithoutConstructor());
         foreach ($reflect->getProperties() as $property) {
             $ignoring = $property->getAttributes(Ignoring::class);
-            if (count($ignoring) == 0) {
-                $binding = $property->getAttributes(Binding::class);
-                if (count($binding) == 1) {
-                    $attribute = current($binding);
-                    $rule      = inject($attribute->newInstance());
-                    if ($rule instanceof RequestFilterInterface) {
-                        $validator->addRule($property->getName(), $rule->dispatch($object, $property->getName()));
-                    }
-                    $validator->setAlias($attribute->getName(), $rule->field);
-                }
+            if (count($ignoring) > 0) {
+                continue;
             }
+
+            $binding = $property->getAttributes(Binding::class);
+            if (count($binding) == 1) {
+                $attribute = current($binding);
+                $rule      = inject($attribute->newInstance());
+                if ($rule instanceof RequestFilterInterface) {
+                    $validator->addRule($property->getName(), $rule->dispatch($object, $property->getName()));
+                }
+                $validator->setAlias($attribute->getName(), $rule->field);
+            }
+
             $typeProxy = $this->_typeValidator($property);
             $validator->addRule($property->getName(), [$typeProxy, false]);
         }
