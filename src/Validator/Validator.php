@@ -113,9 +113,6 @@ class Validator
      */
     public function run(RequestInterface|ServerRequestInterface|ConstrictRequest $request): bool
     {
-        if (!empty($this->message)) {
-            return false;
-        }
         $params = !$request->isPost() ? $request->getQueryParams() : $request->getParsedBody();
         foreach ($this->rules as $name => $rules) {
             /** @var array<array<TypesProxy,string>> $typeValidator */
