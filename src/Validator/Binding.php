@@ -89,7 +89,11 @@ class Binding implements RequestFilterInterface
      */
     protected function getValidator($key, $rule): array
     {
-        $class   = array_merge(self::TYPES[$key], ['value' => $rule, 'field' => $key]);
+        if (is_numeric($key)) {
+            $class = self::TYPES[$key];
+        } else {
+            $class   = array_merge(self::TYPES[$key], ['value' => $rule, 'field' => $key]);
+        }
         $isFirst = false;
         if ($class['class'] === RequiredValidatorFilter::class) {
             $isFirst = true;
