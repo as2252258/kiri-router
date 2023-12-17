@@ -14,7 +14,11 @@ class IntProxy extends TypesProxy
      */
     public function dispatch(object $form, string $field, mixed $value): bool
     {
-        if (is_null($value) && !$this->allowsNull) {
+        if (is_null($value)) {
+            if (!$this->allowsNull) {
+                return false;
+            }
+            $form->{$field} = 0;
             return false;
         }
         return $value == ($form->{$field} = (int)$value);

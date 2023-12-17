@@ -120,18 +120,13 @@ class Validator
         foreach ($this->rules as $name => $rules) {
             /** @var array<array<TypesProxy,string>> $typeValidator */
             $typeValidator = array_pop($rules);
-            $key = $this->alias[$name];
-            if (!isset($params[$key])) {
-                if ($rules[0] instanceof RequiredValidatorFilter) {
+            if (!isset($params[$name])) {
+                if (!empty($rules) && $rules[0] instanceof RequiredValidatorFilter) {
                     return $this->addError('The request field ' . $name . ' is mandatory and indispensable');
                 }
-                if (!$typeValidator[0]->allowsNull) {
-                    return $this->addError('The request field ' . $name . ' parameter cannot be null');
-                }
-                $params[$key] = null;
             }
 
-            if (!call_user_func($typeValidator, $this->formData, $name, $params[$key])) {
+            if (!call_user_func($typeValidator, $this->formData, $name, $params[$name] ?? null)) {
                 return $this->addError('The parameter type used in the request field ' . $name . ' is incorrect');
             }
 
