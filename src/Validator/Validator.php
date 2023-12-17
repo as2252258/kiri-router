@@ -122,6 +122,7 @@ class Validator
                     if ($rules[0][0] instanceof RequiredValidatorFilter) {
                         return $this->addError('The request field ' . $name . ' is mandatory and indispensable');
                     }
+                    unset($rules[0]);
                 }
             }
 
