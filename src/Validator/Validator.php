@@ -118,8 +118,10 @@ class Validator
             /** @var array<array<TypesProxy,string>> $typeValidator */
             $typeValidator = array_pop($rules);
             if (!isset($params[$name])) {
-                if (!empty($rules) && $rules[0] instanceof RequiredValidatorFilter) {
-                    return $this->addError('The request field ' . $name . ' is mandatory and indispensable');
+                if (isset($rules[0])) {
+                    if ($rules[0][0] instanceof RequiredValidatorFilter) {
+                        return $this->addError('The request field ' . $name . ' is mandatory and indispensable');
+                    }
                 }
             }
 
