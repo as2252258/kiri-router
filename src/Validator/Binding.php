@@ -90,7 +90,7 @@ class Binding implements RequestFilterInterface
     protected function getValidator($key, $rule): array
     {
         if (is_numeric($key)) {
-            $class = self::TYPES[$key];
+            $class = self::TYPES[$rule];
         } else {
             $class   = array_merge(self::TYPES[$key], ['value' => $rule, 'field' => $key]);
         }
