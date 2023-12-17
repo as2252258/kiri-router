@@ -16,11 +16,8 @@ class StringProxy extends TypesProxy
     public function dispatch(object $form, string $field, mixed $value): bool
     {
         if (is_null($value)) {
-            if (!$this->allowsNull) {
-                return false;
-            }
-            $form->{$field} = '';
-            return false;
+            $form->{$field} = !$this->allowsNull ? '' : null;
+            return true;
         }
         return $value == ($form->{$field} = (string)$value);
     }
