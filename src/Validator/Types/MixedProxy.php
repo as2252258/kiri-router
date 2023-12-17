@@ -19,6 +19,9 @@ class MixedProxy extends TypesProxy
     public function dispatch(object $form, string $field, mixed $value): bool
     {
         try {
+            if (is_null($value) && !$this->allowsNull) {
+                return false;
+            }
             return $value == ($form->{$field} = $value);
         } catch (\Throwable $throwable) {
             return false;
