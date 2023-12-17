@@ -120,9 +120,9 @@ class Validator
             if (!isset($params[$name])) {
                 if (isset($rules[0])) {
                     if ($rules[0][0] instanceof RequiredValidatorFilter) {
+                        unset($rules[0]);
                         return $this->addError('The request field ' . $name . ' is mandatory and indispensable');
                     }
-                    unset($rules[0]);
                 }
             }
 
