@@ -7,7 +7,6 @@ use Kiri\Di\Inject\Config;
 use Kiri\Di\Inject\Container;
 use Kiri\Di\Interface\InjectParameterInterface;
 use Kiri\Router\Base\Middleware;
-use Kiri\Router\Validator\RequestFilter\RequestFilterInterface;
 use Kiri\Router\Validator\Types\ArrayProxy;
 use Kiri\Router\Validator\Types\BoolProxy;
 use Kiri\Router\Validator\Types\FloatProxy;
@@ -19,8 +18,11 @@ use Kiri\Server\ServerInterface;
 use ReflectionNamedType;
 use ReflectionProperty;
 use ReflectionUnionType;
-use function inject;
 
+
+/**
+ *
+ */
 #[\Attribute(\Attribute::TARGET_PARAMETER)]
 class BindForm implements InjectParameterInterface
 {

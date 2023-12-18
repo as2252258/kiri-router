@@ -3,14 +3,12 @@ declare(strict_types=1);
 
 namespace Kiri\Router\Annotate;
 
+use Kiri\Di\Interface\InjectMethodInterface;
 use Kiri\Router\Constrict\RequestMethod;
-use Kiri\Router\Interface\InjectRouteInterface;
 use Kiri\Router\Router;
-use ReflectionClass;
-use ReflectionException;
 
 #[\Attribute(\Attribute::TARGET_METHOD | \Attribute::IS_REPEATABLE)]
-class Delete extends AbstractRequestMethod implements InjectRouteInterface
+class Delete extends AbstractRequestMethod implements InjectMethodInterface
 {
 
 
@@ -24,14 +22,13 @@ class Delete extends AbstractRequestMethod implements InjectRouteInterface
 
 
     /**
-     * @param ReflectionClass $class
+     * @param string $class
      * @param string $method
      * @return void
-     * @throws ReflectionException
      */
-    public function dispatch(ReflectionClass $class, string $method): void
+    public function dispatch(string $class, string $method): void
     {
-        $controller = \Kiri::getDi()->makeReflection($class);
+        $controller = \Kiri::getDi()->get($class);
 
         // TODO: Implement dispatch() method.
         $path = '/' . ltrim($this->path, '/');

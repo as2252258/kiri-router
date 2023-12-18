@@ -3,7 +3,6 @@
 namespace Kiri\Router\Validator;
 
 use Kiri;
-use Kiri\Router\Interface\ValidatorInterface;
 use Kiri\Router\Validator\RequestFilter\BetweenValidatorFilter;
 use Kiri\Router\Validator\RequestFilter\InValidatorFilter;
 use Kiri\Router\Validator\RequestFilter\LengthValidatorFilter;

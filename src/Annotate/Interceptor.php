@@ -4,11 +4,10 @@ declare(strict_types=1);
 namespace Kiri\Router\Annotate;
 
 
-use Kiri\Router\Interface\InjectRouteInterface;
-use ReflectionClass;
+use Kiri\Di\Interface\InjectMethodInterface;
 
 #[\Attribute(\Attribute::TARGET_METHOD)]
-class Interceptor implements InjectRouteInterface
+class Interceptor implements InjectMethodInterface
 {
 
     public function __construct()
@@ -17,11 +16,11 @@ class Interceptor implements InjectRouteInterface
 
 
     /**
-     * @param ReflectionClass $class
+     * @param string $class
      * @param string $method
      * @return void
      */
-    public function dispatch(ReflectionClass $class, string $method): void
+    public function dispatch(string $class, string $method): void
     {
         // TODO: Implement dispatch() method.
     }

@@ -3,12 +3,11 @@ declare(strict_types=1);
 
 namespace Kiri\Router\Annotate;
 
+use Kiri\Di\Interface\InjectMethodInterface;
 use Kiri\Router\Base\Middleware as MiddlewareManager;
-use Kiri\Router\Interface\InjectRouteInterface;
-use ReflectionClass;
 
 #[\Attribute(\Attribute::TARGET_METHOD | \Attribute::IS_REPEATABLE)]
-class Middleware implements InjectRouteInterface
+class Middleware implements InjectMethodInterface
 {
 
 	/**
@@ -20,15 +19,15 @@ class Middleware implements InjectRouteInterface
 
 
     /**
-     * @param ReflectionClass $class
+     * @param string $class
      * @param string $method
      * @return void
      */
-	public function dispatch(ReflectionClass $class, string $method): void
+	public function dispatch(string $class, string $method): void
     {
 		$middlewareManager = \Kiri::getDi()->get(MiddlewareManager::class);
 
-		$middlewareManager->set($class->getName(), $method, $this->middleware);
+		$middlewareManager->set($class, $method, $this->middleware);
 	}
 
 
