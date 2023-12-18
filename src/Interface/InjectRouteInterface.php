@@ -3,15 +3,17 @@ declare(strict_types=1);
 
 namespace Kiri\Router\Interface;
 
+use ReflectionClass;
+
 interface InjectRouteInterface
 {
 
 
-	/**
-	 * @param object $class
-	 * @param string $method
-	 * @return void
-	 */
-	public function dispatch(object $class, string $method): void;
+    /**
+     * @param ReflectionClass $class
+     * @param string $method
+     * @return void
+     */
+	public function dispatch(ReflectionClass $class, string $method): void;
 
 }

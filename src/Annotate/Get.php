@@ -8,6 +8,7 @@ use Kiri\Router\Constrict\RequestMethod;
 use Kiri\Router\Interface\InjectRouteInterface;
 use Kiri\Router\OptionsController;
 use Kiri\Router\Router;
+use ReflectionClass;
 use ReflectionException;
 
 #[\Attribute(\Attribute::TARGET_METHOD | \Attribute::IS_REPEATABLE)]
@@ -24,20 +25,22 @@ class Get extends AbstractRequestMethod implements InjectRouteInterface
 	}
 
 
-	/**
-	 * @param object $class
-	 * @param string $method
-	 * @return void
-	 * @throws
-	 */
-	public function dispatch(object $class, string $method): void
+    /**
+     * @param ReflectionClass $class
+     * @param string $method
+     * @return void
+     * @throws ReflectionException
+     */
+	public function dispatch(ReflectionClass $class, string $method): void
 	{
-		// TODO: Implement dispatch() method.
+        $controller = \Kiri::getDi()->makeReflection($class);
+
+        // TODO: Implement dispatch() method.
 		$path = '/' . ltrim($this->path, '/');
         if (!empty($this->version)) {
             $path = '/' . trim($this->version) . $path;
         }
-		Router::addRoute(RequestMethod::REQUEST_GET, $path, [$class, $method]);
+		Router::addRoute(RequestMethod::REQUEST_GET, $path, [$controller, $method]);
 	}
 
 }

@@ -3,11 +3,10 @@ declare(strict_types=1);
 
 namespace Kiri\Router\Annotate;
 
-use Exception;
 use Kiri\Router\Constrict\RequestMethod;
 use Kiri\Router\Interface\InjectRouteInterface;
-use Kiri\Router\OptionsController;
 use Kiri\Router\Router;
+use ReflectionClass;
 use ReflectionException;
 
 #[\Attribute(\Attribute::TARGET_METHOD | \Attribute::IS_REPEATABLE)]
@@ -25,19 +24,21 @@ class Delete extends AbstractRequestMethod implements InjectRouteInterface
 
 
     /**
-     * @param object $class
+     * @param ReflectionClass $class
      * @param string $method
      * @return void
-     * @throws
+     * @throws ReflectionException
      */
-    public function dispatch(object $class, string $method): void
+    public function dispatch(ReflectionClass $class, string $method): void
     {
+        $controller = \Kiri::getDi()->makeReflection($class);
+
         // TODO: Implement dispatch() method.
         $path = '/' . ltrim($this->path, '/');
         if (!empty($this->version)) {
             $path = '/' . trim($this->version) . $path;
         }
-        Router::addRoute(RequestMethod::REQUEST_DELETE, $path, [$class, $method]);
+        Router::addRoute(RequestMethod::REQUEST_DELETE, $path, [$controller, $method]);
     }
 
 
