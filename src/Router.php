@@ -179,11 +179,6 @@ class Router
         $container = Kiri::getDi();
         $scanner   = $container->get(Kiri\Di\Scanner::class);
         $scanner->load_directory(APP_PATH . 'app/Controller');
-
-        $array = glob(realpath(__DIR__ . 'app/Controller/'));
-        foreach ($array as $item) {
-
-        }
         $this->reset($container);
     }
 
