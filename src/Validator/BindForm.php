@@ -81,11 +81,6 @@ class BindForm implements InjectParameterInterface
         }
 
 
-        $propertyConfig = $property->getAttributes(Config::class);
-        if (count($propertyConfig) > 0) {
-            ($propertyConfig[0]->newInstance())->dispatch($object, $property->getName());
-        }
-
         $binding = $property->getAttributes(Binding::class);
         if (count($binding) > 0) {
             /** @var Binding $rule */
