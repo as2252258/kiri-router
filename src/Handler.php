@@ -17,6 +17,7 @@ use Psr\Container\NotFoundExceptionInterface;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Server\RequestHandlerInterface;
+use ReflectionFunction;
 use ReflectionMethod;
 use ReflectionNamedType;
 
@@ -37,13 +38,16 @@ class Handler implements RequestHandlerInterface
      */
     protected ContainerInterface $container;
 
+    protected array $parameters;
+
 
     /**
      * @param array|Closure $handler
-     * @param ReflectionMethod $parameter
-     * @throws
+     * @param ReflectionMethod|ReflectionFunction $parameter
+     * @throws ContainerExceptionInterface
+     * @throws NotFoundExceptionInterface
      */
-    public function __construct(public array|Closure $handler, public ReflectionMethod|\ReflectionFunction $parameter)
+    public function __construct(public array|Closure $handler, public ReflectionMethod|ReflectionFunction $parameter)
     {
         $this->container = \Kiri::getDi();
         if ($this->parameter->getReturnType() != null) {
@@ -51,6 +55,7 @@ class Handler implements RequestHandlerInterface
         } else {
             $this->format = $this->container->get(MixedFormat::class);
         }
+        $this->parameters = $this->container->getMethodParams($this->parameter);
     }
 
 
@@ -136,9 +141,7 @@ class Handler implements RequestHandlerInterface
      */
     public function handle(ServerRequestInterface $request): ResponseInterface
     {
-        $parameter = $this->container->getMethodParams($this->parameter);
-
-        $data = call_user_func($this->handler, ...$parameter);
+        $data = call_user_func($this->handler, ...$this->parameters);
 
         /** 根据返回类型 */
         return $this->format->call($data);
