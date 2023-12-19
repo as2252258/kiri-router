@@ -256,13 +256,12 @@ class RouterCollector implements \ArrayAccess, \IteratorAggregate
      */
     private function appendMiddleware(array $middlewares, $class, $method): void
     {
-        $manager = $this->container->get(Middleware::class);
         foreach ($middlewares as $middleware) {
             if (is_string($middleware)) {
                 $middleware = [$middleware];
             }
             foreach ($middleware as $value) {
-                $manager->set($class, $method, $value);
+                Middleware::set($class, $method, $value);
             }
         }
     }

@@ -25,9 +25,7 @@ class Middleware implements InjectMethodInterface
      */
 	public function dispatch(string $class, string $method): void
     {
-		$middlewareManager = \Kiri::getDi()->get(MiddlewareManager::class);
-
-		$middlewareManager->set($class, $method, $this->middleware);
+        MiddlewareManager::set($class, $method, $this->middleware);
 	}
 
 

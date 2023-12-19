@@ -174,11 +174,16 @@ class Router
      */
     public function scan_build_route(): void
     {
+        $this->read_dir_file(APP_PATH . 'routes');
+
         $container = Kiri::getDi();
         $scanner   = $container->get(Kiri\Di\Scanner::class);
         $scanner->load_directory(APP_PATH . 'app/Controller');
 
-        $this->read_dir_file(APP_PATH . 'routes');
+        $array = glob(realpath(__DIR__ . 'app/Controller/'));
+        foreach ($array as $item) {
+
+        }
         $this->reset($container);
     }
 

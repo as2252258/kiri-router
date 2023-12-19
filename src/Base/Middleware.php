@@ -3,6 +3,7 @@ declare(strict_types=1);
 
 namespace Kiri\Router\Base;
 
+use Kiri;
 use Psr\Http\Server\MiddlewareInterface;
 
 class Middleware
@@ -12,39 +13,29 @@ class Middleware
     /**
      * @var array
      */
-    protected array $manager = [];
+    protected static array $manager = [];
 
 
-    /**
-     *
-     */
-    public function __construct()
-    {
-    }
+    protected static array $mapping = [];
 
 
     /**
      * @param string $className
      * @param string $method
-     * @param string|object $middleware
+     * @param string $middleware
      * @return void
      * @throws
      */
-    public function set(string $className, string $method, string|object $middleware): void
+    public static function set(string $className, string $method, string $middleware): void
     {
         $path = $className . '::' . $method;
-        if (isset($this->manager[$path])) {
-            $values = $this->manager[$path];
-            if (in_array($middleware, $values)) {
-                return;
-            }
-            if (!in_array(MiddlewareInterface::class, class_implements($middleware))) {
-                return;
-            }
-        } else {
-            $this->manager[$path] = [];
+        if (!isset(static::$manager[$path])) {
+            static::$manager[$path] = static::$mapping[$path] = [];
         }
-        $this->manager[$path][] = $middleware;
+        if (!in_array($middleware, static::$mapping[$path])) {
+            static::$manager[$path][] = Kiri::getDi()->get($middleware);
+            static::$mapping[$path][] = $middleware;
+        }
     }
 
 
@@ -53,9 +44,9 @@ class Middleware
      * @param string $method
      * @return array
      */
-    public function get(string $className, string $method): array
+    public static function get(string $className, string $method): array
     {
-        return $this->manager[$className . '::' . $method] ?? [];
+        return static::$manager[$className . '::' . $method] ?? [];
     }
 
 

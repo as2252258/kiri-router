@@ -3,7 +3,7 @@
 namespace Kiri\Router\Validator;
 
 use Exception;
-use Kiri\Di\Inject\Config;
+use Kiri;
 use Kiri\Di\Inject\Container;
 use Kiri\Di\Interface\InjectParameterInterface;
 use Kiri\Router\Base\Middleware;
@@ -45,22 +45,18 @@ class BindForm implements InjectParameterInterface
     public function dispatch(string $class, string $method): object
     {
         $validator = new Validator();
-        $container = \Kiri::getDi();
-        $reflect   = $container->getReflectionClass($this->formValidate);
+        $reflect   = Kiri::getDi()->getReflectionClass($this->formValidate);
         $object    = $validator->setFormData($reflect->newInstanceWithoutConstructor());
         foreach ($reflect->getProperties() as $property) {
             $ignoring = $property->getAttributes(Ignoring::class);
-            $comment  = $property->getDocComment();
-            if (count($ignoring) > 0 || ($comment && str_contains($comment, '@deprecated'))) {
-                continue;
+            if (count($ignoring) === 0) {
+                $this->properties($validator, $property, $object);
             }
-
-            $this->properties($validator, $property, $object);
         }
 
         $middleware            = \instance(ValidatorMiddleware::class);
         $middleware->validator = $validator;
-        $container->get(Middleware::class)->set($class, $method, $middleware);
+        Middleware::set($class, $method, $middleware);
 
         return $validator->getFormData();
     }
@@ -103,7 +99,7 @@ class BindForm implements InjectParameterInterface
     {
         $getType = $property->getType();
         if (is_null($getType)) {
-            $service = \Kiri::getDi();
+            $service = Kiri::getDi();
             if ($service->has(ServerInterface::class)) {
                 $service->get(ServerInterface::class)->shutdown();
             }
@@ -119,7 +115,7 @@ class BindForm implements InjectParameterInterface
             }
             $array = array_merge($array, ['types' => $types, 'class' => MixedProxy::class]);
         }
-        return \Kiri::createObject($array);
+        return Kiri::createObject($array);
     }
 
 
