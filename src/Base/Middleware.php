@@ -4,7 +4,6 @@ declare(strict_types=1);
 namespace Kiri\Router\Base;
 
 use Kiri;
-use Psr\Http\Server\MiddlewareInterface;
 
 class Middleware
 {
@@ -26,15 +25,23 @@ class Middleware
      * @return void
      * @throws
      */
-    public static function set(string $className, string $method, string $middleware): void
+    public static function set(string $className, string $method, string|object $middleware): void
     {
         $path = $className . '::' . $method;
         if (!isset(static::$manager[$path])) {
             static::$manager[$path] = static::$mapping[$path] = [];
         }
-        if (!in_array($middleware, static::$mapping[$path])) {
-            static::$manager[$path][] = Kiri::getDi()->get($middleware);
-            static::$mapping[$path][] = $middleware;
+
+        if (is_object($middleware)) {
+            if (!in_array($middleware::class, static::$mapping[$path])) {
+                static::$manager[$path][] = $middleware;
+                static::$mapping[$path][] = $middleware::class;
+            }
+        } else {
+            if (!in_array($middleware, static::$mapping[$path])) {
+                static::$manager[$path][] = Kiri::getDi()->get($middleware);
+                static::$mapping[$path][] = $middleware;
+            }
         }
     }
 
