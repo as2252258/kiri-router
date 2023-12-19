@@ -46,9 +46,7 @@ class ControllerInterpreter
     {
         $reflection = new \ReflectionFunction($method);
 
-        $params = $this->container->resolveMethodParams($reflection);
-
-        return new Handler($method, $params, $reflection->getReturnType());
+        return new Handler($method, $reflection);
     }
 
 
@@ -81,14 +79,7 @@ class ControllerInterpreter
             $reflectionMethod = $reflectionClass->getMethod($reflectionMethod);
         }
 
-        $returnType = $reflectionMethod->getReturnType();
-        if ($returnType instanceof \ReflectionUnionType) {
-            throw new Exception("Return type error, cannot be multi type.");
-        }
-
-        $parameters = $this->container->getMethodParams($reflectionMethod);
-
-        return new Handler([$class, $reflectionMethod->getName()], $parameters, $returnType);
+        return new Handler([$class, $reflectionMethod->getName()], $reflectionMethod);
     }
 
 }

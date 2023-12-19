@@ -86,7 +86,7 @@ class RouterCollector implements \ArrayAccess, \IteratorAggregate
         $found = di(NotFoundController::class);
 
         $reflection  = new ReflectionMethod($found, 'fail');
-        $this->found = new Handler([$found, 'fail'], [], $reflection->getReturnType());
+        $this->found = new Handler([$found, 'fail'], $reflection);
     }
 
 

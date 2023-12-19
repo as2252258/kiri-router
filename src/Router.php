@@ -176,7 +176,7 @@ class Router
     {
         $container = Kiri::getDi();
         $scanner   = $container->get(Kiri\Di\Scanner::class);
-        $scanner->load_directory(APP_PATH . 'app/');
+        $scanner->load_directory(APP_PATH . 'app/Controller');
 
         $this->read_dir_file(APP_PATH . 'routes');
         $this->reset($container);

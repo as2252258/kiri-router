@@ -11,10 +11,13 @@ use Kiri\Router\Format\NoBody;
 use Kiri\Router\Format\OtherFormat;
 use Kiri\Router\Format\ResponseFormat;
 use Kiri\Router\Format\VoidFormat;
+use Psr\Container\ContainerExceptionInterface;
 use Psr\Container\ContainerInterface;
+use Psr\Container\NotFoundExceptionInterface;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Server\RequestHandlerInterface;
+use ReflectionMethod;
 use ReflectionNamedType;
 
 class Handler implements RequestHandlerInterface
@@ -37,15 +40,14 @@ class Handler implements RequestHandlerInterface
 
     /**
      * @param array|Closure $handler
-     * @param array $parameter
-     * @param ReflectionNamedType|null $reflectionType
+     * @param ReflectionMethod $parameter
      * @throws
      */
-    public function __construct(public array|Closure $handler, public array $parameter, public ?ReflectionNamedType $reflectionType)
+    public function __construct(public array|Closure $handler, public ReflectionMethod|\ReflectionFunction $parameter)
     {
         $this->container = \Kiri::getDi();
-        if ($this->reflectionType != null) {
-            $this->format = $this->container->get($this->returnType());
+        if ($this->parameter->getReturnType() != null) {
+            $this->format = $this->container->get($this->returnType($parameter));
         } else {
             $this->format = $this->container->get(MixedFormat::class);
         }
@@ -53,11 +55,12 @@ class Handler implements RequestHandlerInterface
 
 
     /**
+     * @param $reflectionType
      * @return string
      */
-    protected function returnType(): string
+    protected function returnType($reflectionType): string
     {
-        return match ($this->reflectionType->getName()) {
+        return match ($reflectionType->getName()) {
             'array'                 => ArrayFormat::class,
             'mixed', 'object'       => MixedFormat::class,
             'int', 'string', 'bool' => OtherFormat::class,
@@ -133,7 +136,9 @@ class Handler implements RequestHandlerInterface
      */
     public function handle(ServerRequestInterface $request): ResponseInterface
     {
-        $data = call_user_func($this->handler, ...$this->parameter);
+        $parameter = $this->container->getMethodParams($this->parameter);
+
+        $data = call_user_func($this->handler, ...$parameter);
 
         /** 根据返回类型 */
         return $this->format->call($data);
